@@ -1,0 +1,503 @@
+/*******************
+     GENERAL
+*******************/
+html, body
+{
+    height: 100%;
+}
+
+body {
+    background-color: #EEEEFF;
+    background-image: url('../images/bgtile.jpg');
+    background-repeat: repeat-x;
+    background-attachment: fixed;
+    font-family: Verdana, sans-serif;
+}
+
+img {
+    border: none;
+}
+
+a {
+    color: #697C9B;
+}
+
+a:hover {
+    color: #293956;
+}
+
+div#bounding
+{
+    clear: both;
+}
+
+div, img {
+    margin: 0px;
+}
+
+p, ul {
+    margin-top: 0px;
+}
+
+ul {
+    line-height: 20px;
+}
+
+form.hide { display: none }
+
+/*******************
+    DIV LAYOUTS
+*******************/
+
+div#container {
+    position: relative;
+    max-width: 1600px;
+   /* min-width: 750px; */
+    width: 98%;
+    margin: 0px auto;
+}
+
+div#heading {
+    background: #394C6B;
+    border: 3px solid #061E45;
+    height: 100px;
+}
+
+div#heading img {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+div#navigation {
+    height: auto;
+    /*background: #899CBB; /* lightback*/
+    /*background: #061E45; /* darkback */
+    border: solid #EEEEFF;
+    border-width: 1px 0px;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+div#content {
+    height: auto;
+    position: relative;
+    background: #E5E5FF;
+    border: 3px solid #061E45;
+    padding: 20px 50px;
+    font-size: 14px;
+}
+
+div#footer {
+    border-top: 2px solid #9FAFCC;
+    background: #061E45;
+    padding: 5px;
+    text-align: center;
+    font-size: 12px;
+    word-spacing: 50px;
+}
+
+
+
+/*******************
+  Navigation Bar
+*******************/
+
+div#navigation a.orig, 
+div#navigation span.orig {
+    display: block;
+    float: left;
+    border: solid #EEEEFF;
+    border-width: 0px 1px;
+    margin: 0px 40px;
+    padding: 7px 10px;
+    text-decoration: none;
+    color: #061E45; /* lightback*/
+    /*color: #9FAFCC; /* darkback*/
+}
+
+#navigation #selectPresent
+{
+    display: inline-block;
+    position: relative;
+}
+
+#navigation span#addPresent a
+{
+    line-height: 18px;
+}
+
+/*div#navigation a:first-child {
+    border-left: 1px solid #9FAFCC;
+}*/
+
+div#navigation a.orig:hover,
+div#navigation span.orig {
+    background: #061E45;
+    color: #EEEEFF; /*lightback*/
+    /*background: #9FAFCC;
+    color: #061E45; /*darkback*/
+}
+
+div#navigation a
+{
+    color: #061A40;
+}
+
+div#navigation a:hover
+{
+    color: #364A70;
+}
+
+div#navNav, div#navRight
+{ display: inline-block; }
+
+div#navRight
+{ /*position: absolute; right: 5px;*/ float:right; }
+
+div#navRight span
+{ margin: 0 5px; }
+
+div.clearer { clear:both; }
+
+span#quizLink a
+{
+    width: auto;
+    height: auto;
+}
+
+/*******************
+     Content
+*******************/
+
+form.bordered
+{
+    padding: 10px;
+    border: 3px outset #C4C4DD;
+    text-align: right;
+}
+
+#login form
+{
+    width: 240px;
+}
+
+#register form
+{
+    width: auto;
+    display: inline-block;
+}
+
+#register #leftColumn
+{
+    width: 130px;
+    text-align: right;
+}
+
+#register .rightColumn
+{
+    text-align: left;
+}
+
+#schoolYear
+{
+    width: 154px;
+    margin-left: 2px;
+}
+
+#register #tablePerson
+{
+    float: left;
+    width: 300px;
+}
+
+#register #tableDisa
+{
+    float: right;
+    width: 265px;
+}
+
+#register textarea
+{
+    width: 100%;
+    height: 46px;
+}
+
+form #formError
+{
+    color: Red;
+    margin: 10px;
+    text-align: left;
+}
+
+#updatedFields
+{
+    color: Green;
+    margin: 10px;
+    text-align: left;
+}
+
+#chooser dt
+{
+    margin-top: 15px;
+}
+
+#joinCourse
+{
+    position: relative;
+    float: right;
+    width: 200px;
+}
+
+#joinCourse #courses
+{
+    border: 2px solid #5555AA;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: white;
+}
+
+#classroom
+{
+    position: relative;
+    /*min-width: 975px;*/
+    height: 600px;
+    margin: -20px -50px;
+    background-color: black;
+}
+
+#com-head { padding: 10px; }
+#com-head #head-text
+{
+    font-size: 1.2em;
+    margin-left: 20px;
+}
+
+span.addingPresents
+{
+    width: 400px;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    background-color: #E5E5FF;
+    border: 3px outset #061A40;
+    vertical-align: top;
+}
+
+#classroom #pageHeader
+{
+    float: left;
+    position: relative;
+    top: 30px;
+    width: 75%;
+    text-align: center;
+}
+
+#classroom #AddQuizDialog
+{
+    display: none;
+}
+
+#AddQuizDialog span
+{
+    font-size: 0.8em;
+}
+
+.no-close-button .ui-dialog-titlebar-close
+{ display: none; }
+
+#pageHeader #courseTitle
+{
+    font-weight: 400;
+    font-size: 1.6em;
+}
+
+#pageHeader #session
+{
+    font-weight: 300;
+    font-size: 1.4em;
+    position: relative;
+    top: 15px;
+} 
+
+#displayBox
+{
+    float: right;
+    position: relative;
+    width: 70%;
+    height: 100%;
+    margin-right: 0px; 
+    min-height: 400px;
+    background-color: black;
+}
+#displayFrame
+{
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border: 0px;
+}
+
+#userComments
+{
+    position: relative;
+    margin-top: -2px;
+    padding-left: 0;
+    padding-right: 0px;
+    clear: right;
+    overflow-y: auto;
+}
+
+.newComment
+{
+    background-color: rgb(255,200,0);
+}
+
+#commentTable table
+{
+    table-layout: fixed;
+    margin: 0;
+    width: 100%;
+    border-top: 1px solid black;
+    border-collapse: collapse;
+}
+
+#commentTable table tr
+{
+    border-bottom: 1px dotted #061E45;
+}
+
+#commentTable table td.control
+{
+    width: 16px;
+    padding-right: 12px;
+}
+
+#commentTable table td
+{
+    padding-bottom: 5px;
+}
+
+#commentTable p 
+{
+    word-wrap: break-word;
+}
+
+.prating
+{
+    padding: 0;
+    margin: 0;
+}
+
+#ShowQuizDialog table#showAnswers
+{
+    width: 80%;
+    text-align: center;
+    margin-top: 20px;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+table#showAnswers tr:first-child th:first-child { border-top-left-radius: 8px; }
+table#showAnswers tr:first-child th:last-child  { border-top-right-radius: 8px; }
+table#showAnswers tr:last-child  td:first-child { border-bottom-left-radius: 8px; }
+table#showAnswers tr:last-child  td:last-child  { border-bottom-right-radius: 8px; }
+
+table#showAnswers td:first-child { border-right: 2px solid #8FCFF8; }
+table#showAnswers td:last-child { border-left: 2px solid #8FCFF8; }
+table#showAnswers tr:first-child th { border-bottom: 2px solid #4F8FC8; }
+
+#ShowQuizDialog table#showAnswers td
+{
+    padding-right: 10px;
+}
+
+#ShowQuizDialog table#showAnswers tr:nth-child(even) { background-color: #AFEFFF; }
+#ShowQuizDialog table#showAnswers tr:nth-child(odd)  { background-color: #6FB8EE; }
+
+#userComments form
+{
+    display: inline;
+}
+
+tr.hiddenComment, tr.addressedComment
+{
+    display: none;
+}
+
+.icons
+{
+    background: url(../images/icons.gif) no-repeat;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+
+a#iplus:hover { color: green !important; }
+
+a#iup           { background-position:   0px   0px; }
+a#idown       { background-position: -16px   0px; }
+a#iplus       { background-position: -64px   0px; }
+a#ilogout   { background-position: -64px -32px; }
+a#iaddress { background-position: -32px   0px; }
+a#ihide       { background-position: -48px   0px; }
+a#iresaddr { background-position: -32px -32px; }
+a#ireshide { background-position: -48px -32px; }
+a#iminus     { background-position:   0px -48px; }
+a#ipreson   { background-position: -16px -64px; }
+a#ipresoff { background-position: -32px -64px; }
+a#iup:hover           { background-position:   0px -16px; }
+a#idown:hover       { background-position: -16px -16px; }
+a#iplus:hover       { background-position: -64px -16px; }
+a#ilogout:hover   { background-position: -64px -48px; }
+a#iaddress:hover { background-position: -32px -16px; }
+a#ihide:hover       { background-position: -48px -16px; }
+a#iresaddr:hover { background-position: -32px -48px; }
+a#ireshide:hover { background-position: -48px -48px; }
+a#iminus:hover     { background-position:   0px -64px; }
+a#ipreson:hover   { background-position: -32px -64px; }
+a#ipresoff:hover { background-position: -16px -64px; }
+span#iup         { background-position:   0px -32px; }
+span#idown     { background-position: -16px -32px; }
+span#iminus   { background-position: -16px -48px; }
+span#ipres     { background-position: -48px -64px; }
+/*******************
+       Footer
+*******************/
+
+div#footer a,
+div#footer span {
+    color: #9FAFCC;
+    text-decoration: none;
+}
+
+div#footer a:hover,
+div#footer span {
+    text-decoration: underline;
+}
+
+/*******************
+       COLORS
+********************
+
+9FAFCC
+3A5D99 (old)
+     light, bgcolor, navHover/current, txt
+
+061E45
+     dark, divBorder, txt
+     
+899CBB
+     navbar
+
+394C6B
+     header
+
+293956
+     dark (close to header)
+     
+EEEEFF
+     content bgcolor
+*/

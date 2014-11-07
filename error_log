@@ -1,0 +1,84 @@
+[04-Nov-2014 01:23:33 UTC] PHP Warning:  opendir(/home/users16/youspeak/public_html/library/): failed to open dir: No such file or directory in /home/admindanial/public_html/youspeak/lib.php on line 8
+[04-Nov-2014 01:23:33 UTC] PHP Warning:  closedir() expects parameter 1 to be resource, boolean given in /home/admindanial/public_html/youspeak/lib.php on line 15
+[04-Nov-2014 01:23:33 UTC] PHP Fatal error:  Class 'Template' not found in /home/admindanial/public_html/youspeak/index.php on line 39
+[04-Nov-2014 02:42:04 UTC] PHP Warning:  opendir(/home/admindanial/public_html/youspeak/public_html/library/): failed to open dir: No such file or directory in /home/admindanial/public_html/youspeak/lib.php on line 8
+[04-Nov-2014 02:42:04 UTC] PHP Warning:  closedir() expects parameter 1 to be resource, boolean given in /home/admindanial/public_html/youspeak/lib.php on line 15
+[04-Nov-2014 02:42:04 UTC] PHP Fatal error:  Class 'Template' not found in /home/admindanial/public_html/youspeak/index.php on line 39
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: email in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 243
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: institute in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 244
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: major in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 245
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: gpa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 246
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: school_year in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 247
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: gender in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 248
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: age in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 249
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: race in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 250
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: have_disa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 251
+[04-Nov-2014 02:48:07 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 252
+[04-Nov-2014 02:48:07 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/global/dbase.php:243) in /home/admindanial/public_html/youspeak/content/login/c.php on line 30
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: email in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 243
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: institute in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 244
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: major in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 245
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: gpa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 246
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: school_year in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 247
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: gender in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 248
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: age in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 249
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: race in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 250
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: have_disa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 251
+[04-Nov-2014 02:55:03 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 252
+[04-Nov-2014 02:55:03 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/global/dbase.php:243) in /home/admindanial/public_html/youspeak/content/login/c.php on line 30
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: firstname in /home/admindanial/public_html/youspeak/content/registration/m.php on line 45
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: lastname in /home/admindanial/public_html/youspeak/content/registration/m.php on line 46
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: email in /home/admindanial/public_html/youspeak/content/registration/m.php on line 47
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: username in /home/admindanial/public_html/youspeak/content/registration/m.php on line 48
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: institute in /home/admindanial/public_html/youspeak/content/registration/m.php on line 49
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: major in /home/admindanial/public_html/youspeak/content/registration/m.php on line 50
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: gpa in /home/admindanial/public_html/youspeak/content/registration/m.php on line 51
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: schoolYear in /home/admindanial/public_html/youspeak/content/registration/m.php on line 52
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: sex in /home/admindanial/public_html/youspeak/content/registration/m.php on line 53
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: age in /home/admindanial/public_html/youspeak/content/registration/m.php on line 54
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: race in /home/admindanial/public_html/youspeak/content/registration/m.php on line 55
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: haveDisa in /home/admindanial/public_html/youspeak/content/registration/m.php on line 56
+[04-Nov-2014 02:55:07 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/registration/m.php on line 57
+[05-Nov-2014 23:51:47 UTC] PHP Notice:  Undefined index: schoolYear in /home/admindanial/public_html/youspeak/content/registration/c.php on line 16
+[05-Nov-2014 23:51:47 UTC] PHP Notice:  Undefined index: sex in /home/admindanial/public_html/youspeak/content/registration/c.php on line 17
+[05-Nov-2014 23:51:47 UTC] PHP Notice:  Undefined index: haveDisa in /home/admindanial/public_html/youspeak/content/registration/c.php on line 20
+[05-Nov-2014 23:51:47 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/registration/c.php on line 21
+[05-Nov-2014 23:51:47 UTC] PHP Notice:  Undefined index: async in /home/admindanial/public_html/youspeak/content/registration/c.php on line 100
+[05-Nov-2014 23:51:47 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/registration/c.php:16) in /home/admindanial/public_html/youspeak/content/registration/c.php on line 102
+[05-Nov-2014 23:54:50 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/registration/c.php on line 21
+[05-Nov-2014 23:54:50 UTC] PHP Notice:  Undefined index: async in /home/admindanial/public_html/youspeak/content/registration/c.php on line 51
+[05-Nov-2014 23:54:50 UTC] PHP Notice:  Undefined index: async in /home/admindanial/public_html/youspeak/content/registration/c.php on line 58
+[05-Nov-2014 23:54:50 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/registration/c.php:21) in /home/admindanial/public_html/youspeak/content/registration/c.php on line 77
+[06-Nov-2014 00:11:02 UTC] PHP Notice:  Undefined index: have_disa in /home/admindanial/public_html/youspeak/content/profile/c.php on line 106
+[06-Nov-2014 00:11:02 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/profile/c.php on line 106
+[06-Nov-2014 00:11:02 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/profile/c.php:106) in /home/admindanial/public_html/youspeak/content/profile/c.php on line 143
+[06-Nov-2014 00:11:13 UTC] PHP Notice:  Undefined index: have_disa in /home/admindanial/public_html/youspeak/content/profile/c.php on line 106
+[06-Nov-2014 00:11:13 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/profile/c.php on line 106
+[06-Nov-2014 00:11:13 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/profile/c.php:106) in /home/admindanial/public_html/youspeak/content/profile/c.php on line 143
+[06-Nov-2014 00:11:24 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/profile/c.php on line 106
+[06-Nov-2014 00:11:24 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/profile/c.php:106) in /home/admindanial/public_html/youspeak/content/profile/c.php on line 143
+[06-Nov-2014 00:14:21 UTC] PHP Notice:  Undefined index: schoolYear in /home/admindanial/public_html/youspeak/content/registration/c.php on line 16
+[06-Nov-2014 00:14:21 UTC] PHP Notice:  Undefined index: sex in /home/admindanial/public_html/youspeak/content/registration/c.php on line 17
+[06-Nov-2014 00:14:21 UTC] PHP Notice:  Undefined index: haveDisa in /home/admindanial/public_html/youspeak/content/registration/c.php on line 20
+[06-Nov-2014 00:14:21 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/registration/c.php on line 21
+[06-Nov-2014 00:14:21 UTC] PHP Notice:  Undefined index: async in /home/admindanial/public_html/youspeak/content/registration/c.php on line 51
+[06-Nov-2014 00:14:21 UTC] PHP Notice:  Undefined index: async in /home/admindanial/public_html/youspeak/content/registration/c.php on line 58
+[06-Nov-2014 00:14:21 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/registration/c.php:16) in /home/admindanial/public_html/youspeak/content/registration/c.php on line 77
+[07-Nov-2014 00:29:48 UTC] PHP Fatal error:  Class 'GmailAuth' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 12
+[07-Nov-2014 00:30:44 UTC] PHP Fatal error:  Class 'GmailAuth' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 12
+[07-Nov-2014 00:31:19 UTC] PHP Fatal error:  Class 'GmailAuth' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 12
+[07-Nov-2014 00:33:06 UTC] PHP Fatal error:  Class 'GmailAuth' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 12
+[07-Nov-2014 00:33:09 UTC] PHP Fatal error:  Class 'GmailAuth' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 12
+[07-Nov-2014 00:33:15 UTC] PHP Fatal error:  Class 'GmailAuth' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 12
+[07-Nov-2014 00:37:01 UTC] PHP Warning:  require_once(/home/admindanial/public_html/youspeak/library//HTTP/Request2.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:37:01 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library//HTTP/Request2.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:37:24 UTC] PHP Warning:  require_once(/home/admindanial/public_html/youspeak/library/HTTP/Request2.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:37:24 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library/HTTP/Request2.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:38:10 UTC] PHP Warning:  require_once(Net/URL2.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/library/HTTP/Request2.php on line 24
+[07-Nov-2014 00:38:10 UTC] PHP Fatal error:  require_once(): Failed opening required 'Net/URL2.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/library/HTTP/Request2.php on line 24
+[07-Nov-2014 00:48:34 UTC] PHP Warning:  require_once(/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:48:34 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:48:52 UTC] PHP Warning:  require_once(/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:48:52 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:48:55 UTC] PHP Warning:  require_once(/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 00:48:55 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2

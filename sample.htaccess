@@ -1,0 +1,17 @@
+Order Deny,Allow
+Options -Indexes
+
+<Files "index.php">
+    Allow from all
+</Files>
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+
+SetEnv WEB_LOC  http://...
+SetEnv PHYS_LOC /home/...
+SetEnv INI_LOC content/config.ini
