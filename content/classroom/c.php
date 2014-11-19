@@ -119,9 +119,11 @@ function MakeRemoveCommentLink ($commentId,$mobile=false)
     }
     else
     {
-        $html .= "<p class='prating'><a class='icons' id='iminus' href='#' ";
+        $html .= "<p class='prating'><a  id='iminus' href='#' ";//class='icons'
         $html .= "title='Remove Comment' ";
-        $html .= "onclick='AreYouSure(\"Remove this comment?\", RemoveComment,$commentId); return false;'></a></p>";
+        $html .= "onclick='AreYouSure(\"Remove this comment?\", RemoveComment,$commentId); return false;'>";
+        $html .= "<i class='fa fa-trash-o red'></i>";
+        $html .= "</a></p>";
     }
     return $html;
 }
@@ -143,13 +145,13 @@ function MakeRateLinks ($commentId,$rating,$rates,$mobile=false)
     }
     else
     {
-        $activeUp  = "<a class='icons' id='iup' href='#'";
-        $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'></a>";
-        $inactiveUp  = "<span class='icons' id='iup'></span>";
+        $activeUp  = "<a  id='iup' href='#'";//class='icons'
+        $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'></i></a>";
+        $inactiveUp  = "<span  id='iup'></span>";//class='icons'
         
-        $activeDown  = "<a class='icons' id='idown' href='#'";
-        $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'></a>";
-        $inactiveDown = "<span class='icons' id='idown'></span>";
+        $activeDown  = "<a  id='idown' href='#'";//class='icons'
+        $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'></i></a>";
+        $inactiveDown = "<span  id='idown'></span>";//class='icons'
     }
     
     if ( !isset($rates[$commentId]) || $rates[$commentId] == 0 )
@@ -187,26 +189,34 @@ function MakeFlagLinks ($commentId, $comments)
     if ($flagId == $NOFLAG_ID)
     {
         $html .= "<a title='Address'";
-        $html .= " href='#' class='icons' id='iaddress'";
-        $html .= " onclick='FlagComment($commentId,$ADDRESS_ID); return false;'></a>";
+        $html .= " href='#' id='iaddress'";//class='icons'
+        $html .= " onclick='FlagComment($commentId,$ADDRESS_ID); return false;'>";
+        $html .= '<i class="fa fa-comment-o"></i>';
+        $html .= "</a>";
         
         $html .= "<a title='Hide'";
-        $html .= " href='#' class='icons' id='ihide'";
-        $html .= " onclick='FlagComment($commentId,$HIDE_ID); return false;'></a>";
+        $html .= " href='#' id='ihide'";//class='icons'
+        $html .= " onclick='FlagComment($commentId,$HIDE_ID); return false;'>";
+        $html .= '<i class="fa fa-toggle-on"></i>';
+        $html .= "</a>";
     }
     
     elseif ($flagId == $ADDRESS_ID)
     {
         $html .= "<a title='Restore'";
-        $html .= " href='#' class='icons' id='iresaddr'";
-        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'></a>";
+        $html .= " href='#' id='iresaddr'";//class='icons'
+        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
+        $html .= '<i class="fa fa-comment"></i>';
+        $html .= "</a>";
     }
     
     elseif ($flagId == $HIDE_ID)
     {
         $html .= "<a title='Restore'";
-        $html .= " href='#' class='icons' id='ireshide'";
-        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'></a>";
+        $html .= " href='#'  id='ireshide'";//class='icons'
+        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
+        $html .= '<i class="fa fa-toggle-off"></i>';
+        $html .= "</a>";
     }
     return $html;
 }

@@ -1,31 +1,30 @@
 <?php
-//require_once LIBRARY.'google-api-php-client/autoload.php';
+require_once LIBRARY.'google-api-php-client-master/autoload.php';
+
 class GmailAuth{
     
-    private static $user;
+    private static $client;
+    
+    public static function Authenticate ($code){
 
-    public static function Authenticate ($access_token)
-    {
-    $req = new HTTP_Request2('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' . $access_token );
-    $req->setConfig(array(
-        'ssl_verify_peer' => FALSE,
-        'ssl_verify_host' => FALSE
-    ));
+        $temp = $_SESSION['settings']['googleAuth'];
+        self::$client = new Google_Client();
+        $appName = $temp['appname'];
+        $clientId = $temp['clientid'];
+        $clientSacred = $temp['clientsacred'];
 
-    $req->setMethod('GET');
-    try {
-        $response = $req->send();
-        if (200 == $response->getStatus()) {
-            $res_body = $response->getBody();
-            var_dump($res_body);
-        } else {
-            $error = 'Unexpected HTTP status: ' . $response->getStatus() . ' ' . $response->getReasonPhrase();
-        }
-    } catch (HTTP_Request2_Exception $e) {
-        $error = 'Error: ' . $e->getMessage();
+        self::$client->setApplicationName($appName);
+        self::$client->setClientId($clientId);
+        self::$client->setClientSecret($clientSacred);
+        self::$client->setRedirectUri('postmessage');
+        self::$client->authenticate($code);
+        $token = json_decode(self::$client->getAccessToken());
+        $attributes = self::$client->verifyIdToken($token->id_token, $clientId)->getAttributes();
+
+        return $attributes['payload']['email'];
     }
-        return false;
+    public static function Logout (){
+        self::$client->revokeToken();
     }
 }
-
 ?>

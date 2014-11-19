@@ -18,12 +18,13 @@ global $haveDisa;
 global $disability;
 global $updatedFields;
 
+$id = isset($_SESSION['currentUserId']) && $_SESSION['currentUserId'] ? $_SESSION['currentUserId'] : $_SESSION['newUserId'];
+
 Dbase::Connect();
-$user = Dbase::GetUserInfo($_SESSION['currentUserId']);
+$user = Dbase::GetUserInfo($id);
 $instructor = $user['role_code'] == "in";
 $institutions = Dbase::GetInstitutions();
 Dbase::Disconnect();
-
 
 $errorMsg   = "";
 

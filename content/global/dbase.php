@@ -132,7 +132,6 @@ class Dbase
         }
         
         $q .= " WHERE $where";
-
         return self::Query($q);
     }
     
@@ -171,6 +170,26 @@ class Dbase
         
 
         return false;
+    }
+    
+    public static function Authenticate2 ($email)
+    {
+        $select = "id";
+        $from = "users";
+        $where = "email='".self::Encrypt($email)."'";
+        
+        $user = self::SelectFromWhereFirst($select,$from,$where);
+
+        if ( !$user ){
+            self::AddUser($email);
+            $user = self::SelectFromWhereFirst($select,$from,$where);
+        }
+        
+        // log login
+        self::InsertInto("user_logins","user,time","$user[id],NOW()");
+
+        return $user["id"];
+
     }
     
     public static function GetRoleRef ()
@@ -419,42 +438,35 @@ class Dbase
         return $res["role_code"];
     }
     
-    public static function AddUser (
-        $firstName, $lastName, $email, 
-        $username, $password, 
-        $inst, $major, $gpa, $schoolYear,
-        $sex, $age, $race,
-        $haveDisa, $disability
-    )
-    {
+    public static function AddUser ($email){
         // default role
         $role = 'st';
         
         // Encrypt Last Name & email etc.. (decryptable)
-        $lastName   = self::Encrypt($lastName);
+        $lastName   = self::Encrypt("");
         $email      = self::Encrypt($email);
-        $inst       = self::Encrypt($inst);
-        $major      = self::Encrypt($major);
-        $gpa        = self::Encrypt($gpa);
-        $schoolYear = self::Encrypt($schoolYear);
-        $sex        = self::Encrypt($sex);
-        $age        = self::Encrypt($age);
-        $race       = self::Encrypt($race);
-        $haveDisa   = self::Encrypt($haveDisa);
-        $disability = self::Encrypt($disability);
+        $inst       = self::Encrypt("");
+        $major      = self::Encrypt("");
+        $gpa        = self::Encrypt("");
+        $schoolYear = self::Encrypt("");
+        $sex        = self::Encrypt("");
+        $age        = self::Encrypt("");
+        $race       = self::Encrypt("");
+        $haveDisa   = self::Encrypt("");
+        $disability = self::Encrypt("");
         
         // Encrpyt password (one way encryption)
         $password = crypt($password);
         
-        $table = "users";
+        $table   = "users";
         $fields  = "id, username, email, firstname, lastname, password, role_code, ";
         $fields .= "institute, major, gpa, school_year, gender, age, race, have_disa, disability, joined";
-        $values  = "DEFAULT, '$username', '$email', '$firstName', '$lastName', '$password', '$role', ";
+        $values  = "DEFAULT, '', '$email', '', '$lastName', '$password', '$role', ";
         $values .= "'$inst', '$major', '$gpa', '$schoolYear', '$sex', '$age', '$race', '$haveDisa', '$disability', NOW()";
         
         self::InsertInto($table,$fields,$values);
         
-        $newId = mysql_insert_id();
+        return $newId = mysql_insert_id();
         
         // self::AddUserToCourse($newId, 28, 'st');
     }
@@ -829,6 +841,22 @@ class Dbase
         $q = self::Query($q);
         
         return (mysql_num_rows($q)==1);
+    }
+    
+    public static function requiredFields($user){
+
+        if(!isset($user['username']) || $user['username'] == '')
+            return false;
+        if(!isset($user['firstname']) || $user['firstname'] == '')
+            return false;
+        if(!isset($user['lastname']) || $user['lastname'] == '')
+            return false;
+        if(!isset($user['institute']) || $user['institute'] == '')
+            return false;
+        if(!isset($user['email']) || $user['email'] == '')
+            return false;
+        
+        return true;
     }
 }   
 

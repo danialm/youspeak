@@ -1,6 +1,7 @@
 <?php
 
 include "lib.php";
+//require_once "Unirest.php"; A light weight library for http requests!
 
 define("DEFAULT_PAGE", "Login");
 
@@ -44,7 +45,7 @@ $template = new Template
 );
 
 $db = new Part("dbase.php");
-$ga = new Part("gmailauth.php");
+//$ga = new Part("gmailauth.php");
 $pre = new Part("prerender.php");
         
 new Page("About",        $template);
@@ -52,7 +53,7 @@ new Page("Classroom",    $template);
 new Page("Courses",      $template);
 new Page("Login",        $template);
 new Page("Profile",      $template);
-new Page("Registration", $template);
+//new Page("Registration", $template); Gmail Authentication, we do not need registration anymore
 
 new Page("Error",false,PARTS_LOC,"error.html");
 new Page("NotFound",false,PARTS_LOC,"nopage.html");
@@ -64,7 +65,7 @@ try
     {
         $db->run();
         $pre->run();
-        $ga->run();
+        //$ga->run();
         Page::prepareAndRender(URI);
     }
     catch (Exception $e)

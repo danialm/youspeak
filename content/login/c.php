@@ -1,47 +1,71 @@
 <?php
-if ( isset($_POST['act']) )
-{
+global $logout;
+
+$logout = false;
+
+if (isset($_POST['act'])) {
+
     extract($_POST);
 
-    switch ($act)
-    {
-    case "auth":
-        $_SESSION["formError"] = null;
-        $ERRMSG_MISMATCH = "These credentials don't match with our records.";
-        
-        //$usr_email = GmailAuth::Authenticate($access_token);
-        
-        Dbase::Connect();
-        $auth = Dbase::Authenticate($username, $password);//Dbase::Authenticate($username, $password);
-        $user = Dbase::GetUserInfo($auth);
-        Dbase::Disconnect();
+    switch ($act) {
 
-        if ($auth)
-        {
-            $_SESSION["currentUserId"] = $auth;
-            $_SESSION["isInstructor"] = $user['role_code']=='in';
+        case "auth":
 
-            header("location: ".Page::getRealURL("Courses"));
-            exit;
-        }
-        else
-        {
-            $_SESSION["formError"]["msg"] = $ERRMSG_MISMATCH;
+            $temp = $_SESSION['settings']['googleAuth'];
+            $client = new Google_Client();
+            $appName = $temp['appname'];
+            $clientId = $temp['clientid'];
+            $clientSacred = $temp['clientsacred'];
+
+            $client->setApplicationName($appName);
+            $client->setClientId($clientId);
+            $client->setClientSecret($clientSacred);
+            $client->setRedirectUri('postmessage');
+            $client->authenticate($code); //POST variable
+            $token = json_decode($client->getAccessToken());
+
+            $attributes = $client->verifyIdToken($token->id_token, $clientId)->getAttributes();
+
+            $email = $attributes['payload']['email'];
+
+            Dbase::Connect();
+            $auth = Dbase::Authenticate2($email);
+            $user = Dbase::GetUserInfo($auth);
+            Dbase::Disconnect();
+                
+            if (!Dbase::requiredFields($user)) {
+                
+                $_SESSION['newUserId'] = $auth;
+                
+                header("location: " . Page::getRealURL("Profile"));
+                exit;
+                
+            } else {
+
+                $_SESSION['currentUserId'] = $auth;
+                $_SESSION['isInstructor'] = $user['role_code'] == 'in';
+
+                header("location: " . Page::getRealURL("Courses"));
+                exit;
+            }
+
+            break;
+
+        case "logout":
             
-            header("location: ".Page::getRealURL("Login"));
-            exit;
-        }
-        break;
-        
-    case "logout":
-        if ( isset($_SESSION["currentUserId"]) )
-            unset($_SESSION["currentUserId"]);
+            $logout = true;
 
-        if ( isset($_SESSION["sessionId"]) )
-            unset($_SESSION["sessionId"]);
-        break;
+            if (isset($_SESSION['currentUserId']))
+                unset($_SESSION['currentUserId']);
+
+            if (isset($_SESSION['sessionId']))
+                unset($_SESSION['sessionId']);
+
+            if (isset($_SESSION['newUserId']))
+                unset($_SESSION['newUserId']);
+
+            break;
     }
-    
 }
 
 ?>

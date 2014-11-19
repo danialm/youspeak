@@ -33,10 +33,10 @@ class Template
     
     public function renderHeader ()
     {
-        if ( Page::isMobile() && $this->mobhead )
-            $this->mobhead->run();
+        //if ( Page::isMobile() && $this->mobhead )
+            //$this->mobhead->run();
         
-        else
+        //else
             $this->header->run();
             
         $this->counter = 1;
@@ -44,10 +44,10 @@ class Template
     
     public function renderFooter ()
     {
-        if ( Page::isMobile() && $this->mobfoot )
-            $this->mobfoot->run();
+        //if ( Page::isMobile() && $this->mobfoot )
+          //  $this->mobfoot->run();
         
-        else
+        //else
             $this->footer->run();
             
         $this->counter = 2;

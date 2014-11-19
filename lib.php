@@ -5,6 +5,8 @@ function loadLibrary ()
     if ( !defined("LIBRARY") )
         throw new Exception("lib: Trying to load the library. The LIBRARY constant needs to point to a library path.");
     
+    require_once LIBRARY.'google-api-php-client-master/autoload.php';
+    
     $dir = opendir(LIBRARY);
 
     if ($dir)

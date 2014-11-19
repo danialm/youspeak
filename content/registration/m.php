@@ -59,6 +59,7 @@ if ( isset($_SESSION["formError"]) )
 
 Dbase::Connect();
 $institutions = Dbase::GetInstitutions();
+$user = Dbase::GetUserInfo($_SESSION['newUserId']);
 Dbase::Disconnect();
 
 ?>

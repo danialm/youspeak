@@ -91,8 +91,8 @@ class Page
         if ( $file && !file_exists($dir.$file) )
             throw new Exception("Page: ".PAGE_ERROR_FILE_NOT_FOUND.$dir.$file);
         
-        elseif ( !$file && $mobi && !file_exists(CONTENT.$dir.MB) )
-            throw new Exception("Page: ".PAGE_ERROR_VIEW_NOT_FOUND.$this->url);
+//        elseif ( !$file && $mobi && !file_exists(CONTENT.$dir.MB) )
+//            throw new Exception("Page: ".PAGE_ERROR_VIEW_NOT_FOUND.$this->url);
         
         elseif ( !$file && !$mobi && !file_exists(CONTENT.$dir.V) )
             throw new Exception("Page: ".PAGE_ERROR_VIEW_NOT_FOUND.$this->url);
@@ -102,7 +102,7 @@ class Page
             $this->template->renderHeader();
         
         if     ($file) include($dir.$file);
-        elseif ($mobi) include(CONTENT.$dir.MB);
+        //elseif ($mobi) include(CONTENT.$dir.MB);
         else           include(CONTENT.$dir.V);
                 
         if ($this->template)

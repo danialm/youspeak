@@ -21,9 +21,11 @@ function SessionsForCourse($courseId)
 
 function MakeRemoveCourseLink ($courseId)
 {
-    $html  = "<a class='icons' id='iminus' href='#' ";
+    $html  = "<a id='iminus' href='#' ";//class='icons'
     $html .= "title='Remove Course'";
-    $html .= "onclick='AreYouSure(\"Remove this course?\", document.remcourse$courseId); return false;'></a>";
+    $html .= "onclick='AreYouSure(\"Remove this course?\", document.remcourse$courseId); return false;'>";
+    $html .= '<i class="fa fa-trash-o red"></i>';
+    $html .= "</a>";
     $html .= "<form class='hide' name='remcourse$courseId' ";
     $html .= "action='' method='POST'>";
     $html .= "<input type='hidden' name='act' value='remove_course' />";
@@ -41,9 +43,11 @@ function MakeSessionLink ($sessionId, $linkText, $instruct)
 
 function MakeRemoveSessionLink ($sessionId)
 {
-    $html  = "<a class='icons' id='iminus' href='#' ";
+    $html  = "<a id='iminus' href='#' ";//class='icons'
     $html .= "title='Remove Session' ";
-    $html .= "onclick='AreYouSure(\"Remove this session?\", document.remses$sessionId); return false;'></a>";
+    $html .= "onclick='AreYouSure(\"Remove this session?\", document.remses$sessionId); return false;'>";
+    $html .= '<i class="fa fa-trash-o red"></i>';
+    $html .= "</a>";
     $html .= "<form class='hide' name='remses$sessionId' ";
     $html .= "action='' method='POST'>";
     $html .= "<input type='hidden' name='act' value='remove_session' />";
@@ -59,8 +63,9 @@ function MakeAddSessionLink ($courseId)
     $html .= " action='' method='POST'>";
     $html .= "<input type='hidden' name='act' value='add_session' />";
     $html .= "<input type='hidden' name='courseId' value='$courseId' /></form>";
-    $html .= "<a class='icons' id='iplus' style='padding-left: 16px; width: auto;'";
+    $html .= "<a id='iplus' ";//class='icons' //style='padding-left: 16px; width: auto;'
     $html .= " href='#' onclick='pickDate($courseId); return false;'>";
+    $html .= '<i class="fa fa-plus green"></i>';
     $html .= "$linkText</a></dd>";
     
     return $html;
@@ -69,21 +74,26 @@ function MakeExpandLink ($courseId)
 {
     $tagId = "";
     $linkText = "";
+    $upOrDown = "";
     
     if ($courseId == $GLOBALS['expand'])
     {
         $linkText = "Show Less";
         $tagId = "iplus";
         $courseId = 0;
+        $upOrDown = 'up';
     }
     else
     {
         $linkText = "Show More";
         $tagId = "iplus";
+        $upOrDown = 'down';
     }
     
-    echo "<dd><a class='icons' id='$tagId' style='padding-left: 16px; width: auto;'";
-    echo " href='#' onclick='FormIt({expand:$courseId},\"".Page::getRealURL()."\"); return false;'>$linkText</a></dd>";
+    echo "<dd><a id='$tagId' ";
+    echo " href='#' onclick='FormIt({expand:$courseId},\"".Page::getRealURL()."\"); return false;'>";
+    echo '<i class="fa fa-caret-'.$upOrDown.'"></i>';
+    echo "$linkText</a></dd>";
 }
 
 if ( isset( $_POST['act'] ) )

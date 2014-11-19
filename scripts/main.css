@@ -45,6 +45,19 @@ ul {
 
 form.hide { display: none }
 
+.green{
+    color: green;
+}
+.red{
+    color: #AF0000;
+}
+.fa{
+    margin-right: 0.3em;
+}
+.fa-trash-o{
+    margin-right: 0;
+}
+
 /*******************
     DIV LAYOUTS
 *******************/
@@ -53,16 +66,19 @@ div#container {
     position: relative;
     max-width: 1600px;
    /* min-width: 750px; */
-    width: 98%;
+    //width: 98%;
     margin: 0px auto;
 }
 
 div#heading {
-    background: #394C6B;
-    border: 3px solid #061E45;
-    height: 100px;
+    //background: #394C6B;
+    //border: 1px solid #394C6B;
+    //height: 100px;
 }
-
+div#heading h1{
+    color: #465873;
+    display: inline-block;
+}
 div#heading img {
     margin: 0px;
     padding: 0px;
@@ -71,19 +87,17 @@ div#heading img {
 
 div#navigation {
     height: auto;
-    /*background: #899CBB; /* lightback*/
-    /*background: #061E45; /* darkback */
-    border: solid #EEEEFF;
-    border-width: 1px 0px;
+    border: none;
+    //border-width: 1px 0px;
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: 1em;
 }
 
 div#content {
     height: auto;
     position: relative;
     background: #E5E5FF;
-    border: 3px solid #061E45;
+    //border: 3px solid #061E45;
     padding: 20px 50px;
     font-size: 14px;
 }
@@ -176,18 +190,31 @@ form.bordered
     border: 3px outset #C4C4DD;
     text-align: right;
 }
-
+#signinButton iframe, #signinButton button {
+    width: 112px !important;
+    height: 37px !important;
+}
 #login form
 {
     width: 240px;
 }
 
-#register form
-{
-    width: auto;
-    display: inline-block;
-}
 
+#register table fieldset, #register form{
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+}
+#register form{
+    max-width: 550px;
+}
+#register input[type='radio']{
+    margin-right: 0;
+}
+#register table td.pair{
+    width: 50%;
+    float: left;
+}
 #register #leftColumn
 {
     width: 130px;
@@ -199,7 +226,7 @@ form.bordered
     text-align: left;
 }
 
-#schoolYear
+#schoolYear, select[name='institute']
 {
     width: 154px;
     margin-left: 2px;
@@ -219,7 +246,7 @@ form.bordered
 
 #register textarea
 {
-    width: 100%;
+    width: 50%;
     height: 46px;
 }
 
@@ -501,3 +528,36 @@ div#footer span {
 EEEEFF
      content bgcolor
 */
+
+@media screen and (max-width: 340px){
+    div#heading img{
+        width: 60px;
+    }
+    div#heading h1{
+        font-size: 1.6em;
+    }
+}
+@media screen and (max-width: 530px){
+    #register form>fieldset>label, #register form>fieldset>input,
+    #register form>fieldset>select,
+    #register form>fieldset>span.radio,
+    #register form>fieldset>textarea{
+        display: inline-block;
+        box-sizing: border-box;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    #register form>fieldset>label,
+    #register form>fieldset>textarea{
+        margin-bottom: 0;
+    }
+}
+@media screen and (max-width: 600px){
+    body, #container{
+        margin: 0 !important;
+    }
+    #content{
+        padding: 10px!important;
+    }
+}

@@ -39,7 +39,7 @@ $(".right-side").css("top","5px");
             $("#confirmation").dialog("option","resizable",false);
             $("#confirmation").dialog("option","modal",true);
             $("#heading").hide();
-            $("#navigation")[0].style.border = "3px ridge #394C6B";
+            //$("#navigation")[0].style.border = "3px ridge #394C6B";
         </script>
         
         <div id="userComments" class='ui-widget ui-widget-content'>
@@ -48,10 +48,9 @@ $(".right-side").css("top","5px");
                 <?php GenerateCommentsTable($comments, $sessionId, $instructor, $userrates); ?>
             </div>
             <div id='addComment'>
-                <a href='#' class='icons' id='iplus'
-                    style='padding-left: 16px; width: auto;'
+                <a href='#' id='iplus'
                     onclick='ClassroomSwitchToAddComment(<?php echo $sessionId; ?>); return false;'>
-                    Comment</a>
+                    <i class="fa fa-plus green"></i>Comment</a>
             </div><!-- addComment -->
             
             <?php if ($instructor): ?>

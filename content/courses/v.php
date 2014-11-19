@@ -35,7 +35,7 @@ global $expand;
             $("#joinCourse #confirmDialog").dialog("open");
         }
     </script>
-    <h2> <?php echo "$userInfo[firstname] $userInfo[lastname]"; ?>'s Courses </h2>
+    <h2> <?= ucfirst(strtolower($userInfo['firstname']))?> <?= ucfirst(strtolower($userInfo['lastname'])) ?>'s Courses </h2>
     
     <div id='joinCourse'>
         <div class='header'>Join a Course</div>
@@ -83,7 +83,7 @@ global $expand;
                 $removeLink = "";
                 if ($instruct)
                     $removeLink = MakeRemoveCourseLink($courseID);
-                echo "<dt><b>$courseTitle</b> $removeLink</dt>\n";
+                echo "<dt>$removeLink <b>$courseTitle</b></dt>\n";
                 if (isset($sfc))
                 {
                     foreach ($sfc as $i=>$s)
@@ -98,7 +98,7 @@ global $expand;
                         $htmlLink = MakeSessionLink($sessionID, $sessionDate, $instruct);
                         if ($instruct)
                             $removeLink = MakeRemoveSessionLink($sessionID);
-                        echo "<dd>$htmlLink $removeLink</dd>\n";
+                        echo "<dd>$removeLink $htmlLink</dd>\n";
                     }
                     if ($expand == $courseID)
                         MakeExpandLink($courseID);
@@ -118,9 +118,10 @@ global $expand;
         if ($userInfo["role_code"] == "in")
         {
             echo "<dt id='addCourse'>";
-            echo "<a style='padding-left: 16px; width: auto;'";
-            echo " class='icons' id='iplus' href='#'";
+            echo "<a ";//style='padding-left: 16px; width: auto;'
+            echo " id='iplus' href='#'";//class='icons'
             echo " onclick='ChooserSwitchToAddCourse(); return false;'>";
+            echo '<i class="fa fa-plus green"></i>';
             echo "Add a Course</a></dt>";
         }
         

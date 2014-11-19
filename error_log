@@ -82,3 +82,39 @@
 [07-Nov-2014 00:48:52 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
 [07-Nov-2014 00:48:55 UTC] PHP Warning:  require_once(/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php): failed to open stream: No such file or directory in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
 [07-Nov-2014 00:48:55 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/admindanial/public_html/youspeak/library/google-api-php-client/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 2
+[07-Nov-2014 01:50:56 UTC] PHP Fatal error:  Call to undefined function getClientSecret() in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 18
+[07-Nov-2014 01:57:06 UTC] PHP Fatal error:  Class 'Google_HttpRequest' not found in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 23
+[07-Nov-2014 02:01:11 UTC] PHP Fatal error:  Class 'Google_HttpRequest' not found in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 23
+[07-Nov-2014 02:01:46 UTC] PHP Fatal error:  Using $this when not in object context in /home/admindanial/public_html/youspeak/library/google-api-php-client-master/src/Google/Client.php on line 582
+[07-Nov-2014 02:06:34 UTC] PHP Fatal error:  Call to undefined method Google_IO_Curl::authenticatedRequest() in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 23
+[07-Nov-2014 02:10:31 UTC] PHP Fatal error:  Call to undefined method Google_IO_Curl::authenticatedRequest() in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 23
+[07-Nov-2014 02:23:40 UTC] PHP Fatal error:  Call to undefined function http_get() in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 13
+[07-Nov-2014 22:51:38 UTC] PHP Fatal error:  Access to undeclared static property: GmailAuth::$appname in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 20
+[07-Nov-2014 22:52:18 UTC] PHP Fatal error:  Access to undeclared static property: GmailAuth::$client in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 13
+[07-Nov-2014 22:52:23 UTC] PHP Fatal error:  Access to undeclared static property: GmailAuth::$client in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 13
+[07-Nov-2014 23:25:24 UTC] PHP Fatal error:  Access to undeclared static property: GmailAuth::$clientId in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 22
+[07-Nov-2014 23:29:59 UTC] PHP Fatal error:  Call to a member function revokeToken() on a non-object in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 27
+[07-Nov-2014 23:45:02 UTC] PHP Fatal error:  Call to a member function revokeToken() on a non-object in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 27
+[12-Nov-2014 21:51:29 UTC] PHP Fatal error:  Call to undefined method Dbase::requiredFiled() in /home/admindanial/public_html/youspeak/content/login/c.php on line 20
+[12-Nov-2014 21:51:46 UTC] PHP Fatal error:  Call to undefined method Dbase::requiredFiled() in /home/admindanial/public_html/youspeak/content/login/c.php on line 20
+[12-Nov-2014 22:05:34 UTC] PHP Fatal error:  Call to undefined method Dbase::requiredFiled() in /home/admindanial/public_html/youspeak/content/profile/c.php on line 44
+[12-Nov-2014 22:14:29 UTC] PHP Fatal error:  Call to a member function revokeToken() on a non-object in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 27
+[12-Nov-2014 22:53:52 UTC] PHP Fatal error:  Call to a member function revokeToken() on a non-object in /home/admindanial/public_html/youspeak/content/global/gmailauth.php on line 27
+[12-Nov-2014 23:02:48 UTC] PHP Fatal error:  Access to undeclared static property: Page::$client in /home/admindanial/public_html/youspeak/content/login/c.php on line 25
+[12-Nov-2014 23:03:22 UTC] PHP Fatal error:  Class 'Google_Client' not found in /home/admindanial/public_html/youspeak/content/login/c.php on line 14
+[12-Nov-2014 23:05:25 UTC] PHP Fatal error:  Access to undeclared static property: Page::$client in /home/admindanial/public_html/youspeak/content/login/c.php on line 25
+[12-Nov-2014 23:07:34 UTC] PHP Fatal error:  Call to a member function revokeToken() on a non-object in /home/admindanial/public_html/youspeak/content/login/c.php on line 53
+[12-Nov-2014 23:10:45 UTC] PHP Fatal error:  Call to a member function revokeToken() on a non-object in /home/admindanial/public_html/youspeak/content/login/c.php on line 53
+[15-Nov-2014 01:11:43 UTC] PHP Fatal error:  Call to undefined function start_session() in /home/admindanial/public_html/youspeak/content/profile/c.php on line 2
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined variable: password in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 457
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: email in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 260
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: institute in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 261
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: major in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 262
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: gpa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 263
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: school_year in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 264
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: gender in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 265
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: age in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 266
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: race in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 267
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: have_disa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 268
+[15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 269
+[15-Nov-2014 01:24:35 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/global/dbase.php:457) in /home/admindanial/public_html/youspeak/content/login/c.php on line 40

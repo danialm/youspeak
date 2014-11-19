@@ -1,5 +1,8 @@
 <?php
 
+
+
+
 if ( isset( $_POST['act'] ))
 {
     $ERRMSG_EXISTS_USERNAME = "This username is already registered. ";
@@ -92,7 +95,7 @@ if ( isset( $_POST['act'] ))
                 $sex, $age, $race,
                 $haveDisa, $disability
             );
-            $_SESSION['newUserAdded'] = true;
+            $_SESSION['newUserId'] = true;
         }
         
         Dbase::Disconnect();

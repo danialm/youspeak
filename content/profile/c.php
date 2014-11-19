@@ -8,30 +8,27 @@ $ERRMSG_EMPTY_LASTNAME  = "Lastname is a required field and was left empty.";
 $ERRMSG_EMPTY_EMAIL     = "Email is a required field and was left empty.";
 
 
-
-if (isset($_POST['act']))
-{
+if (isset($_POST['act'])){
+    
     extract($_POST);
     switch ($act)
     {
     case "update_profile":
-        $existPass = $pass0;
-        $newPass1  = $pass1;
-        $newPass2  = $pass2;
 
         $errMsg = "";
         $error = false;
         $_SESSION['formError'] = null;
-
-        Dbase::Connect(); 
+        $id = isset($_SESSION['currentUserId']) && $_SESSION['currentUserId'] ? $_SESSION['currentUserId'] : $_SESSION['newUserId'];
+        
+        Dbase::Connect();
         $users = Dbase::GetUsers();
-        $user  = Dbase::GetUserInfo($_SESSION['currentUserId']);
+        $user  = Dbase::GetUserInfo($id);
 
         $usernameBad  = false;
         $emailBad     = false;
         $firstnameBad = false;
         $lastnameBad  = false;
-
+        
         // check for required fields that are empty
         if ($username == "")
         {
@@ -64,7 +61,7 @@ if (isset($_POST['act']))
         // check for an existing username and email
         foreach ($users as $u)
         {
-            if ($u['id'] == $_SESSION['currentUserId'])
+            if ($u['id'] == $id)
                 continue;
             
             if ($u["username"] == $username)
@@ -114,32 +111,13 @@ if (isset($_POST['act']))
                 $_SESSION['updatedFields'][] = $key;
             }
         }
-
-        // password change?
-        if ($existPass != "")
-        {
-            if (Dbase::Authenticate($user['username'],$existPass))
-            {
-                if ($newPass1 == $newPass2)
-                    if ($newPass1 != "")
-                    {
-                         $changes[] = array("key"=>"password", "val"=>crypt($newPass1));
-                         $_SESSION['updatedFields'][] = "Password";
-                     }
-                    else $errMsg .= "<br />Password change attempt failed. (New password was left empty.)";
-                else $errMsg .= "<br />Password change attempt failed. (New password confirmation did not match.)";
-            }
-            
-            else
-                $errMsg .= "<br />Password change attempt failed. (Existing password was incorrect.)";
-        }
-
+        
         if ( isset($changes) )
-            Dbase::Updates("users",$changes,"id=$_SESSION[currentUserId]") or exit(mysql_error());
+            Dbase::Updates("users",$changes,"id=$id") or exit(mysql_error());
 
-        Dbase::Disconnect();
+
         $_SESSION['formError']['msg'] = $errMsg;
-
+        Dbase::Disconnect();
         header("Location: ".Page::getRealURL("Profile"));
         exit;
     
