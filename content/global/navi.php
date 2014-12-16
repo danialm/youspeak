@@ -3,6 +3,11 @@
 global $thisPage;
 global $classroomExtraNavi;
 
+$id = isset($_SESSION['currentUserId']) && $_SESSION['currentUserId'] ? $_SESSION['currentUserId'] : $_SESSION['newUserId'];
+Dbase::Connect();
+$allfields = Dbase::allFields(Dbase::GetUserInfo($id));
+Dbase::Disconnect();
+
 $logged = isset($_SESSION['currentUserId']);
 
 $navi = array (
@@ -11,7 +16,8 @@ $navi = array (
     "Courses"      => array(),
     "Login"        => array(),
     "Profile"      => array("Courses"),
-    "Registration" => array("Login")
+    "Report"       => array("Courses")
+    //"Registration" => array("Login")
 );
 
 echo "<div id='navNav'>";
@@ -19,8 +25,7 @@ echo "<div id='navNav'>";
 echo "<i class='fa fa-home fa-lg' title='Home'></i> &gt; ";
 
 if ( isset($navi[$thisPage]) )
-for ($i=0; $i<sizeof($navi[$thisPage]); $i++)
-{
+for ($i=0; $i<sizeof($navi[$thisPage]); $i++){
     $n = $navi[$thisPage][$i];
      echo "<a href='".Page::getRealURL($n)."'>$n</a> &gt; ";
 }
@@ -38,17 +43,9 @@ echo "</div>";
 // right side of the bar
 echo "<div id='navRight'>";
 
-if ($thisPage == "Login" )
-{
-    echo "
-        <span class='right-side' id='aboutLink'>
-            <a href='".Page::getRealURL("About")."'><i class='fa fa-info fa-lg' title='About Us'></i></a>
-        </span>
-    ";
-}
 
-if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'] )
-{ 
+
+if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){ 
     echo "
         <span id='quizLink'>
             <a href='#' id='iplus' 
@@ -61,14 +58,17 @@ if ( $thisPage == "Courses" && isset($_SESSION['isInstructor']) && $_SESSION['is
 {
     echo "<span id='analLink'>";
     echo "<a ";
-    echo "href='#'>";
-    echo '<i class="fa fa-cloud-download fa-lg" title="Download Database""></i>';
+    echo "href='".Page::getRealURL("Report")."'>";
+    echo '<i class="fa fa-bar-chart fa-lg" title="Report""></i>';
     echo "</a></span>";
 }
 
-if ( $thisPage == "Courses" )
+if ( $logged && $thisPage != "Profile" )
 {
-    echo "<span id='profileLink'>";
+    echo "<span id='profileLink' class='";
+    if(!$allfields)
+        echo "notComplete";
+    echo "'>";
     echo "<a ";
     echo "href='".Page::getRealURL("Profile")."'>";
     echo '<i class="fa fa-user fa-lg" title="Profile"></i>';
@@ -83,7 +83,16 @@ if ( isset($_SESSION['currentUserId']) || isset($_SESSION['newUserId']) )
     echo '<i class="fa fa-sign-out fa-lg" title="Logout"></i></a></span>';
 }
 
+if ($thisPage != "About" ){
+    echo "
+        <span class='right-side' id='aboutLink'>
+            <a href='".Page::getRealURL("About")."'><i class='fa fa-info fa-lg' title='About Us'></i></a>
+        </span>
+    ";
+}
+    
 echo "</div>";
+
 ?>
 
 <div class='clearer'></div>

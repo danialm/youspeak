@@ -345,12 +345,12 @@ function ChooserSwitchToAddCourse ()
     var str = "";
     
     str += "<form name='addCourse' onsubmit='return ValidateAddCourse()' action='' method='post'>";
-    
-        str += "<input type='hidden' name='act' value='add_course' />";
-        str += "<input type='text' name='courseName' placeholder='Name of the new course.' />";
-        str += "<input type='submit' value='Add' />";
-        str += "<input type='button' value='Cancel' onclick='ChooserCancelAddCourse()' />";
-        
+    str +=      "<input type='hidden' name='act' value='add_course' />";
+    str +=      "<input type='text' name='courseName' placeholder='Name of the new course.' />";
+    str +=      "<select name='term'><option value='' selected='selected' disabled='disabled'>Term</option><option value='fa'>Fall</option><option value='su'>Summer</option><option value='sp'>Spring</option><option value='wi'>Winter</option></select>";
+    str +=      "<input type='text' name='year' placeholder='YYYY' style='width:4em' />";
+    str +=      "<input type='submit' value='Add' />";
+    str +=      "<input type='button' value='Cancel' onclick='ChooserCancelAddCourse()' />";
     str += "</form>";
     
     window.originalAddCourse = elem.innerHTML;
@@ -442,7 +442,7 @@ function ShowQuiz (quiz)
         var oChecked = q.form.open==1?"checked":"";
         var cChecked = q.form.open==1?"":"checked";
     
-        html += "<div>Status: ";
+        html += "<div>";
         html += "<input id='modopen'  value=1 type='radio' name='modopen' "+oChecked+" /><label for='modopen' >Active</label>";
         html += "<input id='modclose' value=0 type='radio' name='modopen' "+cChecked+" /><label for='modclose'>Inactive</label>";
         html += "</div>";
@@ -537,7 +537,7 @@ function ClassroomSwitchToAddComment (sessionId)
     var str = "";
     
     str += "<form name='formCom'>";
-    str += "<textarea style='width:90%' rows=5 name='comment' placeholder='Type your comment or question here.' ></textarea><br />";
+    str += "<textarea style='width: 100%; box-sizing: border-box;' rows=5 name='comment' placeholder='Type your comment or question here.' ></textarea><br />";
     str += "<input type='button' name='addbutton' onclick='ValidateAddComment("+sessionId+")' value='Add' />";
     str += "<input type='button' value='Cancel' onclick='ClassroomCancelAddComment();' />";
     str += "</form>";
@@ -547,37 +547,38 @@ function ClassroomSwitchToAddComment (sessionId)
     document.formCom.comment.focus();
 }
 
-function ClassroomSwitchToEditComment (commentId, sessionId, mobile)
-{
-    var cell = $("#cid"+commentId);
-    var comment = $("#cid"+commentId+" p").html();
-    
-    var editHtml = "";
-    editHtml += "<textarea id='editcom"+commentId+"'>";
-    editHtml += comment;
-    editHtml += "</textarea>";
-    editHtml += "<input id='submitEditCom"+commentId+"' type='button' value='Submit Change' />";
-    editHtml += "<input id='cancelEditCom"+commentId+"' type='button' value='Cancel' />";
-    
-    cell.html(editHtml);
-    
-    $("#submitEditCom"+commentId).click( function () {
-        var newComment = $("#editcom"+commentId)[0].value;
-        
-        EditComment(newComment, commentId, sessionId, mobile);
-        window.updateCommentsEvent = setInterval(window.UpdateCommentsEvent,10000);
-    });
-    
-    $("#cancelEditCom"+commentId).click( function () {
-        cell.html("<p>"+comment+"</p>");
-        $("#cid"+commentId+" p").click(function () {
-            ClassroomSwitchToEditComment(commentId, sessionId, mobile);
-        });
-        window.updateCommentsEvent = setInterval(window.UpdateCommentsEvent,10000);
-    });
-    
-    clearInterval(window.updateCommentsEvent);
-}
+//Depricated because no one can edit any comment
+//function ClassroomSwitchToEditComment (commentId, sessionId, mobile)
+//{
+//    var cell = $("#cid"+commentId);
+//    var comment = $("#cid"+commentId+" p").html();
+//    
+//    var editHtml = "";
+//    editHtml += "<textarea id='editcom"+commentId+"'>";
+//    editHtml += comment;
+//    editHtml += "</textarea>";
+//    editHtml += "<input id='submitEditCom"+commentId+"' type='button' value='Submit Change' />";
+//    editHtml += "<input id='cancelEditCom"+commentId+"' type='button' value='Cancel' />";
+//    
+//    cell.html(editHtml);
+//    
+//    $("#submitEditCom"+commentId).click( function () {
+//        var newComment = $("#editcom"+commentId)[0].value;
+//        
+//        EditComment(newComment, commentId, sessionId, mobile);
+//        window.updateCommentsEvent = setInterval(window.UpdateCommentsEvent,10000);
+//    });
+//    
+//    $("#cancelEditCom"+commentId).click( function () {
+//        cell.html("<p>"+comment+"</p>");
+//        $("#cid"+commentId+" p").click(function () {
+//            ClassroomSwitchToEditComment(commentId, sessionId, mobile);
+//        });
+//        window.updateCommentsEvent = setInterval(window.UpdateCommentsEvent,10000);
+//    });
+//    
+//    clearInterval(window.updateCommentsEvent);
+//}
 
 function ClassroomCancelAddComment ()
 {
@@ -873,4 +874,15 @@ function RestoreDisplay ()
     dispEle.style.left = window.origDispLeft;
     dispEle.style.right = window.origDispRight;
     dispEle.style.height = window.origDispHeight;
+}
+
+function toggleAddSessionForm(courseId){
+    var today = $.datepicker.formatDate('yy-mm-dd', new Date());
+    $('.addses'+courseId).toggle();
+    $('.addses'+courseId).find("input[type=date]").attr("value",today);
+    return false;
+}
+function toggleEditCourseForm(courseId){
+    $('.course'+courseId).toggle();
+    return false;
 }

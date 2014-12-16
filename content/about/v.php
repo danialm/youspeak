@@ -1,4 +1,4 @@
-<img style="
+<!--<img style="
         width: 60%;
         position: relative;
         float: right;
@@ -31,4 +31,6 @@ Student Assistant: Shant Mandossian, Computer Science Student, California State 
 <br />
 <br />
 <br />
-<span style='float: right; font-size: 1.3em;'>rev. 3.2.2</span>
+<span style='float: right; font-size: 1.3em;'>rev. 3.2.2</span>-->
+<h2>Coming soon!</h2>
+<p>Sorry! We are working to update this page asap.</p>

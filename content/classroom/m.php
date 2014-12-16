@@ -7,9 +7,7 @@ global $comments;
 global $userrates;
 global $roleInCourse;
 global $presents;
-
 global $quizzesAnswered;
-
 global $sessionId;
 global $instructor;
 

@@ -118,3 +118,7 @@
 [15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: have_disa in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 268
 [15-Nov-2014 01:24:35 UTC] PHP Notice:  Undefined index: disability in /home/admindanial/public_html/youspeak/content/global/dbase.php on line 269
 [15-Nov-2014 01:24:35 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/admindanial/public_html/youspeak/content/global/dbase.php:457) in /home/admindanial/public_html/youspeak/content/login/c.php on line 40
+[21-Nov-2014 01:25:12 UTC] PHP Fatal error:  Call to undefined function uswords() in /home/admindanial/public_html/youspeak/content/report/v.php on line 18
+[21-Nov-2014 01:25:33 UTC] PHP Fatal error:  Call to undefined function uswords() in /home/admindanial/public_html/youspeak/content/report/v.php on line 18
+[21-Nov-2014 20:14:08 UTC] PHP Fatal error:  Call to undefined method Dbase::Authenticate() in /home/admindanial/public_html/youspeak/content/login/c.php on line 32
+[28-Nov-2014 22:48:15 UTC] PHP Fatal error:  Call to undefined function array_sort_bycolumn() in /home/admindanial/public_html/youspeak/content/courses/m.php on line 50

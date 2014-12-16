@@ -186,8 +186,7 @@ function MakeFlagLinks ($commentId, $comments)
     $flagId = $comments[$commentId]['flag_id'];
     $html = "";
  
-    if ($flagId == $NOFLAG_ID)
-    {
+    if ($flagId == $NOFLAG_ID){
         $html .= "<a title='Address'";
         $html .= " href='#' id='iaddress'";//class='icons'
         $html .= " onclick='FlagComment($commentId,$ADDRESS_ID); return false;'>";
@@ -199,25 +198,26 @@ function MakeFlagLinks ($commentId, $comments)
         $html .= " onclick='FlagComment($commentId,$HIDE_ID); return false;'>";
         $html .= '<i class="fa fa-toggle-on"></i>';
         $html .= "</a>";
-    }
-    
-    elseif ($flagId == $ADDRESS_ID)
-    {
+    }else{ // Can be $ADDRESS_ID && $HIDE_ID
         $html .= "<a title='Restore'";
-        $html .= " href='#' id='iresaddr'";//class='icons'
+        $html .= " href='#' id='"; 
+        $html .= $flagId == $ADDRESS_ID ? "iresaddr" : ($flagId == $HIDE_ID  ? "ireshide" : "");
+        $html .= "'";//class='icons'
         $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
-        $html .= '<i class="fa fa-comment"></i>';
+        $html .= "<i class='fa fa-";
+        $html .= $flagId == $ADDRESS_ID ? "comment" : ($flagId == $HIDE_ID  ? "toggle-off" : "");
+        $html .= "'></i>";
         $html .= "</a>";
     }
     
-    elseif ($flagId == $HIDE_ID)
-    {
-        $html .= "<a title='Restore'";
-        $html .= " href='#'  id='ireshide'";//class='icons'
-        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
-        $html .= '<i class="fa fa-toggle-off"></i>';
-        $html .= "</a>";
-    }
+//    elseif ($flagId == $HIDE_ID)
+//    {
+//        $html .= "<a title='Restore'";
+//        $html .= " href='#'  id='ireshide'";//class='icons'
+//        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
+//        $html .= '<i class="fa fa-toggle-off"></i>';
+//        $html .= "</a>";
+//    }
     return $html;
 }
 
@@ -253,7 +253,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobil
             {
                 $flagLinks = MakeFlagLinks($c["id"],$comments);
                 echo "$flagLinks ";
-                echo "<p title='Comment Rating' class='prating'>$c[rating]</p>";
+                //echo "<p title='Comment Rating' class='prating'>$c[rating]</p>";
             }
             
             echo "</td><td id='cid$c[id]'";

@@ -29,7 +29,8 @@ if (isset($_POST['act'])) {
             $email = $attributes['payload']['email'];
 
             Dbase::Connect();
-            $auth = Dbase::Authenticate2($email);
+            $auth = Dbase::Authenticate($email);
+            //$auth = 3;
             $user = Dbase::GetUserInfo($auth);
             Dbase::Disconnect();
                 
@@ -63,6 +64,9 @@ if (isset($_POST['act'])) {
 
             if (isset($_SESSION['newUserId']))
                 unset($_SESSION['newUserId']);
+            
+            if (isset($_SESSION['reportCourseId']))
+                unset($_SESSION['reportCourseId']);
 
             break;
     }

@@ -9,7 +9,8 @@ html, body
 body {
     background-color: #EEEEFF;
     background-image: url('../images/bgtile.jpg');
-    background-repeat: repeat-x;
+    //background-repeat: repeat-x;
+    background-size: 100% 100%;
     background-attachment: fixed;
     font-family: Verdana, sans-serif;
 }
@@ -51,6 +52,9 @@ form.hide { display: none }
 .red{
     color: #AF0000;
 }
+.orange{
+    color: #DF6E00;
+}
 .fa{
     margin-right: 0.3em;
 }
@@ -77,12 +81,15 @@ div#heading {
 }
 div#heading h1{
     color: #465873;
+    margin-bottom: 8px;
     display: inline-block;
 }
 div#heading img {
-    margin: 0px;
-    padding: 0px;
+    margin: 0px 8px;
+    padding: 1px;
     border: 0px;
+    float: left;
+    width: 60px;
 }
 
 div#navigation {
@@ -99,7 +106,7 @@ div#content {
     background: #E5E5FF;
     //border: 3px solid #061E45;
     padding: 20px 50px;
-    font-size: 14px;
+    font-size: 1em;
 }
 
 div#footer {
@@ -180,6 +187,31 @@ span#quizLink a
     height: auto;
 }
 
+div#navigation #profileLink.notComplete a{
+        /* Chrome, Safari, Opera */
+    -webkit-animation-name: myfirst;
+    -webkit-animation-duration: 3s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-delay: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-play-state: running;
+    /* Standard syntax */
+    animation-name: myfirst;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-delay: 2s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: running;
+}
+/* Chrome, Safari, Opera */
+@-webkit-keyframes myfirst {
+    0%    {color:#FDFF75; text-shadow: 0 0 5px #FDFF75;}
+    20%   {color:black; text-shadow: none;}
+    100%  {color:black; text-shadow: none;}
+}
+
 /*******************
      Content
 *******************/
@@ -220,17 +252,18 @@ form.bordered
     width: 130px;
     text-align: right;
 }
-
+#register input:not([type="radio"]), #register select{
+    width: 14em;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
 #register .rightColumn
 {
     text-align: left;
 }
 
-#schoolYear, select[name='institute']
-{
-    width: 154px;
-    margin-left: 2px;
-}
 
 #register #tablePerson
 {
@@ -269,10 +302,17 @@ form #formError
     margin-top: 15px;
 }
 
+#chooser input, #chooser select{
+  vertical-align:top;
+  height:1.6em;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
 #joinCourse
 {
     position: relative;
-    float: right;
+    //float: right;
     width: 200px;
 }
 
@@ -287,10 +327,10 @@ form #formError
 #classroom
 {
     position: relative;
-    /*min-width: 975px;*/
-    height: 600px;
-    margin: -20px -50px;
-    background-color: black;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    /*background-color: black;*/
 }
 
 #com-head { padding: 10px; }
@@ -375,6 +415,8 @@ span.addingPresents
     padding-right: 0px;
     clear: right;
     overflow-y: auto;
+    border: none;
+    background: none;
 }
 
 .newComment
@@ -384,34 +426,39 @@ span.addingPresents
 
 #commentTable table
 {
-    table-layout: fixed;
+    //table-layout: fixed;
     margin: 0;
     width: 100%;
-    border-top: 1px solid black;
+    //border-top: 1px solid black;
     border-collapse: collapse;
 }
 
-#commentTable table tr
-{
-    border-bottom: 1px dotted #061E45;
+#commentTable table tr{
+    background: #E5FBFF;
+}
+#commentTable table tr:nth-child(2n){
+    background: #FAFAD9;
 }
 
-#commentTable table td.control
-{
+#commentTable table td{
+    padding-bottom: 5px;
+}
+
+#commentTable table td.control{
     width: 16px;
     padding-right: 12px;
-}
-
-#commentTable table td
-{
-    padding-bottom: 5px;
+    border: none;
 }
 
 #commentTable p 
 {
     word-wrap: break-word;
 }
-
+#addComment{
+    display: inline-block;
+    margin: 10px 0;
+    width: 100%;
+}
 .prating
 {
     padding: 0;
@@ -542,15 +589,18 @@ EEEEFF
     #register form>fieldset>select,
     #register form>fieldset>span.radio,
     #register form>fieldset>textarea{
-        display: inline-block;
-        box-sizing: border-box;
-        width: 100%;
-        text-align: center;
-        margin-bottom: 5px;
+        display: inline-block !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        text-align: center !important;
     }
     #register form>fieldset>label,
     #register form>fieldset>textarea{
         margin-bottom: 0;
+    }
+    form.bordered{
+        border: none;
+        padding: 0;
     }
 }
 @media screen and (max-width: 600px){

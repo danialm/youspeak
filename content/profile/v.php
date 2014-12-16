@@ -5,7 +5,6 @@ global $institutions;
 global $firstname;
 global $lastname;
 global $email;
-global $username;
 global $major;
 global $gpa;
 global $inst;
@@ -30,22 +29,22 @@ global $updatedFields;
             <?php echo isset($errorMsg) ? $errorMsg : ""; ?>
         </div>
 
-        <div id='updatedFields'>
-            <?php if (isset($updatedFields) && count($updatedFields) > 0) { ?>
+<!--        <div id='updatedFields'>
+            <?php //if (isset($updatedFields) && count($updatedFields) > 0) { ?>
                 The following fields were successfully updated: <br/><br/>
                 <?php
-                foreach ($updatedFields as $k => $v)
-                    echo "$v<br/>";
-            }
+//                foreach ($updatedFields as $k => $v)
+//                    echo "$v<br/>";
+//            }
             ?>
-        </div>
+        </div>-->
         <fieldset>
             <legend>User Info (required)</legend>
 
 
 
-<!--                        <span id='label_username'><label for='username'>Desired Username</label></span>
-                        <input type='text' name='username' id='username' placeholder='Username' value='<?php echo $username; ?>' /><br />-->
+            <!--<span id='label_username'><label for='username'>Desired Username</label></span>-->
+            <!--<input type='hidden' name='username' id='username' placeholder='Username' value='' /><br />-->
 
             <label for='firstName'>First Name</label>
             <input type='text' name='firstname' id='firstName' placeholder='First Name' value='<?php echo $firstname; ?>' /><br />                
@@ -153,7 +152,7 @@ global $updatedFields;
 
         <center>
             <input type='submit' value='Submit Changes' style='width: 200px' />
-            <input type='button' value='Courses' onclick='window.location.href = "<?php echo Page::getRealURL("Login"); ?>"' />
+            <!--<input type='button' value='Courses' onclick='window.location.href = "<?php echo Page::getRealURL("Login"); ?>"' />-->
         </center>
 
 

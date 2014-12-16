@@ -88,7 +88,6 @@ class Dbase
     private static function InsertInto ($table, $fields, $values)
     {
         $query = "INSERT INTO $table ($fields) VALUES ($values)";
-        
         return self::Query($query);
     }
     
@@ -119,7 +118,9 @@ class Dbase
 
         return $table;
     }
-    
+    /*
+     * Depricated
+     */
     public static function Updates ($table, $changes, $where)
     {
         $q  = "UPDATE $table SET ";
@@ -132,7 +133,20 @@ class Dbase
         }
         
         $q .= " WHERE $where";
+        
         return self::Query($q);
+    }
+    
+        public static function Updates2 ($table, $changes, $where){
+        $q  = "UPDATE $table SET ";
+        foreach ($changes as $key => $val ){
+            $temp = $key."= ".trim($val).", ";
+            $q .= $temp;
+        }
+        $q = substr($q, 0, count($q)-3);
+        $q .= " WHERE $where";
+        return self::Query($q);
+
     }
     
     private static function SelectFromWhereFirst ($select, $from="", $where="")
@@ -147,32 +161,32 @@ class Dbase
         return $res;
     }
     
-    public static function Authenticate ($username, $enteredPassword)
-    {
-        $select = "id, password";
-        $from = "users";
-        $where = "username='$username'";
-        
-        $user = self::SelectFromWhereFirst($select,$from,$where);
-        
-        if ( !$user )
-            return false;
-
-        $storedPassword = $user["password"];
-        
-        if ( crypt($enteredPassword, $storedPassword) == $storedPassword )
-        {
-            // log login
-            self::InsertInto("user_logins","user,time","$user[id],NOW()");
-        
-            return $user["id"];
-        }
-        
-
-        return false;
-    }
+//    public static function Authenticate ($username, $enteredPassword)
+//    {
+//        $select = "id, password";
+//        $from = "users";
+//        $where = "username='$username'";
+//        
+//        $user = self::SelectFromWhereFirst($select,$from,$where);
+//        
+//        if ( !$user )
+//            return false;
+//
+//        $storedPassword = $user["password"];
+//        
+//        if ( crypt($enteredPassword, $storedPassword) == $storedPassword )
+//        {
+//            // log login
+//            self::InsertInto("user_logins","user,time","$user[id],NOW()");
+//        
+//            return $user["id"];
+//        }
+//        
+//
+//        return false;
+//    }
     
-    public static function Authenticate2 ($email)
+    public static function Authenticate ($email)
     {
         $select = "id";
         $from = "users";
@@ -208,6 +222,24 @@ class Dbase
         return $roles;
     }
     
+    public static function GetTermRef ($code = null){
+        
+        if($code != null){
+            $select = "term_name";
+            $where = "code ='".$code."'";
+            $from = "ref_term";
+            $res = self::SelectFromWhere($select, $from, $where);
+            return $res[0][0];
+        }else{
+            $select = "*";
+            $from = "ref_term";
+            $res = self::SelectFromWhere($select, $from);
+            return $res;
+        }
+        
+
+    }
+    
     public static function GetCommentFlagRef ()
     {
         $select = "id, reason";
@@ -226,7 +258,7 @@ class Dbase
     
     public static function GetUsers ()
     {
-        $select = "id,username,firstname,lastname,email,role_code";
+        $select = "id,firstname,lastname,email,role_code";
         $from = "users";
         
         $users = self::SelectFromWhere($select, $from);
@@ -252,7 +284,7 @@ class Dbase
     
     public static function GetUserInfo ($userId)
     {
-        $select = "firstname,lastname,email,role_code,username,id,institute,major,gpa,school_year,gender,age,race,have_disa,disability";
+        $select = "firstname,lastname,email,role_code,id,institute,major,gpa,school_year,gender,age,race,have_disa,disability";
         $from = "users";
         $where = "id=$userId";
         
@@ -273,12 +305,18 @@ class Dbase
         return $user;
     }
     
-    public static function GetSessions ()
-    {
-        $select = "id,course_id,UNIX_TIMESTAMP(date) as date";
-        $from = "sessions ORDER BY date DESC";
+    public static function GetSessions ($courseId = null){
         
-        return self::SelectFromWhere($select, $from);
+        $select = "id,course_id,UNIX_TIMESTAMP(date) as date";
+        if($courseId === null){
+            $from = "sessions ORDER BY date DESC";
+            $where = null;
+        }else{
+            $from = "sessions";
+            $where = "course_id= " . $courseId ." ORDER BY date DESC";
+        }
+        
+        return self::SelectFromWhere($select, $from, $where);
     }
     
     public static function GetSessionInfo ($sessionId)
@@ -293,7 +331,7 @@ class Dbase
     public static function GetCourses ()
     {
         $select = "id,title,term_code,year";
-        $from = "courses";
+        $from = "courses ORDER BY year DESC";
         
         $res = self::SelectFromWhere($select, $from);
         
@@ -459,9 +497,9 @@ class Dbase
         $password = crypt($password);
         
         $table   = "users";
-        $fields  = "id, username, email, firstname, lastname, password, role_code, ";
+        $fields  = "id, email, firstname, lastname, password, role_code, ";
         $fields .= "institute, major, gpa, school_year, gender, age, race, have_disa, disability, joined";
-        $values  = "DEFAULT, '', '$email', '', '$lastName', '$password', '$role', ";
+        $values  = "DEFAULT, '$email', '', '$lastName', '$password', '$role', ";
         $values .= "'$inst', '$major', '$gpa', '$schoolYear', '$sex', '$age', '$race', '$haveDisa', '$disability', NOW()";
         
         self::InsertInto($table,$fields,$values);
@@ -483,6 +521,21 @@ class Dbase
         $res = self::SelectFromWhereFirst($select);
         
         return $res["newId"];
+    }
+    
+    public static function EditCourse ($id, $title, $termCode, $year)
+    {
+        $table = "courses";
+//        $fields = "title, term_code, year";
+//        $values = "'$title', '$termCode', $year";
+        $chenges = array(
+            'title' => "'".$title."'",
+            'term_code' => "'".$termCode."'",
+            'year' => $year
+        );
+        $where = "id= $id";
+        
+        return self::Updates2($table,$chenges,$where);
     }
     
     public static function RemoveCourse ($courseId)
@@ -510,7 +563,7 @@ class Dbase
     {
         $table = "sessions";
         $fields = "id, course_id, date";
-        $values = "DEFAULT, $courseId, DATE( FROM_UNIXTIME($unixtime) )";
+        $values = "DEFAULT, $courseId, '$unixtime'";
         
         self::InsertInto($table,$fields,$values);
         
@@ -752,8 +805,7 @@ class Dbase
         self::Query($q);
     }
     
-    public static function GetJoinCourseList ()
-    {
+    public static function GetJoinCourseList ($id){
         $list = array();
         
         $q = "
@@ -762,12 +814,11 @@ class Dbase
             FROM enrollment e
             RIGHT JOIN courses c ON c.id = e.course_id
             RIGHT JOIN users u ON u.id = e.user_id
-            WHERE e.role_code = 'in' AND c.active=1
+            WHERE e.role_code = 'in' AND c.active=1 AND e.user_id <> $id
         ";
         
         $q = self::Query($q);
-        while ($r = mysql_fetch_assoc($q))
-        {
+        while ($r = mysql_fetch_assoc($q)){
             $i = $r['id'];
             $t = $r['title'];
             $f = $r['firstname'];
@@ -844,9 +895,7 @@ class Dbase
     }
     
     public static function requiredFields($user){
-
-        if(!isset($user['username']) || $user['username'] == '')
-            return false;
+        
         if(!isset($user['firstname']) || $user['firstname'] == '')
             return false;
         if(!isset($user['lastname']) || $user['lastname'] == '')
@@ -856,6 +905,32 @@ class Dbase
         if(!isset($user['email']) || $user['email'] == '')
             return false;
         
+        return true;
+    }
+    
+    public static function allFields($user){
+        
+        if(!self::requiredFields($user))
+            return false;
+        if($user['role_code'] != "in"){
+            if(!isset($user['major']) || $user['major'] == '')
+                return false;
+            if(!isset($user['gpa']) || $user['gpa'] == '')
+                return false;
+            if(!isset($user['school_year']) || $user['school_year'] == '')
+                return false;
+            if(!isset($user['age']) || $user['age'] == '')
+                return false;
+            if(!isset($user['race']) || $user['race'] == '')
+                return false;
+            if(!isset($user['have_disa']) || $user['have_disa'] == ''){
+                return false;
+            }else if($user['have_disa'] == 'yes'){
+                if(!isset($user['disability']) || $user['disability'] == '')
+                return false;
+            }
+        }
+
         return true;
     }
 }   
