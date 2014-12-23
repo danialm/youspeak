@@ -44,15 +44,15 @@ echo "</div>";
 echo "<div id='navRight'>";
 
 
-
-if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){ 
-    echo "
-        <span id='quizLink'>
-            <a href='#' id='iplus' 
-                    onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
-        </span>
-    ";//style='padding-left: 16px;' class='icons'
-}
+// This is moved to classroom view. DM 12/16/2014
+//if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){ 
+//    echo "
+//        <span id='quizLink'>
+//            <a href='#' id='iplus' 
+//                    onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
+//        </span>
+//    ";//style='padding-left: 16px;' class='icons'
+//}
 
 if ( $thisPage == "Courses" && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'] )
 {

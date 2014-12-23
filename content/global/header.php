@@ -27,9 +27,13 @@ global $navi;
 <body>
 <div id="container">
     <div id="heading">
-        <img src="images/logo.png" alt="youspeak logo" /><h1><span class="orange">Y</span>ou<span class="orange">S</span>peak</h1>
+        <img src="images/logo.png" alt="youspeak logo" />
+        <h1><span class="orange">Y</span>ou<span class="orange">S</span>peak</h1>
     </div><!-- heading -->
     <div id="navigation" class='ui-widget ui-widget-header'>
         <?php $navi->run(); ?>
     </div><!-- navigaton -->
+    <div class="loginEmail">
+        <span class="orange"><?= $_SESSION['login_email'] ?></span>
+    </div>
     <div id="content">

@@ -45,13 +45,14 @@ if ( isset($_POST['act']) )
         else
             Dbase::AddComment($sessionId, $userId, $comment);
 
-        break;
+        break;        
         
     case "add_quiz":
-        if ($_SESSION['isInstructor'])
-            $adding = Dbase::AddQuiz($sessionId,$name,$numOptions,$open);
+        if ($_SESSION['isInstructor']){
+            $adding = Dbase::AddQuiz($sessionId, $name, $numOptions, $options, $open);
+        }
 
-        // must stay right above "get"
+        // must stay right above "get_quizzes"
         
     case "get_quizzes":
         $ret = Dbase::GetQuizzes($sessionId);
@@ -74,6 +75,13 @@ if ( isset($_POST['act']) )
         }
         
         $ret = json_encode($ret);
+        break;
+        
+    case "quiz_correct_answer":
+        if ($_SESSION['isInstructor']){
+            $temp = Dbase::AddCorrectAnswerToQuiz($quizId, $optionNumber);
+            $ret = json_encode($ret);
+        }
         break;
         
     case "remove_quiz":
@@ -133,7 +141,7 @@ function MakeRateLinks ($commentId,$rating,$rates,$mobile=false)
     $up = $down = "";
     $html = "";
     
-    if ($mobile)
+    if ($mobile) 
     {
         $activeUp  = "<a data-role='button' data-icon='arrow-u' data-iconpos='notext' href='#'";
         $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'></a>";
@@ -147,11 +155,11 @@ function MakeRateLinks ($commentId,$rating,$rates,$mobile=false)
     {
         $activeUp  = "<a  id='iup' href='#'";//class='icons'
         $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'></i></a>";
-        $inactiveUp  = "<span  id='iup'></span>";//class='icons'
+        $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'></i></span>";//class='icons'
         
         $activeDown  = "<a  id='idown' href='#'";//class='icons'
         $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'></i></a>";
-        $inactiveDown = "<span  id='idown'></span>";//class='icons'
+        $inactiveDown = "<span  id='idown'><i class='fa fa-arrow-down inactive'></i></span>";//class='icons'
     }
     
     if ( !isset($rates[$commentId]) || $rates[$commentId] == 0 )
@@ -221,13 +229,10 @@ function MakeFlagLinks ($commentId, $comments)
     return $html;
 }
 
-function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobile=false)
-{
+function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobile=false){
     echo "<table>";
-    if ( $comments ) 
-    {
-        foreach ($comments as $c)
-        {
+    if ( $comments ) {
+        foreach ($comments as $c){
             if ( $c["flag_id"] > 0 )
                 continue;
 
@@ -263,7 +268,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobil
             if ($_SESSION['currentUserId'] == $c['user_id'])
             {
                 $mobString = $mobile?"true":"false";
-                $jsFunc = "function () {ClassroomSwitchToEditComment($c[id],$sessionId,$mobString);}";
+                $jsFunc = "function () {}";
                 $edits[] = "$(\"#cid$c[id] p\").click($jsFunc);";
             }
             echo "</tr>";

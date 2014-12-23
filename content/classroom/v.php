@@ -14,6 +14,7 @@ global $quizzesAnswered;
 ?>
 
 <script>
+session = <?= $sessionId ?>;    
 <?php if(!$instructor){?>
     $(document).ready(function(){
         $('#quizLink').hide();
@@ -27,7 +28,7 @@ window.UpdateCommentsEvent = function (){
     UpdateSessionComments( <?php echo $sessionId; ?> );
     getQuizzes(<?php echo $sessionId; ?>);
 };
-var updateCommentsEvent = setInterval(UpdateCommentsEvent,1000);
+var updateCommentsEvent = setInterval(UpdateCommentsEvent,10000);
 
 $(".right-side").css("top","5px");
 </script>
@@ -49,57 +50,14 @@ $(".right-side").css("top","5px");
             <?php GenerateCommentsTable($comments, $sessionId, $instructor, $userrates); ?>
         </div>
         <div id='addComment'>
-            <a href='#' id='iplus' onclick='ClassroomSwitchToAddComment(<?php echo $sessionId; ?>); return false;'>
+            <a href='#' id='iplus' onclick='ClassroomSwitchToAddComment(<?= $sessionId ?>); return false;'>
                 <i class="fa fa-plus green"></i>Comment</a>
-        </div><!-- addComment -->
-
-        <?php if ($instructor): ?>
-            <div id='AddQuizDialog'>
-                <label>
-                    <span>Questionnaire Name: </span>
-                    <input type='text' />
-                </label>
-                <div>
-                    <!--<span>Initial Status: </span>-->
-                    <input type='radio' name='newopen' id='newopen' value=1 checked /><label for='newopen'>Active</label>
-                    <input type='radio' name='newopen' id='newclose' value=0 /><label for='newclose'>Inactive</label>
-                </div>
-                <label>
-                    <span>Number of Options: </span>
-                    <select>
-                        <option value=2>2</option>
-                        <option value=3>3</option>
-                        <option value=4 selected>4</option>
-                        <option value=5>5</option>
-                    </select>
-                </label>
-            </div>
-
-            <script>
-                $("#AddQuizDialog").hide()
-                    .dialog({
-                        autoOpen: false,
-                        buttons: {
-                            Add:    function () { ClassroomAddQuiz(<?php echo $sessionId; ?>); $(this).dialog("close"); },
-                            Cancel: function () { $(this).dialog("close"); }
-                        },
-                        dialogClass: "no-close-button",
-                        hide: { effect: "slide", duration: 200, direction: "down" },
-                        show: { effect: "slide", duration: 200, direction: "down" },
-                        modal: false,
-                        resizable: false,
-                        draggable: false,
-                        position: { my: "right bottom", at: "right bottom", of: "#classroom" },
-                        width: 300,
-                        title: "Add a Questionnaire",
-                        open: function () {
-                            $("#AddQuizDialog input:text").val("Questionnaire");
-                            $("#AddQuizDialog select").val(4);
-                        }
-                });
-                $("#AddQuizDialog div").buttonset();
-            </script>
-        <?php endif; ?>
+        </div><!-- Add Comment -->
+        <?php if ( $instructor ){ ?> 
+            <span id='quizLink'>
+                <a href='#' id='iplus' onclick='ClassroomSwitchToAddQuiz(<?= $sessionId ?>); return false;'><i class='fa fa-plus green'></i>Questionnaire</a><!-- $("#AddQuizDialog").dialog("open"); return false; -->
+            </span>
+        <?php } ?>
         <div id='ShowQuizDialog' qopenid="0"></div>
         <script>
             quizzes = new Array();

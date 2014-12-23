@@ -43,7 +43,9 @@ p, ul {
 ul {
     line-height: 20px;
 }
-
+h2{
+    margin-top: 5px;
+}
 form.hide { display: none }
 
 .green{
@@ -55,13 +57,22 @@ form.hide { display: none }
 .orange{
     color: #DF6E00;
 }
+.loginEmail{
+    text-align: right;
+    background: #E5E5FF;
+}
+.inactive{
+    opacity: 0.5;
+}
 .fa{
     margin-right: 0.3em;
 }
 .fa-trash-o{
     margin-right: 0;
 }
-
+.clickable, .clickable *{
+    cursor: pointer;
+}
 /*******************
     DIV LAYOUTS
 *******************/
@@ -187,6 +198,10 @@ span#quizLink a
     height: auto;
 }
 
+form[name="formQuiz"] span, form[name="formQuiz"] select{
+    display: inline-block;
+    margin: 0 5px 5px 0;
+}
 div#navigation #profileLink.notComplete a{
         /* Chrome, Safari, Opera */
     -webkit-animation-name: myfirst;
@@ -289,7 +304,9 @@ form #formError
     margin: 10px;
     text-align: left;
 }
-
+#register fieldset{
+    margin-bottom: 10px;
+}
 #updatedFields
 {
     color: Green;
@@ -472,23 +489,37 @@ span.addingPresents
     margin-top: 20px;
     border: 2px solid black;
     border-radius: 10px;
+    overflow: hidden;
 }
 
-table#showAnswers tr:first-child th:first-child { border-top-left-radius: 8px; }
-table#showAnswers tr:first-child th:last-child  { border-top-right-radius: 8px; }
-table#showAnswers tr:last-child  td:first-child { border-bottom-left-radius: 8px; }
-table#showAnswers tr:last-child  td:last-child  { border-bottom-right-radius: 8px; }
+#ShowQuizDialog label.options{
+    max-width: 100%;
+    border-radius: 4px;
+    margin: 0 3px 3px 0;
+}
+#ShowQuizDialog label.options span{
+    overflow: hidden;
+}
 
-table#showAnswers td:first-child { border-right: 2px solid #8FCFF8; }
-table#showAnswers td:last-child { border-left: 2px solid #8FCFF8; }
-table#showAnswers tr:first-child th { border-bottom: 2px solid #4F8FC8; }
-
-#ShowQuizDialog table#showAnswers td
-{
+table#showAnswers td:first-child{ 
+    border-right: 2px solid #8FCFF8; 
+}
+table#showAnswers td:last-child{ 
+    border-left: 2px solid #8FCFF8; 
+}
+table#showAnswers tr:first-child th{ 
+    border-bottom: 2px solid #4F8FC8; 
+}
+table#showAnswers tr td:first-child{
+    display: inline-block;
+    width: 125px;
+    overflow: hidden;
+}
+#ShowQuizDialog table#showAnswers td{
     padding-right: 10px;
 }
 
-#ShowQuizDialog table#showAnswers tr:nth-child(even) { background-color: #AFEFFF; }
+#ShowQuizDialog table#showAnswers tr { background-color: #AFEFFF; }
 #ShowQuizDialog table#showAnswers tr:nth-child(odd)  { background-color: #6FB8EE; }
 
 #userComments form
@@ -578,10 +609,13 @@ EEEEFF
 
 @media screen and (max-width: 340px){
     div#heading img{
-        width: 60px;
+        width: 50px;
     }
     div#heading h1{
         font-size: 1.6em;
+    }
+    .loginEmail{
+        text-align: center;
     }
 }
 @media screen and (max-width: 530px){

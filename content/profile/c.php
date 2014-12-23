@@ -1,9 +1,12 @@
 <?php
 
-$ERRMSG_EXISTS_EMAIL    = "This email is already registered.";
-$ERRMSG_EMPTY_FIRSTNAME = "Firstname is a required field and was left empty.";
-$ERRMSG_EMPTY_LASTNAME  = "Lastname is a required field and was left empty.";
-$ERRMSG_EMPTY_EMAIL     = "Email is a required field and was left empty.";
+$ERRMSG_EXISTS_EMAIL    = "This email is already registered!";
+$ERRMSG_EMPTY_FIRSTNAME = "First Name is a required field and was left empty!";
+$ERRMSG_EMPTY_LASTNAME  = "Last Name is a required field and was left empty!";
+$ERRMSG_EMPTY_STUDENTID = "Student ID is a required field and was left empty!";
+$ERRMSG_EMPTY_EMAIL     = "Email is a required field and was left empty!";
+$ERRMSG_EMPTY_INSTITUDE = "Institution is a required field and was left empty!";
+$ERRMSG_NOT_MATCH_STUDENTID = "Student ID MUST be 9 digits!";
 
 
 if (isset($_POST['act'])){
@@ -25,6 +28,8 @@ if (isset($_POST['act'])){
         $emailBad     = false;
         $firstnameBad = false;
         $lastnameBad  = false;
+        $studentidBad  = false;
+        $instituteBad  = false;
 
         if ($firstname == "")
         {
@@ -39,12 +44,31 @@ if (isset($_POST['act'])){
             $errMsg .= $ERRMSG_EMPTY_LASTNAME;
             $lastnameBad = true;
         }
-
+        
+        if($user['role_code'] != 'in'){
+            if ($studentid == ""){
+                if ($errMsg != "") $errMsg .= "<br />";
+                $errMsg .= $ERRMSG_EMPTY_STUDENTID;
+                $studentidBad = true;
+            }elseif (!preg_match("/^[0-9]{9}$/", $studentid)){
+                if ($errMsg != "") $errMsg .= "<br />";
+                $errMsg .= $ERRMSG_NOT_MATCH_STUDENTID;
+                $studentidBad = true;
+            }
+        }
+        
         if ($email == "")
         {
             if ($errMsg != "") $errMsg .= "<br />";
             $errMsg .= $ERRMSG_EMPTY_EMAIL;
             $emailBad = true;
+        }
+
+        if ($institute == "")
+        {
+            if ($errMsg != "") $errMsg .= "<br />";
+            $errMsg .= $ERRMSG_EMPTY_INSTITUDE;
+            $institudeBad = true;
         }
 
         // check for an existing email
@@ -71,18 +95,20 @@ if (isset($_POST['act'])){
             
             $_SESSION['formError'][$key] = isset($_POST[$key])?$_POST[$key]:"";
             
-            if ( ($key ==    "email") && $emailBad     ) continue;
-            if ( ($key =="firstname") && $firstnameBad ) continue;
-            if ( ($key == "lastname") && $lastnameBad  ) continue;
-            if (  $key ==        "id" )                  continue;
-            if (  $key == "role_code" )                  continue;
+            if (($key ==     "email") && $emailBad    ) continue;
+            if (($key == "firstname") && $firstnameBad) continue;
+            if (($key ==  "lastname") && $lastnameBad ) continue;
+            if (($key == "studentid") && $studentidBad) continue;
+            if (($key == "institute") && $instituteBad) continue;
+            if ( $key ==        "id")                   continue;
+            if ( $key == "role_code")                   continue;
             
             // value has changed
             if ($val != $_POST[$key])
             {
                 $c = array("key"=>$key, "val"=>$_POST[$key]);
                 
-                if ( ($key!="firstname")  )//&& ($key!="username")
+                if ( ($key!="firstname") && ($key!="studentid") )//&& ($key!="username")
                     $c['val'] = Dbase::Encrypt($c['val']);
                 
                 $changes[] = $c;
@@ -93,7 +119,7 @@ if (isset($_POST['act'])){
         $required = false;
         if ( isset($changes) ){
             Dbase::Updates("users",$changes,"id=$id") or exit(mysql_error());
-            $required = Dbase::requiredFields(Dbase::GetUserInfo($id));
+            $required = Dbase::requiredFields($user);
         }
 
         $_SESSION['formError']['msg'] = $errMsg;
@@ -111,8 +137,3 @@ if (isset($_POST['act'])){
     
     }
 }
-
-
-
-
-?>

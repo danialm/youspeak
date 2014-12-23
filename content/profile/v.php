@@ -4,6 +4,7 @@ global $instructor;
 global $institutions;
 global $firstname;
 global $lastname;
+global $studentid;
 global $email;
 global $major;
 global $gpa;
@@ -15,12 +16,19 @@ global $race;
 global $haveDisa;
 global $disability;
 global $updatedFields;
+global $allfields;
 ?>
 
 <div id="register">
 
-    <h2> My Profile </h2>
-
+    <div>
+        <h2 style="display: inline-block;">Profile</h2>
+        <?php if(!isset($errorMsg) || $errorMsg == ""){ ?>
+            <span class="<?= $allfields ? "green" : "orange" ?>">
+            <?= $allfields ? "100% Complete" : "Incomplete!" ?>
+            </span>
+        <?php } ?>
+    </div>
     <form class='bordered' name='updateprofile' method='POST' action='<?php echo Page::getRealURL(); ?>'>
 
         <input type='hidden' name='act' value='update_profile' />
@@ -47,15 +55,18 @@ global $updatedFields;
             <!--<input type='hidden' name='username' id='username' placeholder='Username' value='' /><br />-->
 
             <label for='firstName'>First Name</label>
-            <input type='text' name='firstname' id='firstName' placeholder='First Name' value='<?php echo $firstname; ?>' /><br />                
+            <input type='text' name='firstname' id='firstName' placeholder='First Name' value='<?= $firstname ?>' /><br />                
 
             <label for='lastName'>Last Name</label>
-            <input type='text' name='lastname' id='lastName' placeholder='Last Name' value='<?php echo $lastname; ?>' /><br />
-
-
-
+            <input type='text' name='lastname' id='lastName' placeholder='Last Name' value='<?= $lastname ?>' /><br />
+            
+            <?php if (!$instructor) { ?>
+            <label for='studentId'>Student ID</label>
+            <input type='text' name='studentid' id='studentId' placeholder='9 digits' value='<?= preg_match("/^[0-9]{9}$/", $studentid) ? $studentid : "" ?>'  /><br />
+            <?php }?>
+            
             <label for='email'>E-mail</label>
-            <input type='email' name='email' id='email' placeholder='E-mail' value='<?php echo $email; ?>' /><br />
+            <input type='email' name='email' id='email' placeholder='E-mail' value='<?= $email ?>' /><br />
 
             <label for='inst'>Institution</label>
             <select name='institute' id='selInst'>
@@ -75,7 +86,7 @@ global $updatedFields;
 
 
 
-        <?php if (!$instructor) : ?>
+        <?php if (!$instructor) { ?>
 
 
 
@@ -147,7 +158,7 @@ global $updatedFields;
 
 
 
-        <?php endif ?>
+        <?php } ?>
 
 
         <center>

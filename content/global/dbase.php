@@ -258,7 +258,7 @@ class Dbase
     
     public static function GetUsers ()
     {
-        $select = "id,firstname,lastname,email,role_code";
+        $select = "id,firstname,lastname,studentid,email,role_code";
         $from = "users";
         
         $users = self::SelectFromWhere($select, $from);
@@ -284,7 +284,7 @@ class Dbase
     
     public static function GetUserInfo ($userId)
     {
-        $select = "firstname,lastname,email,role_code,id,institute,major,gpa,school_year,gender,age,race,have_disa,disability";
+        $select = "firstname,lastname,studentid,email,role_code,id,institute,major,gpa,school_year,gender,age,race,have_disa,disability";
         $from = "users";
         $where = "id=$userId";
         
@@ -479,7 +479,7 @@ class Dbase
     public static function AddUser ($email){
         // default role
         $role = 'st';
-        
+        $studentid = 0;
         // Encrypt Last Name & email etc.. (decryptable)
         $lastName   = self::Encrypt("");
         $email      = self::Encrypt($email);
@@ -497,9 +497,9 @@ class Dbase
         $password = crypt($password);
         
         $table   = "users";
-        $fields  = "id, email, firstname, lastname, password, role_code, ";
+        $fields  = "id, email, firstname, lastname, studentid,password, role_code, ";
         $fields .= "institute, major, gpa, school_year, gender, age, race, have_disa, disability, joined";
-        $values  = "DEFAULT, '$email', '', '$lastName', '$password', '$role', ";
+        $values  = "DEFAULT, '$email', '', '$lastName', '$studentid','$password', '$role', ";
         $values .= "'$inst', '$major', '$gpa', '$schoolYear', '$sex', '$age', '$race', '$haveDisa', '$disability', NOW()";
         
         self::InsertInto($table,$fields,$values);
@@ -695,6 +695,11 @@ class Dbase
         return self::Query($query);
     }
     
+    public static function AddCorrectAnswerToQuiz($quizId, $optionNumber){
+        $q = "UPDATE quizzes SET answer= '$optionNumber' WHERE id='$quizId'";
+        return self::Query($q);
+    }
+    
     public static function GetQuizzes ($sessionId)
     {
         $q = "
@@ -711,17 +716,22 @@ class Dbase
         
         $qForms = array();
         
-        while ($row = mysql_fetch_assoc($q))
+        while ($row = mysql_fetch_assoc($q)){
             $qForms[$row['id']] = $row;
-
+        }     
+        
         $q = "
             SELECT quiz,
-                SUM(choice=1) as A,
-                SUM(choice=2) as B,
-                SUM(choice=3) as C,
-                SUM(choice=4) as D,
-                SUM(choice=5) as E,
-                SUM(choice=6) as F
+                SUM(choice=1)  as A,
+                SUM(choice=2)  as B,
+                SUM(choice=3)  as C,
+                SUM(choice=4)  as D,
+                SUM(choice=5)  as E,
+                SUM(choice=6)  as F,
+                SUM(choice=7)  as G,
+                SUM(choice=8)  as H,
+                SUM(choice=9)  as I,
+                SUM(choice=10) as J
             FROM
             (
                 SELECT quiz,user,choice
@@ -741,19 +751,25 @@ class Dbase
         
         $qChoices = array();
         
-        while ($row = mysql_fetch_assoc($q))
+        while ($row = mysql_fetch_assoc($q)){
             $qChoices[$row['quiz']] = $row;
-            
+        }
         $ar = array();
-        foreach ($qForms as $qId => $qForm)
-        {
+        foreach ($qForms as $qId => $qForm){
+            
+            $q = "SELECT number, value FROM options WHERE quiz= '$qId'";
+            $res = self::Query($q);
+            $qOptions = array();
+            while($rw = mysql_fetch_assoc($res)){
+                $qOptions[$rw["number"]] = $rw["value"];
+            }
             $ar[$qId] = array();
             $ar[$qId]['form']    = $qForms[$qId];
-            
+            $ar[$qId]['options'] = $qOptions;
             if (isset($qChoices[$qId]))
                 $ar[$qId]['choices'] = $qChoices[$qId];
             else
-                $ar[$qId]['choices'] = array ("quiz"=>$qId, "A"=>0, "B"=>0, "C"=>0, "D"=>0, "E"=>0, "F"=>0 );
+                $ar[$qId]['choices'] = array ("quiz"=>$qId, "A"=>0, "B"=>0, "C"=>0, "D"=>0, "E"=>0, "F"=>0, "G"=>0, "H"=>0, "I"=>0, "J"=>0);
         }
             
         return $ar;
@@ -771,18 +787,29 @@ class Dbase
         return $res;
     }
     
-    public static function AddQuiz ($sessionId, $name, $numOptions, $open)
-    {
-        if ($numOptions < 1) $numOptions = 1;
-        if ($numOptions > 6) $numOptions = 6;
-        if (!$name || $name=="") $name = "Quiz";
+    public static function AddQuiz ($sessionId, $question, $numOptions, $options, $open){
+        if ($numOptions < 1) 
+            $numOptions = 1;
+        if ($numOptions > 10) 
+            $numOptions = 10;
+        if (!$question || $question=="") 
+            $question = "Question";
         
         $q = "INSERT INTO quizzes (id, name, time, num_options, open, session)
-                VALUES (DEFAULT, '$name', NOW(), $numOptions, $open, $sessionId)";
+                VALUES (DEFAULT, '$question', NOW(), $numOptions, $open, $sessionId)";
         
         self::Query($q);
         
-        return mysql_insert_id();
+        $return = mysql_insert_id();
+        
+        for($i=0; $i<$numOptions; $i++){
+            $num = $i+1;
+            $q = "INSERT INTO options (id, quiz, number, value)
+                    VALUES (DEFAULT, '$return', '$num', '$options[$i]')";
+            self::Query($q);
+        }
+        
+        return $return;
     }
     
     public static function RemoveQuiz ($quizId)
@@ -891,19 +918,15 @@ class Dbase
         $q = "SELECT * FROM user_logins WHERE user = $user";
         $q = self::Query($q);
         
-        return (mysql_num_rows($q)==1);
+        return (mysql_num_rows($q)== 1);
     }
     
     public static function requiredFields($user){
-        
-        if(!isset($user['firstname']) || $user['firstname'] == '')
-            return false;
-        if(!isset($user['lastname']) || $user['lastname'] == '')
-            return false;
-        if(!isset($user['institute']) || $user['institute'] == '')
-            return false;
-        if(!isset($user['email']) || $user['email'] == '')
-            return false;
+        if(!isset($user['firstname']) || $user['firstname'] == '')  return false;
+        if(!isset($user['lastname'] ) || $user['lastname']  == '')  return false;
+        if(($user['role_code'] != "in") && (!isset($user['studentid']) || $user['studentid'] == '' || !preg_match("/^[0-9]{9}$/", $user['studentid'])))  return false;
+        if(!isset($user['institute']) || $user['institute'] == '')  return false;
+        if(!isset($user['email']    ) || $user['email']     == '')  return false;
         
         return true;
     }

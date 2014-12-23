@@ -122,3 +122,11 @@
 [21-Nov-2014 01:25:33 UTC] PHP Fatal error:  Call to undefined function uswords() in /home/admindanial/public_html/youspeak/content/report/v.php on line 18
 [21-Nov-2014 20:14:08 UTC] PHP Fatal error:  Call to undefined method Dbase::Authenticate() in /home/admindanial/public_html/youspeak/content/login/c.php on line 32
 [28-Nov-2014 22:48:15 UTC] PHP Fatal error:  Call to undefined function array_sort_bycolumn() in /home/admindanial/public_html/youspeak/content/courses/m.php on line 50
+[20-Dec-2014 07:44:44 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 59
+[20-Dec-2014 08:22:54 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 59
+[20-Dec-2014 08:24:14 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 59
+[20-Dec-2014 08:26:05 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 59
+[20-Dec-2014 08:26:45 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 59
+[20-Dec-2014 19:57:44 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 51
+[20-Dec-2014 20:01:06 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 51
+[20-Dec-2014 20:04:08 UTC] PHP Fatal error:  Function name must be a string in /home/admindanial/public_html/youspeak/content/classroom/c.php on line 81

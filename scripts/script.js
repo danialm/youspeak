@@ -205,7 +205,45 @@ function ValidateAddComment(sessionId)
     {
         AddComment(form.comment.value,sessionId);
         form.addbutton.disable = true;
-        ClassroomCancelAddComment();
+        ClassroomCancelAdd();
+    }
+    
+    return false;
+}
+
+function ValidateAddQuiz(sessionId){
+    var ERRMSG_EMPTY_FIELDS = "Something was left blank.";
+
+    var form = document.forms["formQuiz"];
+    var fields = form.elements;
+    var emptyFields;
+    var options = new Array();
+
+    // Check Required Fields
+    for (var i=0; i<form.length; i++){
+        var fieldName = fields[i].name;
+        var fieldValue = fields[i].value;
+        
+        if (fieldValue == "")
+            emptyFields = true;
+    }
+    
+    // action
+    if (emptyFields){
+        var errorMsg = "";
+        if (emptyFields) errorMsg += ERRMSG_EMPTY_FIELDS;
+        alert(errorMsg);
+    }
+    else{
+        for(var i=2; i<12; i++){
+            var temp = $("form[name=formQuiz] input[name="+String.fromCharCode(95 + i)+"]").val();
+            if(temp && temp.trim()){
+                options.push(temp.trim());
+            }
+        }
+        addQuiz(sessionId, form.question.value, options.length, options, 1);
+        form.addbutton.disable = true;
+        ClassroomCancelAdd();
     }
     
     return false;
@@ -431,11 +469,12 @@ function ShowQuiz (quiz)
         return false;
         
     var html = "";
-    var choices = ["A","B","C","D","E","F"];
+    var choices = ["A","B","C","D","E","F","G","H","I","J"];
     var q = quizzes[quiz];
+    var options = q["options"];
     var buttons;
     
-    $("#ShowQuizDialog").dialog("option","title",q.form.name);
+    $("#ShowQuizDialog").dialog("option","title","Questionnaire");
     
     if (ins)
     {
@@ -448,38 +487,37 @@ function ShowQuiz (quiz)
         html += "</div>";
         
         var total = 0;
-        for (i=0; i<q.form.num_options; i++)
+        for (var i=0; i<q.form.num_options; i++)
             total += parseInt(q.choices[ choices[i] ]);
         
         if (cChecked)
         {
-        
+            html += "<p>Click on the right Answer:</p>";
             html += "<center><table id='showAnswers' cellspacing=0>";
             html += "<tr><th>Choice</th><th>Count</th><th>%</th></tr>";
             
             total = total>0?total:1;
             
-            for (i=0; i<q.form.num_options; i++)
+            for (var i=0; i<q.form.num_options; i++)
             {
                 var count = q.choices[ choices[i] ];
                 var perc = 100*count/total;
                 perc = Math.round(perc);
-                html += "<tr><td>"+choices[i]+"</td><td>"+count+"</td><td style='text-align:right'>("+perc+"%)</td></tr>";
+                html += "<tr class='clickable "+(i+1)+"' onclick='chooseCorrectAnswer("+quiz+","+(i+1)+", \""+q['form']['name']+"\", \""+options[i+1]+"\")' ><td title="+options[i+1]+">"+options[i+1]+"</td><td>"+count+"</td><td style='text-align:right'>("+perc+"%)</td></tr>";
             }
             html += "</table></center>";
+            buttons = {
+                Close: function () {
+                    takingQuiz = false;
+                    $("#ShowQuizDialog").dialog("close");
+                }
+            };
         }
         else
         {
-            html += "<h4>"+ q.form.name +" is active.</h4>";
-            html += "<p>"+total+ (total==1?" has ":" have ")+"answered.</p>";
+            html += "<br><p>"+ q.form.name +"<br><b>is active</b></p>";
+            html += "<p>"+total+ (total==1?" has ":" have ")+"answered</p>";
         }
-        
-        buttons = {
-            Close: function () {
-                takingQuiz = false;
-                $("#ShowQuizDialog").dialog("close");
-            }
-        };
         
         $("#ShowQuizDialog").html(html).dialog("option", "buttons", buttons);
         $("#ShowQuizDialog div").buttonset();
@@ -493,10 +531,11 @@ function ShowQuiz (quiz)
     }
     else
     {
+        html += "<p>"+ q.form.name +"</p>";
         html += "<div>";
         
-        for (i=0; i<q.form.num_options; i++)
-            html += "<input id='rb"+i+"' answer="+(i+1)+" type='radio' name='quiz' /><label for='rb"+i+"'>"+choices[i]+"</label>";
+        for (var i=0; i<q.form.num_options; i++)
+            html += "<input id='rb"+i+"' answer="+(i+1)+" type='radio' name='quiz' /><label class='options' for='rb"+i+"' title="+options[i+1]+">"+options[i+1]+"</label>";
         
         html += "</div>";
         
@@ -530,21 +569,79 @@ function ShowQuiz (quiz)
         $("#ShowQuizDialog").dialog("option","position",{ my: "right bottom", at: "right bottom", of: "#classroom" });
     }
 }
-
-function ClassroomSwitchToAddComment (sessionId)
-{
-    var ele = document.getElementById("addComment");
+function chooseCorrectAnswer(quizId, optionNumber, question, option){
+    $(".clickable."+optionNumber).css("background", "green");
+    var url = NO_REWRITE?"?p=Classroom":"Classroom";
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            act: "quiz_correct_answer",
+            quizId: quizId,
+            optionNumber: optionNumber
+        },
+        success: function () {
+            AddComment(question+"<br>"+option , session);
+            takingQuiz = false;
+            $("#ShowQuizDialog").dialog("close");
+        },
+        error: function (j,t,e) { console.log("Add correct answer to quiz cancelled"); },
+        dataType: "json"
+    });
+}
+function ClassroomSwitchToAddComment (sessionId){
+    session = sessionId;
+    var ele1 = $("#addComment");
+    var ele2 = $("#quizLink");
     var str = "";
     
     str += "<form name='formCom'>";
     str += "<textarea style='width: 100%; box-sizing: border-box;' rows=5 name='comment' placeholder='Type your comment or question here.' ></textarea><br />";
     str += "<input type='button' name='addbutton' onclick='ValidateAddComment("+sessionId+")' value='Add' />";
-    str += "<input type='button' value='Cancel' onclick='ClassroomCancelAddComment();' />";
+    str += "<input type='button' value='Cancel' onclick='ClassroomCancelAdd();' />";
     str += "</form>";
     
-    window.originalAddComment = ele.innerHTML;
-    ele.innerHTML = str;
+    window.originalAddComment = ele1.html();
+    window.originalAddQuiz = ele2.html();
+    ele1.html(str);
+    ele2.html('');
     document.formCom.comment.focus();
+}
+
+function ClassroomSwitchToAddQuiz (sessionId){
+    var ele1 = $("#quizLink");
+    var ele2 = $("#addComment");
+    var str = "";
+    
+    str += "<form name='formQuiz' method='post'>";
+    str += "<input type='hidden' name='act' value='add_quiz'>";
+    str += "<textarea style='width: 100%; box-sizing: border-box;' rows=2 name='question' placeholder='Type your question here.' ></textarea><br />";
+    str += "Number Of Choices: <select onchange='addOptions();' name='NumberOfChoises'><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option></select>";
+    str += "<div class='choises' ><span>1. <input type='text' name='a' value='a'/></span><span>2. <input type='text' name='b' value='b'/></span></div>";
+    str += "<input type='button' name='addbutton' onclick='ValidateAddQuiz("+sessionId+")' value='Add' />";
+    str += "<input type='button' value='Cancel' onclick='ClassroomCancelAdd();' />";
+    str += "</form>";
+    
+    window.originalAddQuiz = ele1.html();
+    window.originalAddComment = ele2.html();
+    ele1.html(str);
+    ele2.html('');
+    document.formQuiz.question.focus();
+}
+
+function addOptions(){
+    var form = $("form[name=formQuiz]");
+    var num = parseInt(form.find("select option:selected").first().text());
+    form.find(".choises").empty();
+    for(var i=1;i<num+1;i++){
+        var char = String.fromCharCode(96 + i);
+        form.find(".choises").append("<span>"+i+". <input type='text' name='"+char+"' value='"+char+"'></span>");
+    }
+}
+
+function ClassroomCancelAdd (){
+    $("#addComment").html(window.originalAddComment);
+    $("#quizLink").html(window.originalAddQuiz);
 }
 
 //Depricated because no one can edit any comment
@@ -579,12 +676,6 @@ function ClassroomSwitchToAddComment (sessionId)
 //    
 //    clearInterval(window.updateCommentsEvent);
 //}
-
-function ClassroomCancelAddComment ()
-{
-    var ele = document.getElementById("addComment");
-    ele.innerHTML = window.originalAddComment;
-}
 
 function ClassroomShowOrHideComments (flagtype)
 {
@@ -636,7 +727,7 @@ function getQuizzes (sessionId)
     });
 }
 
-function addQuiz (sessionId,name,numOptions,open)
+function addQuiz (sessionId, name, numOptions, options, open)
 {
     var url = NO_REWRITE?"?p=Classroom":"Classroom";
     $.ajax({
@@ -647,6 +738,7 @@ function addQuiz (sessionId,name,numOptions,open)
             sessionId: sessionId,
             name: name,
             numOptions: numOptions,
+            options: options,
             open: open
         },
         success: function (data) {
@@ -676,7 +768,7 @@ function removeQuiz (quizId)
             },
             error: function (j,t,e) { console.log("Remove Quiz Cancelled"); }
         });
-    }
+    };
     $("<div></div>").dialog(
     {
         buttons: 

@@ -27,7 +27,7 @@ if (isset($_POST['act'])) {
             $attributes = $client->verifyIdToken($token->id_token, $clientId)->getAttributes();
 
             $email = $attributes['payload']['email'];
-
+            $_SESSION['login_email'] = $email;
             Dbase::Connect();
             $auth = Dbase::Authenticate($email);
             //$auth = 3;
@@ -67,6 +67,9 @@ if (isset($_POST['act'])) {
             
             if (isset($_SESSION['reportCourseId']))
                 unset($_SESSION['reportCourseId']);
+            
+            if (isset($_SESSION['login_email']))
+                unset($_SESSION['login_email']);
 
             break;
     }

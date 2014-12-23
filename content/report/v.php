@@ -29,6 +29,6 @@ global $courses;
     <?php } ?>
     </ul>
 <?php }else{ ?>
-    <h3>No courses to display!</h3>
+    <h3>No course to display!</h3>
 <?php } ?>
 </div>
