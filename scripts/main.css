@@ -481,7 +481,9 @@ span.addingPresents
     padding: 0;
     margin: 0;
 }
-
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.no-close-button.ui-dialog-buttons.ui-draggable{
+    top: 100px;
+}
 #ShowQuizDialog table#showAnswers
 {
     width: 80%;

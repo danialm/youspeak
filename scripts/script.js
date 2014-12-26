@@ -492,7 +492,7 @@ function ShowQuiz (quiz)
         
         if (cChecked)
         {
-            html += "<p>Click on the right Answer:</p>";
+            html += "<br><p>Click on the right Answer:</p>";
             html += "<center><table id='showAnswers' cellspacing=0>";
             html += "<tr><th>Choice</th><th>Count</th><th>%</th></tr>";
             
@@ -566,7 +566,7 @@ function ShowQuiz (quiz)
     else
     {
         // reposition
-        $("#ShowQuizDialog").dialog("option","position",{ my: "right bottom", at: "right bottom", of: "#classroom" });
+        //$("#ShowQuizDialog").dialog("option","position",{ my: "right bottom", at: "right bottom", of: "#classroom" });
     }
 }
 function chooseCorrectAnswer(quizId, optionNumber, question, option){
@@ -578,7 +578,8 @@ function chooseCorrectAnswer(quizId, optionNumber, question, option){
         data: {
             act: "quiz_correct_answer",
             quizId: quizId,
-            optionNumber: optionNumber
+            optionNumber: optionNumber,
+            sessionId: session
         },
         success: function () {
             AddComment(question+"<br>"+option , session);
@@ -590,7 +591,6 @@ function chooseCorrectAnswer(quizId, optionNumber, question, option){
     });
 }
 function ClassroomSwitchToAddComment (sessionId){
-    session = sessionId;
     var ele1 = $("#addComment");
     var ele2 = $("#quizLink");
     var str = "";

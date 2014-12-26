@@ -44,15 +44,22 @@ echo "</div>";
 echo "<div id='navRight'>";
 
 
-// This is moved to classroom view. DM 12/16/2014
-//if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){ 
+
+if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){ 
+// This is moved to classroom view. DM 12/16/2014    
 //    echo "
 //        <span id='quizLink'>
 //            <a href='#' id='iplus' 
 //                    onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
 //        </span>
 //    ";//style='padding-left: 16px;' class='icons'
-//}
+    echo "
+        <span id='studentView'>
+            <a href='#' id='iplus' 
+                    onclick='FormIt({act:\"changeView\"},\"".Page::getRealURL("Classroom")."\"); return false;'><i class='fa fa-paint-brush fa-lg'></i></a>
+        </span>
+    ";//style='padding-left: 16px;' class='icons'
+}
 
 if ( $thisPage == "Courses" && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'] )
 {

@@ -1,4 +1,5 @@
 <?php
+$studentView = (isset($_SESSION['studentView']) && $_SESSION['studentView']) ? true : false ;
 
 if ( isset($_POST['act']) )
 {
@@ -9,13 +10,14 @@ if ( isset($_POST['act']) )
     
     Dbase::Connect();
     
-    switch($act)
-    {
+    $courseInfo = Dbase::GetCourseFromSession($sessionId);
+    $roleInCourse = Dbase::GetUserRoleInCourse($userId,$courseInfo["id"]);
+    $instructor = ($roleInCourse == "in") && !$studentView;
+    
+    switch($act){
+
     case "update_comments":
         $mobile = isset($mobile)&&$mobile ? true : false;
-        $courseInfo = Dbase::GetCourseFromSession($sessionId);
-        $roleInCourse = Dbase::GetUserRoleInCourse($userId,$courseInfo["id"]);
-        $instructor = ($roleInCourse == "in");
         $comments = Dbase::GetCommentsFromSession($sessionId,$userId);
         $userrates = Dbase::GetCommentRatingsForUser($userId);
 
@@ -48,7 +50,7 @@ if ( isset($_POST['act']) )
         break;        
         
     case "add_quiz":
-        if ($_SESSION['isInstructor']){
+        if ($instructor){
             $adding = Dbase::AddQuiz($sessionId, $name, $numOptions, $options, $open);
         }
 
@@ -59,10 +61,10 @@ if ( isset($_POST['act']) )
         
         foreach ($ret as $i => $quiz)
         {
-            if ( !$_SESSION['isInstructor'] )
+            if ( !$instructor )
                 unset($ret[$i]['choices']);
             
-            if ( !$quiz['form']['open'] && !$_SESSION['isInstructor']) 
+            if ( !$quiz['form']['open'] && !$instructor) 
                 unset($ret[$i]);
         }
         
@@ -78,9 +80,9 @@ if ( isset($_POST['act']) )
         break;
         
     case "quiz_correct_answer":
-        if ($_SESSION['isInstructor']){
+        if ($instructor){
             $temp = Dbase::AddCorrectAnswerToQuiz($quizId, $optionNumber);
-            $ret = json_encode($ret);
+            $ret = json_encode($temp);
         }
         break;
         
@@ -95,6 +97,13 @@ if ( isset($_POST['act']) )
     case "open_quiz":
         Dbase::OpenQuiz($quiz,$open);
         break;
+    
+    case "changeView":
+        $_SESSION['studentView'] = (isset($_SESSION['studentView']) && $_SESSION['studentView']) ? false : true ;
+        header("location: " . Page::getRealURL("Classroom"));
+        exit;
+        break;
+    
     }
     
     Dbase::Disconnect();
@@ -136,7 +145,7 @@ function MakeRemoveCommentLink ($commentId,$mobile=false)
     return $html;
 }
 
-function MakeRateLinks ($commentId,$rating,$rates,$mobile=false)
+function MakeRateLinks ($commentId,$rating,$rates,$studentView,$mobile=false)
 {
     $up = $down = "";
     $html = "";
@@ -151,8 +160,7 @@ function MakeRateLinks ($commentId,$rating,$rates,$mobile=false)
         $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'></a>";
         $inactiveDown = "<span class='ui-disabled' data-role='button' data-icon='arrow-d' data-iconpos='notext'></span>";
     }
-    else
-    {
+    else{
         $activeUp  = "<a  id='iup' href='#'";//class='icons'
         $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'></i></a>";
         $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'></i></span>";//class='icons'
@@ -162,8 +170,10 @@ function MakeRateLinks ($commentId,$rating,$rates,$mobile=false)
         $inactiveDown = "<span  id='idown'><i class='fa fa-arrow-down inactive'></i></span>";//class='icons'
     }
     
-    if ( !isset($rates[$commentId]) || $rates[$commentId] == 0 )
-    {
+    if($studentView){
+        $up = $inactiveUp;
+        $down = $inactiveDown;
+    }elseif ( !isset($rates[$commentId]) || $rates[$commentId] == 0 ){
         $up = $activeUp;
         $down = $activeDown;
     }
@@ -229,7 +239,7 @@ function MakeFlagLinks ($commentId, $comments)
     return $html;
 }
 
-function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobile=false){
+function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$mobile=false){
     echo "<table>";
     if ( $comments ) {
         foreach ($comments as $c){
@@ -241,7 +251,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobil
             echo "<tr><td class='control $newComment' style='width: 20px'>";
             
             // if comment owner
-            if ($_SESSION['currentUserId'] == $c['user_id'])
+            if ($_SESSION['currentUserId'] == $c['user_id'] || $instructor)
             {
                 $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
                 echo "$removeLink";
@@ -250,7 +260,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$mobil
             
             else if (!$instructor)
             {
-                $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$mobile);
+                $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$mobile);
                 echo "$rateLinks ";
             }
             

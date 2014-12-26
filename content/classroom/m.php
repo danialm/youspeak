@@ -11,22 +11,19 @@ global $quizzesAnswered;
 global $sessionId;
 global $instructor;
 
-if ( isset($_SESSION["currentUserId"]) )
+if ( isset($_SESSION["currentUserId"]) ){
     $userId = $_SESSION["currentUserId"];
-else
-{
+}else{
     header("location: ".Page::getRealURL("Login"));
     exit ("Restricted Area");
 }
 
-if ( !isset($_POST["sessionId"]) && !isset($_SESSION["sessionId"]) )
-{
+if ( !isset($_POST["sessionId"]) && !isset($_SESSION["sessionId"]) ){
     header("location: ".Page::getRealURL("Login"));
     exit ("Access Error");
 }
 
-if ( isset($_POST["sessionId"]) )
-{
+if ( isset($_POST["sessionId"]) ){
     $_SESSION["sessionId"] = $_POST["sessionId"];
     header("location: ".Page::getRealURL("Classroom"));
     exit;

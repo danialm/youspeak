@@ -11,10 +11,12 @@ global $sessionId;
 global $instructor;
 global $quizzesAnswered;
 
+$studentView = (isset($_SESSION['studentView']) && $_SESSION['studentView']) ? true : false ;
+$instructor = $instructor && !$studentView;
+
 ?>
 
 <script>
-session = <?= $sessionId ?>;    
 <?php if(!$instructor){?>
     $(document).ready(function(){
         $('#quizLink').hide();
@@ -28,7 +30,7 @@ window.UpdateCommentsEvent = function (){
     UpdateSessionComments( <?php echo $sessionId; ?> );
     getQuizzes(<?php echo $sessionId; ?>);
 };
-var updateCommentsEvent = setInterval(UpdateCommentsEvent,10000);
+var updateCommentsEvent = setInterval(UpdateCommentsEvent,1000);
 
 $(".right-side").css("top","5px");
 </script>
@@ -43,11 +45,18 @@ $(".right-side").css("top","5px");
         $("#heading").hide();
         //$("#navigation")[0].style.border = "3px ridge #394C6B";
     </script>
-
+    <h4>
+        <?php if($studentView) { ?> 
+        <span class="orange">This is Student View. </span>
+        <span id='studentView'>
+            <a href='#' id='iplus' onclick='FormIt({act:"changeView"},"<?= Page::getRealURL("Classroom")?>"); return false;'>Instructor View<i class='fa fa-undo fa-lg'></i></a>
+        </span>
+        <?php } ?>
+    </h4>
     <div id="userComments" class='ui-widget ui-widget-content'>
 
         <div id='commentTable'>
-            <?php GenerateCommentsTable($comments, $sessionId, $instructor, $userrates); ?>
+            <?php GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView); ?>
         </div>
         <div id='addComment'>
             <a href='#' id='iplus' onclick='ClassroomSwitchToAddComment(<?= $sessionId ?>); return false;'>
@@ -60,9 +69,10 @@ $(".right-side").css("top","5px");
         <?php } ?>
         <div id='ShowQuizDialog' qopenid="0"></div>
         <script>
+            session = <?php echo $sessionId; ?>;
             quizzes = new Array();
             takingQuiz = false;
-            ins = <?php echo $_SESSION['isInstructor']?"true":"false"; ?>;
+            ins = <?php echo $instructor?"true":"false"; ?>;
             $("#ShowQuizDialog").hide().dialog({
                     autoOpen: false,
                     buttons: { Close: function () { $(this).dialog("close"); } },
@@ -71,8 +81,8 @@ $(".right-side").css("top","5px");
                     show: { effect: "slide", duration: 200, direction: "down" },
                     modal: false,
                     resizable: false,
-                    draggable: false,
-                    position: { my: "right bottom", at: "right bottom", of: "#classroom" },
+                    draggable: true,
+                    position: { my: "center", at: "center", of: "body" },
                     width: 300,
                     title: "View a Questionnaire",
                     open: function () {
