@@ -214,39 +214,42 @@ function ValidateAddComment(sessionId)
 function ValidateAddQuiz(sessionId){
     var ERRMSG_EMPTY_FIELDS = "Something was left blank.";
 
-    var form = document.forms["formQuiz"];
-    var fields = form.elements;
+    var form = $("#AddQuizDialog");
+    var fields = form.find("input");
+    fields.push(form.find("textarea")[0]);
+    console.log(fields);
     var emptyFields;
     var options = new Array();
 
     // Check Required Fields
-    for (var i=0; i<form.length; i++){
+    for (var i=0; i<fields.length; i++){
+        console.log(fields[i].name);
         var fieldName = fields[i].name;
         var fieldValue = fields[i].value;
         
-        if (fieldValue == "")
+        if (fieldValue === ""){
+            console.log("yes");
             emptyFields = true;
+        }
     }
     
     // action
     if (emptyFields){
         var errorMsg = "";
-        if (emptyFields) errorMsg += ERRMSG_EMPTY_FIELDS;
+        errorMsg += ERRMSG_EMPTY_FIELDS;
         alert(errorMsg);
+        return false;
     }
     else{
         for(var i=2; i<12; i++){
-            var temp = $("form[name=formQuiz] input[name="+String.fromCharCode(95 + i)+"]").val();
+            var temp = $("#AddQuizDialog input[name="+String.fromCharCode(95 + i)+"]").val();
             if(temp && temp.trim()){
                 options.push(temp.trim());
             }
         }
-        addQuiz(sessionId, form.question.value, options.length, options, 1);
-        form.addbutton.disable = true;
-        ClassroomCancelAdd();
+        addQuiz(sessionId, form.find("textarea").val(), options.length, options, 1);
+        return true;
     }
-    
-    return false;
 }
 
 function MobValidateAddComment(sessionId)
@@ -411,32 +414,32 @@ function ClassroomAddQuiz (sessionId)
     addQuiz(sessionId, name, numOptions, open);
 }
 
-function UpdateQuizState ()
-{
+function UpdateQuizState (){
+
     var dialog = $("#ShowQuizDialog");
-    $.each(quizzes, function (i,q)
-    {
+    if(!ins && quizzes.length===0){ //No active quiz for student 
+        dialog.html("Quiz is closed!");
+        dialog.dialog("option","buttons",{ Close: function () {dialog.dialog("close");} });
+    }
+    console.log(quizzes);
+    console.log(quizzesAnswered);
+    $.each(quizzes, function (i,q){
         var id = q.form.id;
         var open = q.form.open;
         
-        // check if the quiz is open
-        if ( dialog.attr("qopenid") == id )
-        {
-            // if instructor just refresh the quiz dialog
-            if (ins)
+        if ( dialog.attr("qopenid") == id ){// check if the quiz is open
+            if (ins)// if instructor just refresh the quiz dialog
                 ShowQuiz(id);
-           
-           // if student, only refresh if quiz is closed
-            if (!ins && !open)
-            {
-                dialog.html("This questionnaire has been closed.");
-                dialog.dialog("option","buttons",{ Close: function () {dialog.dialog("close");} });
-            }
         }
+           // if student, only refresh if quiz is closed
+        if (!ins && !open){
+            dialog.html("Quiz is closed!");
+            dialog.dialog("option","buttons",{ Close: function () {dialog.dialog("close");} });
+        }
+
         
         // if student and there is an active quiz to take, pop it up (unless its been answered already)
-        if ( !ins && (dialog.attr("qopenid")==0) && open && ($.inArray(String(id),quizzesAnswered)==-1) )
-        {
+        if ( !ins && (dialog.attr("qopenid")==0) && open && ($.inArray(String(id),quizzesAnswered)==-1) ){
             ShowQuiz(id);
         }
         
@@ -492,7 +495,7 @@ function ShowQuiz (quiz)
         
         if (cChecked)
         {
-            html += "<br><p>Click on the right Answer:</p>";
+            html += "<br><span>Click on the right Answer:</span>";
             html += "<center><table id='showAnswers' cellspacing=0>";
             html += "<tr><th>Choice</th><th>Count</th><th>%</th></tr>";
             
@@ -517,6 +520,9 @@ function ShowQuiz (quiz)
         {
             html += "<br><p>"+ q.form.name +"<br><b>is active</b></p>";
             html += "<p>"+total+ (total==1?" has ":" have ")+"answered</p>";
+            buttons = {
+                
+            };
         }
         
         $("#ShowQuizDialog").html(html).dialog("option", "buttons", buttons);
@@ -535,18 +541,13 @@ function ShowQuiz (quiz)
         html += "<div>";
         
         for (var i=0; i<q.form.num_options; i++)
-            html += "<input id='rb"+i+"' answer="+(i+1)+" type='radio' name='quiz' /><label class='options' for='rb"+i+"' title="+options[i+1]+">"+options[i+1]+"</label>";
+            html += "<input id='rb"+i+"' answer="+(i+1)+" type='radio' name='quiz' /><label class='options' for='rb"+i+"' title="+options[i+1]+" onclick='addSubmit(\""+quiz+"\")'>"+options[i+1]+"</label>";
         
         html += "</div>";
         
         buttons = {
             Submit: function () {
-                var answer = $("#ShowQuizDialog :radio:checked").attr("answer");
-                SubmitQuizAnswer(answer,quiz);
-            },
-            Cancel: function () {
-                takingQuiz = false;
-                $("#ShowQuizDialog").dialog("close");
+                alert("You needt to select an option!");
             }
         };
         
@@ -563,11 +564,16 @@ function ShowQuiz (quiz)
             .dialog("open")
             .attr("qopenid",quiz);
     }
-    else
-    {
-        // reposition
-        //$("#ShowQuizDialog").dialog("option","position",{ my: "right bottom", at: "right bottom", of: "#classroom" });
-    }
+
+}
+function addSubmit(quiz){
+    var buttons = {
+            Submit: function () {
+                var answer = $("#ShowQuizDialog :radio:checked").attr("answer");
+                SubmitQuizAnswer(answer,quiz);
+            }
+        };
+    $("#ShowQuizDialog").dialog("option", "buttons", buttons);
 }
 function chooseCorrectAnswer(quizId, optionNumber, question, option){
     $(".clickable."+optionNumber).css("background", "green");
@@ -582,7 +588,7 @@ function chooseCorrectAnswer(quizId, optionNumber, question, option){
             sessionId: session
         },
         success: function () {
-            AddComment(question+"<br>"+option , session);
+            AddComment(question+"<br>Answer: "+option , session);
             takingQuiz = false;
             $("#ShowQuizDialog").dialog("close");
         },
@@ -630,7 +636,7 @@ function ClassroomSwitchToAddQuiz (sessionId){
 }
 
 function addOptions(){
-    var form = $("form[name=formQuiz]");
+    var form = $("#AddQuizDialog");
     var num = parseInt(form.find("select option:selected").first().text());
     form.find(".choises").empty();
     for(var i=1;i<num+1;i++){
@@ -686,7 +692,7 @@ function ClassroomShowOrHideComments (flagtype)
         {
             if (elems[i].style.display == "none" || elems[i].style.display == "")
             {
-                elems[i].style.display = "table-row";
+                elems[i].style.display = "list-item";
                 var h = $("#showOrHideBut"+flagtype+" a").html();
                 $("#showOrHideBut"+flagtype+" a").html(h.replace("Show","Hide"));
             }

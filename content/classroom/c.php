@@ -21,7 +21,7 @@ if ( isset($_POST['act']) )
         $comments = Dbase::GetCommentsFromSession($sessionId,$userId);
         $userrates = Dbase::GetCommentRatingsForUser($userId);
 
-        GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $mobile);
+        GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView,$mobile);
         break;
         
     case "add_rating":
@@ -240,7 +240,7 @@ function MakeFlagLinks ($commentId, $comments)
 }
 
 function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$mobile=false){
-    echo "<table>";
+    echo "<ul>";
     if ( $comments ) {
         foreach ($comments as $c){
             if ( $c["flag_id"] > 0 )
@@ -248,7 +248,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
 
             $newComment = isNewComment($c['time'])?"newComment":"";
              
-            echo "<tr><td class='control $newComment' style='width: 20px'>";
+            echo "<li><div class='control $newComment' style='width: 20px'>";
             
             // if comment owner
             if ($_SESSION['currentUserId'] == $c['user_id'] || $instructor)
@@ -271,17 +271,17 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
                 //echo "<p title='Comment Rating' class='prating'>$c[rating]</p>";
             }
             
-            echo "</td><td id='cid$c[id]'";
+            echo "</div><div id='cid$c[id]'";
             if ($mobile) echo " style='padding-left: 20px'";
             echo " class='$newComment'><p>$c[comment]</p>";
-            echo "</td>";
+            echo "</div>";
             if ($_SESSION['currentUserId'] == $c['user_id'])
             {
                 $mobString = $mobile?"true":"false";
                 $jsFunc = "function () {}";
                 $edits[] = "$(\"#cid$c[id] p\").click($jsFunc);";
             }
-            echo "</tr>";
+            echo "</li>";
         }
         
         foreach ($comments as $c)
@@ -298,12 +298,12 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             $addressed = null;
             if ($c["flag_id"]==4)   // hidden
             {
-                $html .= "<tr class='hiddenComment'><td class='control'>";
+                $html .= "<li class='hiddenComment'><div class='control'>";
                 $hidden = true;
             }
             else    // addressed
             {
-                $html .= "<tr class='addressedComment'><td class='control'>";
+                $html .= "<li class='addressedComment'><div class='control'>";
                 $addressed = true;
             }
             
@@ -321,7 +321,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             }
             
             $html .= "<center><p title='Comment Rating' class='prating'>$c[rating]</p></center>";
-            $html .= "</td><td><p>$c[comment]</p></td></tr>";
+            $html .= "</div><div><p>$c[comment]</p></div></li>";
             
             if ($hidden)    $hiddenComments[]    = $html;
             if ($addressed) $addressedComments[] = $html;
@@ -332,7 +332,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             $count = count($addressedComments);
             $initLinkText = "&lt;Show $count addressed comment".(($count>1)?"s":"")."&gt;";
             $jsCall = "ClassroomShowOrHideComments(\"addressed\")";
-            echo "<tr id='showOrHideButaddressed'><td colspan=2><a href='#' onclick='$jsCall; return false;'>$initLinkText</a></td></tr>";
+            echo "<li id='showOrHideButaddressed'><div colspan=2><a href='#' onclick='$jsCall; return false;'>$initLinkText</a></div></li>";
             foreach ($addressedComments as $c) echo $c;
         }
         
@@ -341,16 +341,16 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             $count = count($hiddenComments);
             $initLinkText = "&lt;Show $count hidden comment".(($count>1)?"s":"")."&gt;";
             $jsCall = "ClassroomShowOrHideComments(\"hidden\")";
-            echo "<tr id='showOrHideButhidden'><td colspan=2><a href='#' onclick='$jsCall; return false;'>$initLinkText</a></td></tr>";
+            echo "<li id='showOrHideButhidden'><div colspan=2><a href='#' onclick='$jsCall; return false;'>$initLinkText</a></div></li>";
             foreach ($hiddenComments as $c) echo $c;
         }
         
     }
 
     else 
-        echo "<tr><td colspan=2>No comments to display.</td></tr>";
+        echo "<li><div colspan=2>No comments to display</div></li>";
     
-    echo "</table>";
+    echo "</ul>";
     
     if ( isset($edits) )
     {

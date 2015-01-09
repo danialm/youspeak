@@ -60,12 +60,16 @@ form.hide { display: none }
 .loginEmail{
     text-align: right;
     background: #E5E5FF;
+    padding-right: 15px;
 }
 .inactive{
     opacity: 0.5;
 }
 .fa{
     margin-right: 0.3em;
+}
+.no-margin{
+    margin: 0;
 }
 .fa-trash-o{
     margin-right: 0;
@@ -115,8 +119,7 @@ div#content {
     height: auto;
     position: relative;
     background: #E5E5FF;
-    //border: 3px solid #061E45;
-    padding: 20px 50px;
+    padding: 3px 5px;
     font-size: 1em;
 }
 
@@ -198,7 +201,7 @@ span#quizLink a
     height: auto;
 }
 
-form[name="formQuiz"] span, form[name="formQuiz"] select{
+#AddQuizDialog span, #AddQuizDialog select{
     display: inline-block;
     margin: 0 5px 5px 0;
 }
@@ -440,36 +443,33 @@ span.addingPresents
 {
     background-color: rgb(255,200,0);
 }
-
-#commentTable table
-{
-    //table-layout: fixed;
+#commentTable{
+    padding: 1px;
+}
+#commentTable ul{
+    list-style-type: none;
     margin: 0;
+    padding: 0;
     width: 100%;
-    //border-top: 1px solid black;
-    border-collapse: collapse;
 }
-
-#commentTable table tr{
-    background: #E5FBFF;
+#commentTable ul li{
+    border: solid #BBBBBB 1px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    padding: 5px;
+    background: #FFFFFF;
 }
-#commentTable table tr:nth-child(2n){
-    background: #FAFAD9;
+#commentTable ul li>div{
+    display: table-cell;
 }
-
-#commentTable table td{
-    padding-bottom: 5px;
-}
-
-#commentTable table td.control{
+#commentTable ul li .control{
     width: 16px;
     padding-right: 12px;
-    border: none;
 }
 
-#commentTable p 
-{
+#commentTable p {
     word-wrap: break-word;
+    margin: 0;
 }
 #addComment{
     display: inline-block;
@@ -486,9 +486,9 @@ span.addingPresents
 }
 #ShowQuizDialog table#showAnswers
 {
-    width: 80%;
+    width: 100%;
     text-align: center;
-    margin-top: 20px;
+    //margin-top: 20px;
     border: 2px solid black;
     border-radius: 10px;
     overflow: hidden;
@@ -529,8 +529,7 @@ table#showAnswers tr td:first-child{
     display: inline;
 }
 
-tr.hiddenComment, tr.addressedComment
-{
+li.hiddenComment, li.addressedComment{
     display: none;
 }
 
@@ -643,7 +642,10 @@ EEEEFF
     body, #container{
         margin: 0 !important;
     }
-    #content{
-        padding: 10px!important;
+    #navigation{
+        background: #5c9ccc;
+    }
+    #navNav{
+        margin-bottom: 5px;
     }
 }

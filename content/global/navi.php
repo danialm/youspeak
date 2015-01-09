@@ -45,20 +45,19 @@ echo "<div id='navRight'>";
 
 
 
-if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){ 
-// This is moved to classroom view. DM 12/16/2014    
-//    echo "
-//        <span id='quizLink'>
-//            <a href='#' id='iplus' 
-//                    onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
-//        </span>
-//    ";//style='padding-left: 16px;' class='icons'
+if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){   
     echo "
-        <span id='studentView'>
-            <a href='#' id='iplus' 
-                    onclick='FormIt({act:\"changeView\"},\"".Page::getRealURL("Classroom")."\"); return false;'><i class='fa fa-paint-brush fa-lg'></i></a>
+        <span id='quizLink'>
+            <a href='#' 
+                    onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
         </span>
-    ";//style='padding-left: 16px;' class='icons'
+    ";
+    echo "
+        <span id='studentView' title='Student View'>
+            <a href='#' 
+                    onclick='FormIt({act:\"changeView\"},\"".Page::getRealURL("Classroom")."\"); return false;'><i class='fa fa-binoculars fa-lg'></i></a>
+        </span>
+    ";
 }
 
 if ( $thisPage == "Courses" && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'] )
@@ -87,13 +86,13 @@ if ( isset($_SESSION['currentUserId']) || isset($_SESSION['newUserId']) )
     echo "<span id='logoutLink' class='right-side'>";
     echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\"); return false;'>";
     //echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\");'>";
-    echo '<i class="fa fa-sign-out fa-lg" title="Logout"></i></a></span>';
+    echo '<i class="fa fa-sign-out fa-lg no-margin" title="Logout"></i></a></span>';
 }
 
 if ($thisPage != "About" ){
     echo "
         <span class='right-side' id='aboutLink'>
-            <a href='".Page::getRealURL("About")."'><i class='fa fa-info fa-lg' title='About Us'></i></a>
+            <a href='".Page::getRealURL("About")."'><i class='fa fa-info fa-lg no-margin' title='About Us'></i></a>
         </span>
     ";
 }

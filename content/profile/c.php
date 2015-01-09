@@ -46,11 +46,7 @@ if (isset($_POST['act'])){
         }
         
         if($user['role_code'] != 'in'){
-            if ($studentid == ""){
-                if ($errMsg != "") $errMsg .= "<br />";
-                $errMsg .= $ERRMSG_EMPTY_STUDENTID;
-                $studentidBad = true;
-            }elseif (!preg_match("/^[0-9]{9}$/", $studentid)){
+            if ($studentid !== "" && !preg_match("/^[0-9]{9}$/", $studentid)){
                 if ($errMsg != "") $errMsg .= "<br />";
                 $errMsg .= $ERRMSG_NOT_MATCH_STUDENTID;
                 $studentidBad = true;

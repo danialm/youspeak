@@ -924,7 +924,6 @@ class Dbase
     public static function requiredFields($user){
         if(!isset($user['firstname']) || $user['firstname'] == '')  return false;
         if(!isset($user['lastname'] ) || $user['lastname']  == '')  return false;
-        if(($user['role_code'] != "in") && (!isset($user['studentid']) || $user['studentid'] == '' || !preg_match("/^[0-9]{9}$/", $user['studentid'])))  return false;
         if(!isset($user['institute']) || $user['institute'] == '')  return false;
         if(!isset($user['email']    ) || $user['email']     == '')  return false;
         
@@ -936,6 +935,8 @@ class Dbase
         if(!self::requiredFields($user))
             return false;
         if($user['role_code'] != "in"){
+            if((!isset($user['studentid']) || $user['studentid'] == '' || !preg_match("/^[0-9]{9}$/", $user['studentid'])))  
+                return false;
             if(!isset($user['major']) || $user['major'] == '')
                 return false;
             if(!isset($user['gpa']) || $user['gpa'] == '')

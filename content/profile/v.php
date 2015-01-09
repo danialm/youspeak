@@ -60,11 +60,6 @@ global $allfields;
             <label for='lastName'>Last Name</label>
             <input type='text' name='lastname' id='lastName' placeholder='Last Name' value='<?= $lastname ?>' /><br />
             
-            <?php if (!$instructor) { ?>
-            <label for='studentId'>Student ID</label>
-            <input type='text' name='studentid' id='studentId' placeholder='9 digits' value='<?= preg_match("/^[0-9]{9}$/", $studentid) ? $studentid : "" ?>'  /><br />
-            <?php }?>
-            
             <label for='email'>E-mail</label>
             <input type='email' name='email' id='email' placeholder='E-mail' value='<?= $email ?>' /><br />
 
@@ -94,6 +89,8 @@ global $allfields;
                 <legend>Academic Info (optional)</legend>
 
 
+                <label for='studentId'>Student ID</label>
+                <input type='text' name='studentid' id='studentId' placeholder='9 digits' value='<?= preg_match("/^[0-9]{9}$/", $studentid) ? $studentid : "" ?>'  /><br />
 
                 <label for='major'>Major</label>
                 <input type='text' name='major' id='major' placeholder='Major' value='<?php echo $major; ?>' /><br>
