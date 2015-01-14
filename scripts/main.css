@@ -71,9 +71,9 @@ form.hide { display: none }
 .no-margin{
     margin: 0;
 }
-.fa-trash-o{
+/*.fa-trash-o{
     margin-right: 0;
-}
+}*/
 .clickable, .clickable *{
     cursor: pointer;
 }
@@ -343,7 +343,20 @@ form #formError
     padding: 5px;
     background-color: white;
 }
-
+#join ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#join ul li{
+    margin-bottom: 5px;
+}
+#join a{
+    color: #697C9B;
+}
+#join a:hover {
+    color: #293956;
+}
 #classroom
 {
     position: relative;
@@ -459,14 +472,17 @@ span.addingPresents
     padding: 5px;
     background: #FFFFFF;
 }
+#commentTable ul.indent{
+    margin-left: 5%;
+    width: 95%;
+}
 #commentTable ul li>div{
     display: table-cell;
 }
-#commentTable ul li .control{
-    width: 16px;
+#commentTable ul li>div.control{
+    width: 20px;
     padding-right: 12px;
 }
-
 #commentTable p {
     word-wrap: break-word;
     margin: 0;
@@ -524,13 +540,18 @@ table#showAnswers tr td:first-child{
 #ShowQuizDialog table#showAnswers tr { background-color: #AFEFFF; }
 #ShowQuizDialog table#showAnswers tr:nth-child(odd)  { background-color: #6FB8EE; }
 
-#userComments form
-{
-    display: inline;
+#reply textarea{
+    width: 98%;
 }
 
 li.hiddenComment, li.addressedComment{
-    display: none;
+    //display: none;
+}
+#showOrHideButaddressed, li.addressedComment{
+    background: #BBFFBB url("../images/check.png") right center no-repeat !important;    
+}
+#showOrHideButhidden, li.hiddenComment{
+    background-color: #FFD8D8 !important;
 }
 
 .icons

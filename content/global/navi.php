@@ -81,20 +81,20 @@ if ( $logged && $thisPage != "Profile" )
     echo "</a></span>";
 }
 
-if ( isset($_SESSION['currentUserId']) || isset($_SESSION['newUserId']) )
-{
-    echo "<span id='logoutLink' class='right-side'>";
-    echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\"); return false;'>";
-    //echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\");'>";
-    echo '<i class="fa fa-sign-out fa-lg no-margin" title="Logout"></i></a></span>';
-}
-
 if ($thisPage != "About" ){
     echo "
         <span class='right-side' id='aboutLink'>
             <a href='".Page::getRealURL("About")."'><i class='fa fa-info fa-lg no-margin' title='About Us'></i></a>
         </span>
     ";
+}
+
+if ( isset($_SESSION['currentUserId']) || isset($_SESSION['newUserId']) )
+{
+    echo "<span id='logoutLink' class='right-side'>";
+    echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\"); return false;'>";
+    //echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\");'>";
+    echo '<i class="fa fa-sign-out fa-lg no-margin" title="Logout"></i></a></span>';
 }
     
 echo "</div>";

@@ -217,18 +217,15 @@ function ValidateAddQuiz(sessionId){
     var form = $("#AddQuizDialog");
     var fields = form.find("input");
     fields.push(form.find("textarea")[0]);
-    console.log(fields);
     var emptyFields;
     var options = new Array();
 
     // Check Required Fields
     for (var i=0; i<fields.length; i++){
-        console.log(fields[i].name);
         var fieldName = fields[i].name;
         var fieldValue = fields[i].value;
         
         if (fieldValue === ""){
-            console.log("yes");
             emptyFields = true;
         }
     }
@@ -421,8 +418,6 @@ function UpdateQuizState (){
         dialog.html("Quiz is closed!");
         dialog.dialog("option","buttons",{ Close: function () {dialog.dialog("close");} });
     }
-    console.log(quizzes);
-    console.log(quizzesAnswered);
     $.each(quizzes, function (i,q){
         var id = q.form.id;
         var open = q.form.open;
@@ -512,6 +507,14 @@ function ShowQuiz (quiz)
             buttons = {
                 Close: function () {
                     takingQuiz = false;
+                    var text = "Options: ";
+                    for(var i=0; i < q.form.num_options-1 ; i++){
+                        text += 
+                        text += options[i+1];
+                        text += " -- ";
+                    }
+                    text += options[q.form.num_options];
+                    AddComment(q['form']['name']+"<br><br>"+text , session);
                     $("#ShowQuizDialog").dialog("close");
                 }
             };
@@ -588,7 +591,7 @@ function chooseCorrectAnswer(quizId, optionNumber, question, option){
             sessionId: session
         },
         success: function () {
-            AddComment(question+"<br>Answer: "+option , session);
+            AddComment(question+"<br><br>Answer: "+option , session);
             takingQuiz = false;
             $("#ShowQuizDialog").dialog("close");
         },
@@ -895,12 +898,13 @@ function URLSafe (str)
     return newStr;
 }
 
-function AddComment (comment, sessionId, mobile)
+function AddComment (comment, sessionId, parrentId)
 {
     var vars = {
         act: "add_comment",
         comment: comment,
-        sessionId: sessionId
+        sessionId: sessionId,
+        parrentId: parrentId
     };
     var url = NO_REWRITE?"?p=Classroom":"Classroom";
     $.post(url,vars,function(){window.UpdateCommentsEvent();});
@@ -983,4 +987,106 @@ function toggleAddSessionForm(courseId){
 function toggleEditCourseForm(courseId){
     $('.course'+courseId).toggle();
     return false;
+}
+function ClassroomReply(id){
+    var html = "<textarea name='comment' value=''></textarea>";
+    if(id){
+        var buttons = {
+            Reply: function(){
+                var comment = $(this).find('textarea').val();
+                if(comment && comment.trim() !== ""){
+                    comment = comment.trim();
+                    AddComment(comment, session, id);
+                    $(this).dialog('close');
+                }else{
+                    alert("The textfiled was left blank!");
+                }
+            },
+            Cancel: function () { 
+                $(this).dialog("close");
+                $("reply").html("");
+            }
+        };
+    }else{
+        var buttons = {
+            Send: function(){
+                var comment = $(this).find('textarea').val();
+                if(comment && comment.trim() !== ""){
+                    comment = comment.trim();
+                    AddComment(comment, session);
+                    $(this).dialog('close');
+                }else{
+                    alert("The textfiled was left blank!");
+                }
+            },
+            Cancel: function () { 
+                $(this).dialog("close");
+                $("reply").html("");
+            }
+        };
+
+    }
+    $("#reply").dialog("option", "title", id ? "Reply" : "Comment");
+    $("#reply").dialog("option", "buttons", buttons);
+    $("#reply").html(html).dialog("open");
+}
+function openJoinACourse(){
+    var html = "<ul>";
+    for (var i=0; i<joinCourseList.length; i++){
+        var profCourse = joinCourseList[i];
+        html += "<li><a href='#' onClick='goToCourses(";
+        html += i;
+        html += "); return false;'>";
+        html += profCourse[0];
+        html += "</a></li>";
+    }
+    html +="</ui>";
+    var buttons = {
+        Cancel: function () { 
+            $(this).dialog("close");
+            $("join").html("");
+        }
+    };
+    $("#join").dialog("option", "title", "Instructors");
+    $("#join").dialog("option", "buttons", buttons);
+    $("#join").html(html).dialog("open");
+}
+function goToCourses(i){
+    var courses = joinCourseList[i];
+    var html = "<ul>";
+    for (var j=1; j<courses.length; j++){
+        var course = courses[j];
+        html += "<li><a href='#' onClick='joinDialog(";
+        html += course["id"];
+        html += ", \"";
+        html += course["title"];
+        html += "\"); return false;'>";
+        html += course["title"];
+        html += "</a></li>";
+    }
+    html +="</ui>";
+    var buttons = {
+        Cancel: function () { 
+            $(this).dialog("close");
+            $("join").html("");
+        }
+    };
+    $("#join").dialog("option", "title", courses[0]+" Courses");
+    $("#join").dialog("option", "buttons", buttons);
+    $("#join").html(html).dialog("open");
+}
+function joinDialog (c,title){
+    var html = "<br><p>"+"Join "+title+"?</p>";
+    var buttons = {
+            Yes: function () {
+                FormIt({act:"join_course",u:userId,c:c}, URL);
+            },
+            No:  function () {
+                $(this).dialog("close");
+                $(this).html("");
+            }
+    };
+    $("#join").dialog("option", "title", "Confirm");
+    $("#join").dialog("option", "buttons", buttons);
+    $("#join").html(html).dialog("open");
 }

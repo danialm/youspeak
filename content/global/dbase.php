@@ -376,23 +376,31 @@ class Dbase
         return self::SelectFromWhere($select,$from);
     }
     
-    public static function GetCommentsFromSession ($sessionId)
-    {
-        $select = "c.id,c.user_id,c.time,c.comment,c.flag_id,IFNULL(SUM(r.rating),0) as rating";
-        $from = "comments c";
-        $from = $from . " LEFT JOIN comment_ratings r ON c.id = r.comment_id";
-        $where = "c.session_id=$sessionId";
-        $where = $where . " GROUP BY c.id";
-        $where = $where . " ORDER BY rating DESC";
-        
+    public static function GetCommentsFromSessionForParent ($sessionId, $parentId = NULL){
+        $select = "c.id,c.user_id,c.time,c.comment,c.flag_id, IFNULL(c.parent_id,0) as parent_id,IFNULL(SUM(r.rating),0) as rating";
+        $from   = "comments c ";
+        $from  .= "LEFT JOIN comment_ratings r ON c.id = r.comment_id";
+        $where  = "c.session_id=$sessionId AND c.parent_id";
+        $where .= $parentId === null ? " IS NULL " : "=$parentId ";
+        $where .= "GROUP BY c.id ";
+        $where .= "ORDER BY rating DESC";
         $res = self::SelectFromWhere($select,$from,$where);
         $comments = null;
-        
         if ( $res )
         foreach ($res as $c)
             $comments[$c['id']] = $c;
         
         return $comments;
+    }
+    public static function GetCommentsFromSession ($sessionId)
+    {
+        $parents = self::GetCommentsFromSessionForParent($sessionId);
+        $out = array();
+        foreach($parents as $par){
+            $par['children'] = self::GetCommentsFromSessionForParent($sessionId, $par['id']);
+            array_push($out, $par);
+        }
+        return $out;
     }
     
     public static function GetCommentRatingsForUser ($userId)
@@ -559,6 +567,13 @@ class Dbase
         return self::InsertInto($table,$fields,$values);
     }
      
+    public static function RemoveUserFromCourse($userId, $courseId){
+        if(self::GetUserRoleInCourse($userId, $courseId) === "in")
+                return false;
+        
+	return self::Query("DELETE FROM enrollment WHERE course_id = $courseId AND user_id= $userId");
+    }
+     
     public static function AddSession ($courseId,$unixtime)
     {
         $table = "sessions";
@@ -604,12 +619,13 @@ class Dbase
         self::Query("DELETE FROM presentations WHERE id = $presentId");
     }
      
-    public static function AddComment ($sessionId, $userId, $comment)
+    public static function AddComment ($sessionId, $userId, $comment, $parentId = null)
     {
         $table = "comments";
-        $fields = "id, session_id, user_id, time, comment, flag_id";
-        $values = "DEFAULT, $sessionId, $userId, NOW(), '$comment', DEFAULT";
-        
+        $fields = "id, session_id, user_id, time, comment, flag_id, parent_id";
+        $values = "DEFAULT, $sessionId, $userId, NOW(), '$comment', DEFAULT, ";
+        $values.= $parentId ? $parentId : "NULL";
+
         return self::InsertInto($table,$fields,$values);
     }
     
@@ -690,7 +706,7 @@ class Dbase
     
     public static function FlagComment ($commentId, $flagId)
     {
-        $query = "UPDATE comments SET flag_id=$flagId WHERE id=$commentId";
+        $query = "UPDATE comments SET flag_id=$flagId WHERE id=$commentId";// OR parent_id=$commentId" ;
         
         return self::Query($query);
     }
@@ -837,9 +853,10 @@ class Dbase
         
         $q = "
             SELECT
-                c.id, c.title, u.firstname, u.lastname, u.id as user_id
+                c.id, c.title, c.year, t.term_name ,u.firstname, u.lastname, u.id as user_id
             FROM enrollment e
             RIGHT JOIN courses c ON c.id = e.course_id
+            RIGHT JOIN ref_term t ON c.term_code = t.code
             RIGHT JOIN users u ON u.id = e.user_id
             WHERE e.role_code = 'in' AND c.active=1 AND e.user_id <> $id
         ";
@@ -847,7 +864,7 @@ class Dbase
         $q = self::Query($q);
         while ($r = mysql_fetch_assoc($q)){
             $i = $r['id'];
-            $t = $r['title'];
+            $t = $r['title'] . " (" . $r['term_name'] . " " .$r["year"] . ")";
             $f = $r['firstname'];
             $l = self::Decrypt($r['lastname']);
             $u = $r['user_id'];

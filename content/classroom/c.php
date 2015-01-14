@@ -45,7 +45,10 @@ if ( isset($_POST['act']) )
         if ($commentId > 0)
             Dbase::EditComment($commentId, $comment);
         else
-            Dbase::AddComment($sessionId, $userId, $comment);
+            if ($parrentId)
+                Dbase::AddComment($sessionId, $userId, $comment, $parrentId);
+            else
+                Dbase::AddComment($sessionId, $userId, $comment);
 
         break;        
         
@@ -195,15 +198,14 @@ function MakeRateLinks ($commentId,$rating,$rates,$studentView,$mobile=false)
     return $html;
 }
 
-function MakeFlagLinks ($commentId, $comments)
+function MakeFlagLinks ($commentId, $flagId)
 {
     $NOFLAG_ID = 0;
     $ADDRESS_ID = 3;
     $HIDE_ID = 4;
     
-    $flagId = $comments[$commentId]['flag_id'];
+    //$flagId = $comments[$commentId]['flag_id'];
     $html = "";
- 
     if ($flagId == $NOFLAG_ID){
         $html .= "<a title='Address'";
         $html .= " href='#' id='iaddress'";//class='icons'
@@ -214,7 +216,7 @@ function MakeFlagLinks ($commentId, $comments)
         $html .= "<a title='Hide'";
         $html .= " href='#' id='ihide'";//class='icons'
         $html .= " onclick='FlagComment($commentId,$HIDE_ID); return false;'>";
-        $html .= '<i class="fa fa-toggle-on"></i>';
+        $html .= '<i class="fa fa-toggle-off"></i>';
         $html .= "</a>";
     }else{ // Can be $ADDRESS_ID && $HIDE_ID
         $html .= "<a title='Restore'";
@@ -223,32 +225,37 @@ function MakeFlagLinks ($commentId, $comments)
         $html .= "'";//class='icons'
         $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
         $html .= "<i class='fa fa-";
-        $html .= $flagId == $ADDRESS_ID ? "comment" : ($flagId == $HIDE_ID  ? "toggle-off" : "");
+        $html .= $flagId == $ADDRESS_ID ? "comment" : ($flagId == $HIDE_ID  ? "toggle-on" : "");
         $html .= "'></i>";
         $html .= "</a>";
     }
     
-//    elseif ($flagId == $HIDE_ID)
-//    {
-//        $html .= "<a title='Restore'";
-//        $html .= " href='#'  id='ireshide'";//class='icons'
-//        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
-//        $html .= '<i class="fa fa-toggle-off"></i>';
-//        $html .= "</a>";
-//    }
     return $html;
 }
 
-function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$mobile=false){
-    echo "<ul>";
+function MakeReplyLink($id){
+    $html =   "<span title='Reply' id='reply$id'>";
+    $html.=   "<a href='#' id='iplus' onclick='ClassroomReply($id); return false;'>";
+    $html.=   "<i class='fa fa-reply green'></i></a></span>";
+    
+    return $html;
+}
+
+function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$indent=false,$mobile=false){
+    $ulClass = $indent ? "indent": "";
+    
+    echo "<ul class='$ulClass'>";
     if ( $comments ) {
         foreach ($comments as $c){
-            if ( $c["flag_id"] > 0 )
+            //if ( $c["flag_id"] > 0 )
+                //continue;
+            if (!$instructor && $c["flag_id"]==4)//Hidden comments not shown for non-instructor
                 continue;
-
-            $newComment = isNewComment($c['time'])?"newComment":"";
-             
-            echo "<li><div class='control $newComment' style='width: 20px'>";
+            
+            $newComment = isNewComment($c['time'])? "newComment" : "";
+            $liClass = $c["flag_id"]==4 ? "hiddenComment" : ($c["flag_id"]==3 ? "addressedComment" : "");
+            //var_dump($liClass);
+            echo "<li class='$liClass'><div class='control $newComment' >";
             
             // if comment owner
             if ($_SESSION['currentUserId'] == $c['user_id'] || $instructor)
@@ -266,9 +273,11 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             
             if ($instructor)
             {
-                $flagLinks = MakeFlagLinks($c["id"],$comments);
+                $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
                 echo "$flagLinks ";
-                //echo "<p title='Comment Rating' class='prating'>$c[rating]</p>";
+            }
+            if ($c['parent_id'] === "0"){
+                echo MakeReplyLink($c['id']);
             }
             
             echo "</div><div id='cid$c[id]'";
@@ -282,11 +291,12 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
                 $edits[] = "$(\"#cid$c[id] p\").click($jsFunc);";
             }
             echo "</li>";
+            if($c['children'] && count($c['children'])>0)
+                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$studentView,true,$mobile=false);
         }
         
-        foreach ($comments as $c)
-        {
-            if ($c["flag_id"] == 0)
+        foreach ($comments as $c){
+            //if ($c["flag_id"] == 0)
                 continue;
             
             if (!$instructor && ($c["flag_id"]!=3) )   // flag_id==3 means it was addressed
@@ -296,19 +306,17 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             $html = "";
             $hidden = null;
             $addressed = null;
-            if ($c["flag_id"]==4)   // hidden
-            {
-                $html .= "<li class='hiddenComment'><div class='control'>";
+            
+            if ($c["flag_id"]==4){   // hidden
+                $html .= "<li class='$class hiddenComment'><div class='control'>";
                 $hidden = true;
-            }
-            else    // addressed
-            {
-                $html .= "<li class='addressedComment'><div class='control'>";
+            }else{    // addressed
+                $html .= "<li class='$class addressedComment'><div class='control'>";
                 $addressed = true;
             }
             
             // if comment owner
-            if ($_SESSION['currentUserId'] == $c['user_id'])
+            if ($c['flag_id'] != 3 && ($_SESSION['currentUserId'] == $c['user_id'] || $instructor))// Addressed comment not be deleted
             {
                 $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
                 $html .= "$removeLink";
@@ -316,7 +324,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             
             if ($instructor)
             {
-                $flagLinks = MakeFlagLinks($c["id"],$comments);
+                $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
                 $html .= "$flagLinks ";
             }
             
@@ -325,6 +333,9 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             
             if ($hidden)    $hiddenComments[]    = $html;
             if ($addressed) $addressedComments[] = $html;
+            
+            if($c['children'] && count($c['children'])>0)
+                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$studentView,$mobile=false);
         }
         
         if ( isset($addressedComments) )

@@ -32,7 +32,7 @@ window.UpdateCommentsEvent = function (){
     UpdateSessionComments( <?php echo $sessionId; ?> );
     getQuizzes(<?php echo $sessionId; ?>);
 };
-var updateCommentsEvent = setInterval(UpdateCommentsEvent,20000);
+var updateCommentsEvent = setInterval(UpdateCommentsEvent,1000);
 
 $(".right-side").css("top","5px");
 </script>
@@ -54,7 +54,7 @@ $(".right-side").css("top","5px");
             <?php GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView); ?>
         </div>
         <div id='addComment'>
-            <a href='#' id='iplus' onclick='ClassroomSwitchToAddComment(<?= $sessionId ?>); return false;'>
+            <a href='#' id='iplus' onclick='ClassroomReply(); return false;'>
                 <i class="fa fa-plus green"></i>Comment</a>
         </div>
         
@@ -75,7 +75,7 @@ $(".right-side").css("top","5px");
                     modal: false,
                     resizable: false,
                     draggable: true,
-                    position: { my: "center", at: "center", of: "body" },
+                    position: { my: "top", at: "top", of: "#classroom" },
                     width: 300,
                     title: "View a Questionnaire",
                     open: function () {
@@ -127,10 +127,26 @@ $(".right-side").css("top","5px");
                 modal: false,
                 resizable: false,
                 draggable: true,
-                position: { my: "center", at: "center", of: "body" },
+                position: { my: "top", at: "top", of: "#classroom" },
                 width: 300,
                 title: "Add a Questionnaire"
         });
         $("#AddQuizDialog div").buttonset();
+    </script>
+    <div id="reply"></div>
+    <script>
+        $("#reply").hide()
+            .dialog({
+                autoOpen: false,
+                dialogClass: "no-close-button",
+                hide: { effect: "slide", duration: 200, direction: "down" },
+                show: { effect: "slide", duration: 200, direction: "down" },
+                modal: false,
+                resizable: false,
+                draggable: true,
+                position: { my: "top", at: "top", of: "#classroom" },
+                width: 300,
+                title: "Reply"
+        });
     </script>
 </div><!-- classroom -->
