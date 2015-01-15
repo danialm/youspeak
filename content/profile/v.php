@@ -124,13 +124,13 @@ global $allfields;
 
                 <label for="gender">Gender:</label>
                 <span class="radio"><input type='radio' name='gender' value='male' id='smale' <?php if ($sex == "male") echo "checked"; ?> />
-                <label for='smale'>Male</label>
+                <label for='smale' class='smaller'>Male</label>
 
                 <input type='radio' name='gender' value='female' id='sfemale' <?php if ($sex == "female") echo "checked"; ?> />
-                <label for='sfemale'>Female</label>
+                <label for='sfemale' class='smaller'>Female</label>
 
                 <input type='radio' name='gender' value='unspecified' id='snone' <?php if ($sex == "unspecified") echo "checked"; ?> />
-                <label for='snone'>Don't Specify</label></span><br>
+                <label for='snone' class='smaller'>Don't Specify</label></span><br>
 
                 <label for='race'>Ethnicity</label>
                 <input type='text' name='race' id='race' placeholder='Ethnicity' value='<?php echo $race; ?>' /><br>
@@ -140,13 +140,13 @@ global $allfields;
 
                 <label for="have-disa">Do you have any disabilities?</label>
                 <span class="radio"><input type='radio' name='have_disa' id='haveDisaYes' value='yes' onchange='DisaShow(this)' <?php if ($haveDisa == "yes") echo "checked"; ?> />
-                <label for='haveDisaYes'>Yes</label>
+                <label for='haveDisaYes' class='smaller'>Yes</label>
 
                 <input type='radio' name='have_disa' id='haveDisaNo' value='no' onchange='DisaShow(this)' <?php if ($haveDisa == "no") echo "checked"; ?> />
-                <label for='haveDisaNo'>No</label>
+                <label for='haveDisaNo' class='smaller'>No</label>
 
                 <input type='radio' name='have_disa' id='haveDisaNone' value='unspecified' onchange='DisaShow(this)' <?php if ($haveDisa == "unspecified") echo "checked"; ?> />
-                <label for='haveDisaNone'>Don't Specify</label></span><br>
+                <label for='haveDisaNone' class='smaller'>Don't Specify</label></span><br>
 
                 <textarea <?= $haveDisa == "yes" ? "" : "disabled" ?> name='disability' placeholder='Briefly describe your disability.'><?php if ($haveDisa == "yes") echo $disability; ?></textarea>
 

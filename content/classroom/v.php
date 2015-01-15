@@ -20,21 +20,37 @@ $instructor = $instructor && !$studentView;
 <?php if(!$instructor){?>
     $(document).ready(function(){
         $('#quizLink').hide();
-        $('#studentView').attr('title', 'Back to instructor view');
-        $('#studentView a').attr('style', 'color: #7E7E7E; text-shadow: 0px 0px 4px white');
+        <?php if(isset($_SESSION['studentView']) && $_SESSION['studentView']){ ?>
+            $('#studentView').attr('title', 'Back to instructor view');
+            $('#studentView a').attr('style', 'color: #7E7E7E; text-shadow: 0px 0px 4px white');
+        <?php }else{?>
+            $('#studentView').hide();
+        <?php }?>
     });
 <?php } ?>
 var quizzesAnswered = <?= json_encode($quizzesAnswered) ?>;
-
+var width = $(window).width();
+$( window ).resize(function(){
+    width = $(window).width();
+});
 window.hideaddressedComments = true;
 window.hidehiddenComments = true;
 window.UpdateCommentsEvent = function (){
-    UpdateSessionComments( <?php echo $sessionId; ?> );
+    UpdateSessionComments( <?php echo $sessionId; ?>, width );
     getQuizzes(<?php echo $sessionId; ?>);
 };
+UpdateCommentsEvent;
 var updateCommentsEvent = setInterval(UpdateCommentsEvent,1000);
 
+setInterval(console.log('test'),300);
+
 $(".right-side").css("top","5px");
+
+//var setSize = function(){
+//    var width = $(window).width()-80;
+//    $('#commentTable ul li div:nth-child(2) p').width(width).show();
+//};
+//setSize = setInterval(setSize,1);
 </script>
 <style> body { background-color: black; background-image: none; } </style>
 
@@ -51,7 +67,7 @@ $(".right-side").css("top","5px");
     <div id="userComments" class='ui-widget ui-widget-content'>
 
         <div id='commentTable'>
-            <?php GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView); ?>
+            <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView, false, false, false); ?>
         </div>
         <div id='addComment'>
             <a href='#' id='iplus' onclick='ClassroomReply(); return false;'>

@@ -21,7 +21,7 @@ if ( isset($_POST['act']) )
         $comments = Dbase::GetCommentsFromSession($sessionId,$userId);
         $userrates = Dbase::GetCommentRatingsForUser($userId);
 
-        GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView,$mobile);
+        GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView, $width, false, false);
         break;
         
     case "add_rating":
@@ -219,7 +219,9 @@ function MakeFlagLinks ($commentId, $flagId)
         $html .= '<i class="fa fa-toggle-off"></i>';
         $html .= "</a>";
     }else{ // Can be $ADDRESS_ID && $HIDE_ID
-        $html .= "<a title='Restore'";
+        $html .= "<a title='";
+        $html .= $flagId == $ADDRESS_ID ? "Unaddress" : ($flagId == $HIDE_ID  ? "Unhide" : "");;
+        $html .= "'";
         $html .= " href='#' id='"; 
         $html .= $flagId == $ADDRESS_ID ? "iresaddr" : ($flagId == $HIDE_ID  ? "ireshide" : "");
         $html .= "'";//class='icons'
@@ -241,9 +243,9 @@ function MakeReplyLink($id){
     return $html;
 }
 
-function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$indent=false,$mobile=false){
+function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$width=false,$indent=false,$mobile=false){
     $ulClass = $indent ? "indent": "";
-    
+    $pStyle = $width ? ( $indent ? "width:".($width*0.95-80)."px" : "width:".($width-80)."px") : "display: none";
     echo "<ul class='$ulClass'>";
     if ( $comments ) {
         foreach ($comments as $c){
@@ -284,7 +286,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             
             echo "</div><div id='cid$c[id]'";
             if ($mobile) echo " style='padding-left: 20px'";
-            echo " class='$newComment'><p>$c[comment]</p>";
+            echo " class='$newComment'><p style='$pStyle'>$c[comment]</p>";
             echo "</div>";
             if ($_SESSION['currentUserId'] == $c['user_id'])
             {
@@ -294,50 +296,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             }
             echo "</li>";
             if($c['children'] && count($c['children'])>0)
-                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$studentView,true,$mobile=false);
-        }
-        
-        foreach ($comments as $c){
-            //if ($c["flag_id"] == 0)
-                continue;
-            
-            if (!$instructor && ($c["flag_id"]!=3) )   // flag_id==3 means it was addressed
-                continue;                              // by instructor meaning students
-                                                       // still have accesss to it
-            
-            $html = "";
-            $hidden = null;
-            $addressed = null;
-            
-            if ($c["flag_id"]==4){   // hidden
-                $html .= "<li class='$class hiddenComment'><div class='control'>";
-                $hidden = true;
-            }else{    // addressed
-                $html .= "<li class='$class addressedComment'><div class='control'>";
-                $addressed = true;
-            }
-            
-            // if comment owner
-            if ($c['flag_id'] != 3 && ($_SESSION['currentUserId'] == $c['user_id'] || $instructor))// Addressed comment not be deleted
-            {
-                $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
-                $html .= "$removeLink";
-            }
-            
-            if ($instructor)
-            {
-                $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
-                $html .= "$flagLinks ";
-            }
-            
-            $html .= "<center><p title='Comment Rating' class='prating'>$c[rating]</p></center>";
-            $html .= "</div><div><p>$c[comment]</p></div></li>";
-            
-            if ($hidden)    $hiddenComments[]    = $html;
-            if ($addressed) $addressedComments[] = $html;
-            
-            if($c['children'] && count($c['children'])>0)
-                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$studentView,$mobile=false);
+                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$studentView,$width,true,false);
         }
         
         if ( isset($addressedComments) )
@@ -372,6 +331,8 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             echo "$e ";
         echo "};$(document).ready(EditsWhenReady());</script>";
     }
+
+
 }
 
 ?>

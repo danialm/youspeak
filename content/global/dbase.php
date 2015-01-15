@@ -641,6 +641,7 @@ class Dbase
     public static function RemoveComment ($commentId)
     {
         self::Query("DELETE FROM comments WHERE id = $commentId");
+        self::Query("UPDATE comments SET parent_id = DEFAULT WHERE parent_id = $commentId");
 	self::Query("DELETE FROM comment_ratings WHERE comment_id = $commentId");
     }
     

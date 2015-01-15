@@ -458,6 +458,20 @@ span.addingPresents
 }
 #commentTable{
     padding: 1px;
+    -webkit-animation: slide 2s; /* Chrome, Safari, Opera */
+    animation: slide 2s;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes slide {
+    from { opacity: 0;}
+    to { opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes slide {
+    from { opacity: 0;}
+    to { opacity: 1;}
 }
 #commentTable ul{
     list-style-type: none;
@@ -471,6 +485,9 @@ span.addingPresents
     margin-bottom: 2px;
     padding: 5px;
     background: #FFFFFF;
+}
+#commentTable ul li div:nth-child(2) p{
+    //display: none;
 }
 #commentTable ul.indent{
     margin-left: 5%;
@@ -657,6 +674,9 @@ EEEEFF
     form.bordered{
         border: none;
         padding: 0;
+    }
+    label.smaller{
+        font-size: 15px;
     }
 }
 @media screen and (max-width: 600px){

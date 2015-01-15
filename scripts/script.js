@@ -509,7 +509,6 @@ function ShowQuiz (quiz)
                     takingQuiz = false;
                     var text = "Options: ";
                     for(var i=0; i < q.form.num_options-1 ; i++){
-                        text += 
                         text += options[i+1];
                         text += " -- ";
                     }
@@ -921,12 +920,13 @@ function EditComment (comment, commentId, sessionId, mobile)
     $.post(url,vars,function(){window.UpdateCommentsEvent();});
 }
 
-function UpdateSessionComments (sessionId,mobile)
+function UpdateSessionComments (sessionId,width,mobile)
 {
     var vars = {
         act: "update_comments",
         sessionId: sessionId,
-        mobile: mobile?1:null
+        mobile: mobile?1:null,
+        width: width
     };
     var url = NO_REWRITE?"?p=Classroom":"Classroom";
     $.post(url,vars,function (res)

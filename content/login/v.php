@@ -11,7 +11,7 @@ if($logout){
 <?php }else{?>
 <!-- login -->
 <div id="login">
-    <h2> Welcome to YouSpeak. Please log-in with your Gmail account. </h2>
+    <h2> Welcome to YouSpeak. Please sign in with your Gmail account. </h2>
     <div id="signinButton" style="display: none">
         <span
             class="g-signin"

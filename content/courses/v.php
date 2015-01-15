@@ -11,8 +11,13 @@ global $expand;
 <div id="chooser">
     <div id='confirmation' title='Are You Sure?'></div>
     <script>
-        $("#confirmation").dialog({autoOpen:false});
-        $("#confirmation").dialog("option","resizable",false);
+        $("#confirmation").dialog({
+                autoOpen: false,
+                modal: false,
+                resizable: false,
+                draggable: true,
+                position: { my: "top", at: "top", of: "#chooser" }
+        });
         $("#confirmation").dialog("option","modal",true);
         var joinCourseList = <?php echo json_encode($joinCourseList); ?>;
         var userId = <?php echo $userId; ?>;
