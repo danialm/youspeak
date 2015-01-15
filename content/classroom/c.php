@@ -252,7 +252,9 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             if (!$instructor && $c["flag_id"]==4)//Hidden comments not shown for non-instructor
                 continue;
             
-            $newComment = isNewComment($c['time'])? "newComment" : "";
+            //$newComment = isNewComment($c['time'])? "newComment" : "";
+            $newComment = "";
+            
             $liClass = $c["flag_id"]==4 ? "hiddenComment" : ($c["flag_id"]==3 ? "addressedComment" : "");
             //var_dump($liClass);
             echo "<li class='$liClass'><div class='control $newComment' >";
