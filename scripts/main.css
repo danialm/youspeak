@@ -256,7 +256,7 @@ form.bordered
     width: 100%;
 }
 #register form{
-    max-width: 550px;
+    width: auto;
 }
 #register input[type='radio']{
     margin-right: 0;
@@ -276,6 +276,9 @@ form.bordered
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
+}
+#register span.radio{
+    margin-bottom: 5px;
 }
 #register .rightColumn
 {
