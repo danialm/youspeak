@@ -11,7 +11,8 @@ if($logout){
 <?php }else{?>
 <!-- login -->
 <div id="login">
-    <h2> Welcome to YouSpeak. Please sign in with your Gmail account. </h2>
+    <h2> Welcome to YouSpeak. Please log-in with your Gmail account. </h2>
+    <i id="log-spin" class="fa fa-gear fa-2x fa-spin green"></i>
     <div id="signinButton" style="display: none">
         <span
             class="g-signin"
@@ -38,9 +39,10 @@ if($logout){
                     $(document).ready(function(){
                         form.submit();
                         $("#signinButton").hide();
+                        $("#log-spin").show();
                     });
                 } else {
-                    //console.log('Sign-in state: ' + authResult['error']);
+                    $("#log-spin").hide();
                     $("#signinButton").show();
                 }
             }

@@ -42,15 +42,15 @@ function FormIt (obj,url)
 {
     if (!url) url = "";
     
-    var html = "<form method='POST' action='"+url+"'>";
+    var html = "<form id='addedForm' method='POST' action='"+url+"'>";
     for (key in obj)
     {
         var val = obj[key];
         html += "<input type='hidden' name='"+key+"' value='"+val+"' />";
     }
     html += "</form>";
-    document.write(html);
-    $("form")[0].submit();
+    $("body").append(html);
+    $("#addedForm").submit();
 }
 
 function pickDate (courseId)

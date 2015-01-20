@@ -74,5 +74,4 @@ try
         echo "<h3>".$e->getMessage()."</h3>";
         echo "<pre>".$e->getTraceAsString()."</pre>";
     }
-
 ?>

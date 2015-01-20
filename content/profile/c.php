@@ -1,4 +1,5 @@
 <?php
+global $student;
 
 $ERRMSG_EXISTS_EMAIL    = "This email is already registered!";
 $ERRMSG_EMPTY_FIRSTNAME = "First Name is a required field and was left empty!";
@@ -45,7 +46,7 @@ if (isset($_POST['act'])){
             $lastnameBad = true;
         }
         
-        if($user['role_code'] != 'in'){
+        if($student){
             if ($studentid !== "" && !preg_match("/^[0-9]{9}$/", $studentid)){
                 if ($errMsg != "") $errMsg .= "<br />";
                 $errMsg .= $ERRMSG_NOT_MATCH_STUDENTID;
@@ -121,7 +122,6 @@ if (isset($_POST['act'])){
         $_SESSION['formError']['msg'] = $errMsg;
         Dbase::Disconnect();
         
-//        var_dump($required);
         if(isset($_SESSION['newUserId']) && $required ){//new user who fill out the required field.
             unset($_SESSION['newUserId']);
             header("Location: ".Page::getRealURL("Courses"));

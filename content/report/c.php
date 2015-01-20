@@ -5,9 +5,9 @@ global $reportMessage;
 global $reportCourseId;
 global $userId;
 
-if(isset($_SESSION['currentUserId']) && $_SESSION['currentUserId']){
-    $userId = $_SESSION['currentUserId'];
-    if(isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'] == "in"){
+if(isset($_SESSION['currentUserId']) && $userId = $_SESSION['currentUserId']){
+
+    if(isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){
         if ( isset($_POST['act']) ){
             extract($_POST);
             switch ($act)
@@ -26,7 +26,9 @@ if(isset($_SESSION['currentUserId']) && $_SESSION['currentUserId']){
 
 
         }
+    }else if(isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']){
     }else{
+
         $reportError = true;
         $reportMessage = "Access denied!";
     }

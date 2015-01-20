@@ -3,12 +3,18 @@ global $reportError;
 global $reportMessage;
 global $report;
 global $courses;
+global $assessor;
 ?>
 
 <div id="report">
     <h2>YouSpeak Report</h2>
 <?php if($reportError){ ?>
     <h3><?= $reportMessage; ?></h3>
+<?php }else if($assessor){ ?>
+    <script>
+        var rep = <?php echo json_encode( $report )?>  ;
+        console.log(rep.students[110]);
+    </script>
 <?php }else if($report){ ?>
     <h3><?= $report['title']?></h3>
     <?php foreach($report['reports'] as $name => $rep){?>

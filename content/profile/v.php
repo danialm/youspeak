@@ -17,6 +17,7 @@ global $haveDisa;
 global $disability;
 global $updatedFields;
 global $allfields;
+global $student;
 ?>
 
 <div id="register">
@@ -81,7 +82,7 @@ global $allfields;
 
 
 
-        <?php if (!$instructor) { ?>
+        <?php if ($student) { ?>
 
 
 
@@ -124,13 +125,13 @@ global $allfields;
 
                 <label for="gender">Gender:</label>
                 <span class="radio"><input type='radio' name='gender' value='male' id='smale' <?php if ($sex == "male") echo "checked"; ?> />
-                <label for='smale' class='smaller'>Male</label>
+                <label for='smale'>Male</label>
 
                 <input type='radio' name='gender' value='female' id='sfemale' <?php if ($sex == "female") echo "checked"; ?> />
-                <label for='sfemale' class='smaller'>Female</label>
+                <label for='sfemale'>Female</label>
 
                 <input type='radio' name='gender' value='unspecified' id='snone' <?php if ($sex == "unspecified") echo "checked"; ?> />
-                <label for='snone' class='smaller'>Don't Specify</label></span><br>
+                <label for='snone'>Don't Specify</label></span><br>
 
                 <label for='race'>Ethnicity</label>
                 <input type='text' name='race' id='race' placeholder='Ethnicity' value='<?php echo $race; ?>' /><br>
@@ -140,13 +141,13 @@ global $allfields;
 
                 <label for="have-disa">Do you have any disabilities?</label>
                 <span class="radio"><input type='radio' name='have_disa' id='haveDisaYes' value='yes' onchange='DisaShow(this)' <?php if ($haveDisa == "yes") echo "checked"; ?> />
-                <label for='haveDisaYes' class='smaller'>Yes</label>
+                <label for='haveDisaYes'>Yes</label>
 
                 <input type='radio' name='have_disa' id='haveDisaNo' value='no' onchange='DisaShow(this)' <?php if ($haveDisa == "no") echo "checked"; ?> />
-                <label for='haveDisaNo' class='smaller'>No</label>
+                <label for='haveDisaNo'>No</label>
 
                 <input type='radio' name='have_disa' id='haveDisaNone' value='unspecified' onchange='DisaShow(this)' <?php if ($haveDisa == "unspecified") echo "checked"; ?> />
-                <label for='haveDisaNone' class='smaller'>Don't Specify</label></span><br>
+                <label for='haveDisaNone'>Don't Specify</label></span><br>
 
                 <textarea <?= $haveDisa == "yes" ? "" : "disabled" ?> name='disability' placeholder='Briefly describe your disability.'><?php if ($haveDisa == "yes") echo $disability; ?></textarea>
 
@@ -160,7 +161,6 @@ global $allfields;
 
         <center>
             <input type='submit' value='Submit Changes' style='width: 200px' />
-            <!--<input type='button' value='Courses' onclick='window.location.href = "<?php echo Page::getRealURL("Login"); ?>"' />-->
         </center>
 
 

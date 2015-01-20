@@ -6,12 +6,17 @@ global $reportMessage;
 global $userId;
 global $report;
 global $courses;
+global $assessor;
 
 if(!$reportError){
     Dbase::Connect();
-
-    if($reportCourseId && $reportCourseId != ''){
-        if(Dbase::GetUserRoleInCourse($userId, $reportCourseId) == "in"){
+    if(isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']){
+            $assessor = true;
+            $report = Dbase::GetAssessorReport();
+    }else if($reportCourseId && $reportCourseId != ''){
+        $roleInCourse = Dbase::GetUserRoleInCourse($userId, $reportCourseId);
+        if( $roleInCourse == "in"){
+            $allStudents = Dbase::GetUsersFromCourse($reportCourseId, "st");
             $course = Dbase::GetCourseInfo($reportCourseId);
             $report = array(
                 'title' => $course['title'] . " (" . Dbase::GetTermRef($course['term_code']) . " " . $course['year'] . ")",
@@ -48,6 +53,9 @@ if(!$reportError){
                 }
 
             }
+            $report['reports']['students'] = array(
+                'registered_students' => implode(", ", $allStudents)
+            );
             $report['reports']['comments'] = array(
                 'tottal_number_of_comments'       =>$courseCommentNumber ,
                 'tottal_number_of_comments_by_students'=>$studentCourseCommentNumber ,
@@ -60,7 +68,7 @@ if(!$reportError){
                 'average_participation_per_questionnaire'      =>$totalQuizAnswer/$courseQuizzNumber,
                 'average_answered_questionnaires_per_session'      =>$answerdCourseQuizzNumber/count($courseSessions)
             );
-        }else{
+        }else {
             $reportError = true;
             $reportMessage = "You do not have access to this course!";
         }

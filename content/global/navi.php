@@ -3,6 +3,10 @@
 global $thisPage;
 global $classroomExtraNavi;
 
+$instructor = isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'];
+$assessor = isset($_SESSION['isAssessor']) && $_SESSION['isAssessor'];
+$student = !($instructor || $assessor);
+
 $id = isset($_SESSION['currentUserId']) && $_SESSION['currentUserId'] ? $_SESSION['currentUserId'] : $_SESSION['newUserId'];
 Dbase::Connect();
 $allfields = Dbase::allFields(Dbase::GetUserInfo($id));
@@ -45,7 +49,7 @@ echo "<div id='navRight'>";
 
 
 
-if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){   
+if ( strstr($thisPage, "Classroom") && $instructor){   
     echo "
         <span id='quizLink'>
             <a href='#' 
@@ -60,7 +64,7 @@ if ( strstr($thisPage, "Classroom") && isset($_SESSION['isInstructor']) && $_SES
     ";
 }
 
-if ( $thisPage == "Courses" && isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'] )
+if ( $thisPage == "Courses" && !$student)
 {
     echo "<span id='analLink'>";
     echo "<a ";
@@ -93,7 +97,6 @@ if ( isset($_SESSION['currentUserId']) || isset($_SESSION['newUserId']) )
 {
     echo "<span id='logoutLink' class='right-side'>";
     echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\"); return false;'>";
-    //echo "<a href='#' onclick='FormIt({act:\"logout\"},\"".Page::getRealURL("Login")."\");'>";
     echo '<i class="fa fa-sign-out fa-lg no-margin" title="Logout"></i></a></span>';
 }
     

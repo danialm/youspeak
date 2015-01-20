@@ -7,7 +7,7 @@ global $firstname;
 global $lastname;
 global $studentid;
 global $email;
-//global $username;
+global $student;
 global $major;
 global $gpa;
 global $inst;
@@ -19,12 +19,14 @@ global $haveDisa;
 global $disability;
 global $updatedFields;
 global $allfields;
+global $assessor;
 
 $id = isset($_SESSION['currentUserId']) && $_SESSION['currentUserId'] ? $_SESSION['currentUserId'] : $_SESSION['newUserId'];
 
 Dbase::Connect();
 $user = Dbase::GetUserInfo($id);
 $instructor = $user['role_code'] == "in";
+$assessor = $user['role_code'] == "as";
 $institutions = Dbase::GetInstitutions();
 $allfields = Dbase::allFields($user);
 Dbase::Disconnect();
@@ -33,9 +35,8 @@ $errorMsg   = "";
 
 $firstname  = $user['firstname'];
 $lastname   = $user['lastname'];
-$studentid   = $user['studentid'];
+$studentid  = $user['studentid'];
 $email      = $user['email'];
-//$username   = $user['username'];
 $major      = $user['major'];
 $gpa        = $user['gpa'];
 $inst       = $user['institute'];
@@ -54,7 +55,6 @@ if ( isset($_SESSION["formError"]) )
     $lastname   = $_SESSION["formError"]["lastname"];
     $studentid   = $_SESSION["formError"]["studentid"];
     $email      = $_SESSION["formError"]["email"];
-    //$username   = $_SESSION["formError"]["username"];
     $major      = $_SESSION["formError"]["major"];
     $gpa        = $_SESSION["formError"]["gpa"];
     $inst       = $_SESSION["formError"]["institute"];
@@ -81,7 +81,6 @@ foreach  ($updatedFields as $k=>$v)
         case "lastname":    $v = "Last Name"; break;
         case "studentid":   $v = "Student ID"; break;
         case "email":       $v = "E-Mail"; break;
-        //case "username":    $v = "Username"; break;
         case "major":       $v = "Major"; break;
         case "gpa":         $v = "GPA"; break;
         case "institute":   $v = "Institution"; break;
@@ -94,4 +93,7 @@ foreach  ($updatedFields as $k=>$v)
     }
     $updatedFields[$k] = $v;
 }
+
+$student = !($instructor || $assessor);
+
 ?>

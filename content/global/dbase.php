@@ -100,7 +100,7 @@ class Dbase
         
         if ( ($from != null) && ($from != "") && ($where != null) && ($where != "") )
             $query = $query . " WHERE $where";
-        
+
         $result = self::Query($query);
         
         if ( !$result )
@@ -256,13 +256,17 @@ class Dbase
         return $flag;
     }
     
-    public static function GetUsers ()
+    public static function GetUsers ($role=NULL)
     {
         $select = "id,firstname,lastname,studentid,email,role_code";
         $from = "users";
+        if($role){
+            $where = "role_code='$role'";
+            $users = self::SelectFromWhere($select, $from, $where);
+        }else{
+            $users = self::SelectFromWhere($select, $from);
+        }
         
-        $users = self::SelectFromWhere($select, $from);
-            
         if ( !$users )
             return null;
 
@@ -362,7 +366,7 @@ class Dbase
         return self::SelectFromWhereFirst($select,$from,$where);
     }
     
-    public static function GetComments ()
+    public static function GetComments ($userId = null)
     {
         $select  = "c.id, c.session_id, c.user_id, ";
         $select .= "c.time, c.comment, c.flag_id, ";
@@ -370,8 +374,24 @@ class Dbase
         $from  = "comments c";
         $from .= " LEFT JOIN comment_ratings r";
         $from .= " ON c.id=r.comment_id";
+        $from .= $userId ? " WHERE c.user_id='$userId'" : "";
         $from .= " GROUP BY c.id";
-        $from .= " ORDER BY rating DESC";
+        $from .= " ORDER BY rating DESC ";
+        
+        return self::SelectFromWhere($select,$from);
+    }
+    
+    public static function GetReplys ($commentId)
+    {
+        $select  = "c.id, c.session_id, c.user_id, ";
+        $select .= "c.time, c.comment, c.flag_id, ";
+        $select .= "IFNULL(SUM(r.rating),0) as rating";
+        $from  = "comments c";
+        $from .= " LEFT JOIN comment_ratings r";
+        $from .= " ON c.id=r.comment_id";
+        $from .= " WHERE c.parent_id='$commentId'";
+        $from .= " GROUP BY c.id";
+        $from .= " ORDER BY rating DESC ";
         
         return self::SelectFromWhere($select,$from);
     }
@@ -482,6 +502,23 @@ class Dbase
             return null;
         
         return $res["role_code"];
+    }
+    
+    public static function GetUsersFromCourse ($courseId, $role = NULL){
+        $select = "u.studentid";
+        $from   = "enrollment e RIGHT JOIN users u ON u.id = e.user_id";
+        $where  = "e.course_id= $courseId ";
+        if($role)
+            $where .= "AND u.role_code= '$role'";
+        
+        $res = self::SelectFromWhere($select,$from,$where);
+        $ids = array();
+        foreach ($res as $c){
+            if($c[0] != 0)
+                array_push($ids,$c[0]);
+        }
+        return $ids;
+        
     }
     
     public static function AddUser ($email){
@@ -641,7 +678,6 @@ class Dbase
     public static function RemoveComment ($commentId)
     {
         self::Query("DELETE FROM comments WHERE id = $commentId");
-        self::Query("UPDATE comments SET parent_id = DEFAULT WHERE parent_id = $commentId");
 	self::Query("DELETE FROM comment_ratings WHERE comment_id = $commentId");
     }
     
@@ -930,6 +966,54 @@ class Dbase
         
         return $list;
     }
+    public static function GetAssessorReport (){
+        $users = self::GetUsers("st");//All the studets
+        $report = array();
+        
+        $students = array();
+        foreach($users as $user){
+            $student = self::GetUserInfo($user['id']);
+            $RatingsNum = count(self::GetCommentRatingsForUser($user['id']));
+            $coursesNum = count(self::GetEnrollmentFromUser($user['id']));
+                    
+            $comments = self::GetComments($user['id']);
+            $hidden = $addressed = 0;
+            for($i = 0; $i<count($comments); $i++){
+                $com = $comments[$i];
+                if($com['flag_id'] == 3){
+                    $addressed++;
+                }else if($com['flag_id'] == 4){
+                    $hidden++;
+                }
+                $replys = self::getReplys($com['id']);
+                $comments[$i]['replys_num'] = count($replys);
+                $comments[$i]['replys'] = $replys;
+            }
+            
+            $temp = array(
+                'firstname' => $user['firstname'],
+                'lastname' => $user['lastname'],
+                'studentid' => $user['studentid'],
+                'major' => $student['major'],
+                'gpa' => $student['gpa'],
+                'school_year' => $student['school_year'],
+                'gender' => $student['gender'],
+                'age' => $student['age'],
+                'race' => $student['race'],
+                'have_disa' => $student['have_disa'],
+                'disability' => $student['disability'],
+                'courses_num' => $coursesNum,
+                'ratings_num' => $RatingsNum,
+                'comments_num' => $addressed,
+                'address_comments_num' => $addressed,
+                'hidden_comments_num' => $hidden,
+                'comments' => $comments
+            );
+            array_push($students, $temp);
+        }
+        $report['students'] = $students;
+        return $report;
+    }
     
     public static function IsFirstLogin ($user)
     {
@@ -950,9 +1034,11 @@ class Dbase
     
     public static function allFields($user){
         
+    $student = !($user['role_code'] == "in" || $user['role_code'] == "as");
+        
         if(!self::requiredFields($user))
             return false;
-        if($user['role_code'] != "in"){
+        if($student){
             if((!isset($user['studentid']) || $user['studentid'] == '' || !preg_match("/^[0-9]{9}$/", $user['studentid'])))  
                 return false;
             if(!isset($user['major']) || $user['major'] == '')

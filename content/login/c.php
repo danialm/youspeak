@@ -44,10 +44,20 @@ if (isset($_POST['act'])) {
             } else {
 
                 $_SESSION['currentUserId'] = $auth;
-                $_SESSION['isInstructor'] = $user['role_code'] == 'in';
-
-                header("location: " . Page::getRealURL("Courses"));
-                exit;
+                
+                switch ($user['role_code']){
+                case 'in' :
+                    $_SESSION['isInstructor'] = true;
+                    header("location: " . Page::getRealURL("Courses"));
+                    exit;
+                case 'st' :
+                    header("location: " . Page::getRealURL("Courses"));
+                    exit;
+                case 'as' :
+                    $_SESSION['isAssessor'] = true;
+                    header("location: " . Page::getRealURL("Report"));
+                    exit;
+                }
             }
 
             break;
@@ -70,6 +80,12 @@ if (isset($_POST['act'])) {
             
             if (isset($_SESSION['login_email']))
                 unset($_SESSION['login_email']);
+            
+            if (isset($_SESSION['isInstructor']))
+                unset($_SESSION['isInstructor']);
+            
+            if (isset($_SESSION['isAssessor']))
+                unset($_SESSION['isAssessor']);
 
             break;
     }
