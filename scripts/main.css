@@ -257,6 +257,7 @@ form.bordered
 }
 #register form{
     width: auto;
+    min-width: 530px;
 }
 #register input[type='radio']{
     margin-right: 0;
@@ -661,6 +662,10 @@ EEEEFF
     }
 }
 @media screen and (max-width: 530px){
+    #register form{
+        width: auto;
+        min-width: initial;
+    }
     #register form>fieldset>label, #register form>fieldset>input,
     #register form>fieldset>select,
     #register form>fieldset>span.radio,
