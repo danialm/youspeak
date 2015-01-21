@@ -12,9 +12,40 @@ global $assessor;
     <h3><?= $reportMessage; ?></h3>
 <?php }else if($assessor){ ?>
     <script>
-        var rep = <?php echo json_encode( $report )?>  ;
-        console.log(rep.students[110]);
+        var rep = <?php echo json_encode( $report )?>;
+        
+        /* original data */
+        var data = [];
+        for(var i= 0; i<rep.students.length; i++){
+            var student = rep.students[i];
+            var title = [];
+            var temp = [];
+            for (var key in student){
+                var value = student[key];
+                if(i == 0){//title
+                    title.push(key);
+                }
+                temp.push(Array.isArray(value) ? null : value);
+            }
+            if(i == 0){//title
+                data.push(title);
+            }
+            data.push(temp);
+        }
+        var ws_name = "SheetJS";
+        var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+
+        /* add worksheet to workbook */
+        wb.SheetNames.push(ws_name);
+        wb.Sheets[ws_name] = ws;
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        
+        function SaveFile(){
+            saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), "YouSpek Report <?= date("m-d-Y"); ?>.xlsx");
+        }
+        
     </script>
+    <a href="#" onclick='SaveFile(); return false;'><i class="fa fa-download fa-2x orange"></i>  Download</a>
 <?php }else if($report){ ?>
     <h3><?= $report['title']?></h3>
     <?php foreach($report['reports'] as $name => $rep){?>

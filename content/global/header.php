@@ -20,6 +20,9 @@ global $navi;
 <script src="scripts/jquery-1.9.1.js"></script>
 <script src="scripts/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+<script src="scripts/Blob.js" lang="javascript" ></script>
+<script src="scripts/FileSaver.js" lang="javascript" ></script>
+<script src="scripts/js-xlsx/dist/xlsx.core.min.js" lang="javascript" ></script>
 <script src="scripts/script.js"></script>
 <script>var NO_REWRITE = <?php echo NO_REWRITE?"true":"false"; ?>;</script>
 </head>

@@ -100,7 +100,7 @@ class Dbase
         
         if ( ($from != null) && ($from != "") && ($where != null) && ($where != "") )
             $query = $query . " WHERE $where";
-
+        
         $result = self::Query($query);
         
         if ( !$result )
@@ -830,13 +830,11 @@ class Dbase
     
     public static function GetQuizzesUserAnswered ($userid)
     {
-        $q = "SELECT DISTINCT quiz FROM quiz_answers WHERE user = $userid";
-        $q = self::Query($q);
+        $select = "quiz, choice";
+        $from = "quiz_answers";
+        $where = "user = $userid";
         
-        $res = array();
-        while ($r = mysql_fetch_assoc($q))
-            $res[] = $r['quiz'];
-            
+        $res = self::SelectFromWhere($select, $from, $where);
         return $res;
     }
     
@@ -972,6 +970,7 @@ class Dbase
         
         $students = array();
         foreach($users as $user){
+            //var_dump("===================================");
             $student = self::GetUserInfo($user['id']);
             $RatingsNum = count(self::GetCommentRatingsForUser($user['id']));
             $coursesNum = count(self::GetEnrollmentFromUser($user['id']));
@@ -990,6 +989,22 @@ class Dbase
                 $comments[$i]['replys'] = $replys;
             }
             
+            $quizzes = self::GetQuizzesUserAnswered($user['id']);
+            $correctAnswers = $hasCorrectAnswer = 0;
+            foreach($quizzes as $quiz){
+                $answerArray = self::getQuizCorrectAnswer($quiz['quiz']);
+                $answer = $answerArray['answer'];
+                if($answer != 0)
+                    $hasCorrectAnswer++;
+                
+                if($quiz['choice'] == $answer)
+                    $correctAnswers++;
+            }
+            
+            foreach($quizzes as $quiz){
+                
+            }
+            
             $temp = array(
                 'firstname' => $user['firstname'],
                 'lastname' => $user['lastname'],
@@ -1000,19 +1015,31 @@ class Dbase
                 'gender' => $student['gender'],
                 'age' => $student['age'],
                 'race' => $student['race'],
-                'have_disa' => $student['have_disa'],
+                'have_disability' => $student['have_disa'],
                 'disability' => $student['disability'],
-                'courses_num' => $coursesNum,
-                'ratings_num' => $RatingsNum,
-                'comments_num' => $addressed,
-                'address_comments_num' => $addressed,
-                'hidden_comments_num' => $hidden,
-                'comments' => $comments
+                'courses_enrolled' => $coursesNum,
+                'comments_rated' => $RatingsNum,
+                'comments_posted' => count($comments),
+                'addressed_comments' => $addressed,
+                'hidden_comments' => $hidden,
+                //'comments' => $comments,
+                'quizzes_answered' => count($quizzes),
+                'quizzes_with_correct_answer' => $hasCorrectAnswer,
+                'correct_answers' => $correctAnswers,
             );
             array_push($students, $temp);
         }
         $report['students'] = $students;
         return $report;
+    }
+    
+    public function getQuizCorrectAnswer($quizId) {
+        $select = "answer";
+        $from = "quizzes";
+        $where = "id='$quizId'";
+        
+        $res = self::SelectFromWhereFirst($select, $from, $where);
+        return $res;
     }
     
     public static function IsFirstLogin ($user)
