@@ -6,17 +6,25 @@ global $reportMessage;
 global $userId;
 global $report;
 global $courses;
-global $assessor;
+global $asReport;
+global $inReport;
+
 
 if(!$reportError){
+    $inReport = $asReport = $report = null;
+    $assessor = isset($_SESSION['isAssessor']) && $_SESSION['isAssessor'];
     Dbase::Connect();
-    if(isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']){
-            $assessor = true;
-            $report = Dbase::GetAssessorReport();
-    }else if($reportCourseId && $reportCourseId != ''){
+
+    if($reportCourseId && $reportCourseId != ''){
         $roleInCourse = Dbase::GetUserRoleInCourse($userId, $reportCourseId);
-        if( $roleInCourse == "in"){
+        if( $roleInCourse == "in" || $assessor){
             $allStudents = Dbase::GetUsersFromCourse($reportCourseId, "st");
+            $ids = array();
+            foreach ($allStudents as $st) {
+                if($st['studentid'] != 0){
+                    array_push($ids, $st['studentid']);
+                }
+            }
             $course = Dbase::GetCourseInfo($reportCourseId);
             $report = array(
                 'title' => $course['title'] . " (" . Dbase::GetTermRef($course['term_code']) . " " . $course['year'] . ")",
@@ -54,7 +62,7 @@ if(!$reportError){
 
             }
             $report['reports']['students'] = array(
-                'registered_students' => implode(", ", $allStudents)
+                'registered_students' => count($ids)>0 ? implode(", ", $ids) : "No Registered Ids"
             );
             $report['reports']['comments'] = array(
                 'tottal_number_of_comments'       =>$courseCommentNumber ,
@@ -74,15 +82,35 @@ if(!$reportError){
         }
 
     }else{
-        $userCourses = Dbase::GetEnrollmentFromUser($userId);
-        $courses = array();
-        foreach($userCourses as $crs){
-            if($crs['role_code'] == 'in'){
-                $temp_course = Dbase::GetCourseInfo($crs['course_id']);
-                $temp_course['title'] = $temp_course['title'] . " (" . Dbase::GetTermRef($temp_course['term_code']) . " " . $temp_course['year'] . ")";
+        
+        if($assessor){
+            $asReport['all-courses'] = Dbase::GetAssessorReport();
+            $allCourses = Dbase::GetCourses();
+            $courses = array();
+            foreach($allCourses as $crs){
+                $temp_course['title'] = $crs['title'] . " (" . Dbase::GetTermRef($crs['term_code']) . " " . $crs['year'] . ")";
+                $temp_course['id'] = $crs['id'];
                 array_push($courses, $temp_course);
+                
+                $asReport['courses'][$crs['id']]['name'] = $temp_course['title'];
+                $asReport['courses'][$crs['id']]['report'] = Dbase::GetAssessorReport($crs['id']);
+            }
+        }else{
+            $userCourses = Dbase::GetEnrollmentFromUser($userId);
+            $courses = array();
+            foreach($userCourses as $crs){
+                if($crs['role_code'] == 'in'){
+                    $temp_course = Dbase::GetCourseInfo($crs['course_id']);
+                    $temp_course['title'] = $temp_course['title'] . " (" . Dbase::GetTermRef($temp_course['term_code']) . " " . $temp_course['year'] . ")";
+                    array_push($courses, $temp_course);
+                }
+            }
+            foreach($courses as $crs){
+                    $inReport['courses'][$crs['id']]['name'] = $crs['title'];
+                    $inReport['courses'][$crs['id']]['report'] = Dbase::GetAssessorReport($crs['id']);
             }
         }
+        
     }
 
     Dbase::Disconnect();

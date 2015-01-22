@@ -65,13 +65,12 @@ $(".right-side").css("top","5px");
     </script>
     
     <div id="userComments" class='ui-widget ui-widget-content'>
-
         <div id='commentTable'>
             <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView, false, false, false); ?>
         </div>
         <div id='addComment'>
             <a href='#' id='iplus' onclick='ClassroomReply(); return false;'>
-                <i class="fa fa-plus green"></i>Comment</a>
+                <i class="fa fa-plus fa-lg green"></i>Comment</a>
         </div>
         
         <div id='ShowQuizDialog' qopenid="0"></div>

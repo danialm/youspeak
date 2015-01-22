@@ -49,21 +49,23 @@ echo "<div id='navRight'>";
 
 
 
-if ( strstr($thisPage, "Classroom") && $instructor){   
-    echo "
-        <span id='quizLink'>
-            <a href='#' 
-                    onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
-        </span>
-    ";
-    echo "
-        <span id='studentView' title='Student View'>
-            <a href='#' 
-                    onclick='FormIt({act:\"changeView\"},\"".Page::getRealURL("Classroom")."\"); return false;'><i class='fa fa-binoculars fa-lg'></i></a>
-        </span>
-    ";
+if ( strstr($thisPage, "Classroom")){
+        echo "<span><a href='#' id='iplus' onclick='ClassroomReply(); return false;'><i class='fa fa-plus fa-lg green'></i>Comment</a></span>";
+    if($instructor){   
+        echo "
+            <span id='quizLink'>
+                <a href='#' 
+                        onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
+            </span>
+        ";
+        echo "
+            <span id='studentView' title='Student View'>
+                <a href='#' 
+                        onclick='FormIt({act:\"changeView\"},\"".Page::getRealURL("Classroom")."\"); return false;'><i class='fa fa-binoculars fa-lg'></i></a>
+            </span>
+        ";
+    }
 }
-
 if ( $thisPage == "Courses" && !$student)
 {
     echo "<span id='analLink'>";

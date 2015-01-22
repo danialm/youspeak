@@ -3,50 +3,23 @@ global $reportError;
 global $reportMessage;
 global $report;
 global $courses;
-global $assessor;
+global $asReport;
+global $inReport;
 ?>
 
 <div id="report">
     <h2>YouSpeak Report</h2>
 <?php if($reportError){ ?>
     <h3><?= $reportMessage; ?></h3>
-<?php }else if($assessor){ ?>
+<?php }else{ ?> 
     <script>
-        var rep = <?php echo json_encode( $report )?>;
-        
-        /* original data */
-        var data = [];
-        for(var i= 0; i<rep.students.length; i++){
-            var student = rep.students[i];
-            var title = [];
-            var temp = [];
-            for (var key in student){
-                var value = student[key];
-                if(i == 0){//title
-                    title.push(key);
-                }
-                temp.push(Array.isArray(value) ? null : value);
-            }
-            if(i == 0){//title
-                data.push(title);
-            }
-            data.push(temp);
-        }
-        var ws_name = "SheetJS";
-        var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
-
-        /* add worksheet to workbook */
-        wb.SheetNames.push(ws_name);
-        wb.Sheets[ws_name] = ws;
-        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        
-        function SaveFile(){
-            saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), "YouSpek Report <?= date("m-d-Y"); ?>.xlsx");
-        }
-        
+        var report = <?= json_encode( $asReport ? $asReport : $inReport )?>, date = '<?= date("m-d-y") ?>' ;
+        console.log(report);
     </script>
-    <a href="#" onclick='SaveFile(); return false;'><i class="fa fa-download fa-2x orange"></i>  Download</a>
-<?php }else if($report){ ?>
+    <?php if($asReport){ ?>
+        <h3>All Courses: <a title='Download' href="#" onclick='SaveFile(report, date); return false;'><i class="fa fa-download fa-lg orange"></i></a></h3>
+    <?php } ?>
+    <?php if($report){ ?>
     <h3><?= $report['title']?></h3>
     <?php foreach($report['reports'] as $name => $rep){?>
         <div class="reportContainer">
@@ -62,10 +35,14 @@ global $assessor;
     <h3>List of Courses:</h3>
     <ul>
     <?php foreach($courses as $crs){ ?>
-        <li><span><?= $crs['title'] ?></span> <a href='#' onclick='FormIt({act:"report", reportCourseId:<?= "\"".$crs['id']."\"" ?> }, <?= "\"".Page::getRealURL("Report")."\"" ?> ); return false;'><i class="fa fa-bar-chart" title="See report"></i></a></li>
+        <li>
+            <span><?= $crs['title'] ?></span>
+            <a  title="See report" href='#' onclick='FormIt({act:"report", reportCourseId:<?= "\"".$crs['id']."\"" ?> }, <?= "\"".Page::getRealURL("Report")."\"" ?> ); return false;'><i class="fa fa-bar-chart"></i></a>
+            <a title='Download' href="#" onclick='SaveFile(report, date, <?= $crs['id']?>); return false;'><i class="fa fa-download orange"></i></a>
+        </li>
     <?php } ?>
     </ul>
 <?php }else{ ?>
     <h3>No course to display!</h3>
-<?php } ?>
+<?php } } ?>
 </div>

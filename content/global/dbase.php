@@ -256,7 +256,7 @@ class Dbase
         return $flag;
     }
     
-    public static function GetUsers ($role=NULL)
+    public static function GetUsers ($role = NULL)
     {
         $select = "id,firstname,lastname,studentid,email,role_code";
         $from = "users";
@@ -505,20 +505,14 @@ class Dbase
     }
     
     public static function GetUsersFromCourse ($courseId, $role = NULL){
-        $select = "u.studentid";
+        $select = "u.id, u.studentid";
         $from   = "enrollment e RIGHT JOIN users u ON u.id = e.user_id";
         $where  = "e.course_id= $courseId ";
         if($role)
-            $where .= "AND u.role_code= '$role'";
+            $where .= "AND e.role_code= '$role'";
         
         $res = self::SelectFromWhere($select,$from,$where);
-        $ids = array();
-        foreach ($res as $c){
-            if($c[0] != 0)
-                array_push($ids,$c[0]);
-        }
-        return $ids;
-        
+        return $res;
     }
     
     public static function AddUser ($email){
@@ -964,8 +958,13 @@ class Dbase
         
         return $list;
     }
-    public static function GetAssessorReport (){
-        $users = self::GetUsers("st");//All the studets
+    
+    public static function GetAssessorReport ($courseId = NULL){
+        if($courseId)
+            $users = self::GetUsersFromCourse ($courseId, "st");//All students in course
+        else
+            $users = self::GetUsers("st");//All studets
+        
         $report = array();
         
         $students = array();
@@ -1006,9 +1005,9 @@ class Dbase
             }
             
             $temp = array(
-                'firstname' => $user['firstname'],
-                'lastname' => $user['lastname'],
-                'studentid' => $user['studentid'],
+                'firstname' => $student['firstname'],
+                'lastname' => $student['lastname'],
+                'studentid' => $student['studentid'],
                 'major' => $student['major'],
                 'gpa' => $student['gpa'],
                 'school_year' => $student['school_year'],
@@ -1024,12 +1023,12 @@ class Dbase
                 'hidden_comments' => $hidden,
                 //'comments' => $comments,
                 'quizzes_answered' => count($quizzes),
-                'quizzes_with_correct_answer' => $hasCorrectAnswer,
+                'wrong_answers' => $hasCorrectAnswer-$correctAnswers,
                 'correct_answers' => $correctAnswers,
             );
             array_push($students, $temp);
         }
-        $report['students'] = $students;
+        $report = $students;
         return $report;
     }
     

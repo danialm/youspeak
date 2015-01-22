@@ -1141,6 +1141,48 @@ function Workbook() {
         this.SheetNames = [];
         this.Sheets = {};
 }
+
+function SaveFile(report, date, courseId){
+
+    var rep, fileName;
+    if(typeof courseId === "undefined" ){
+        rep = report['all-courses'];
+        fileName = "YouSpeak All Courses Report ("+date+").xlsx";
+    }else{
+        rep = report.courses[courseId].report;
+        fileName = "YouSpeak "+ report.courses[courseId].name +" Report ("+date+").xlsx";
+    }
+
+    /* original data */
+    var data = [];
+    for(var i= 0; i<rep.length; i++){
+        var student = rep[i];
+        var title = [];
+        var temp = [];
+        for (var key in student){
+            var value = student[key];
+            if(i == 0){//title
+                title.push(key);
+            }
+            temp.push(Array.isArray(value) ? null : value);
+        }
+        if(i == 0){//title
+            data.push(title);
+        }
+        data.push(temp);
+    }
+    var ws_name = "SheetJS";
+    var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+
+    /* add worksheet to workbook */
+    wb.SheetNames.push(ws_name);
+    wb.Sheets[ws_name] = ws;
+    var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+
+
+    saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), fileName);
+}
+
 /*
  *Excel Download functions end
  *******************************

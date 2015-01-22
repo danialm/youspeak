@@ -5,9 +5,10 @@ global $reportMessage;
 global $reportCourseId;
 global $userId;
 
+$student = !(isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']) && !(isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']);
 if(isset($_SESSION['currentUserId']) && $userId = $_SESSION['currentUserId']){
 
-    if(isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']){
+    if(!$student){
         if ( isset($_POST['act']) ){
             extract($_POST);
             switch ($act)
@@ -26,7 +27,6 @@ if(isset($_SESSION['currentUserId']) && $userId = $_SESSION['currentUserId']){
 
 
         }
-    }else if(isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']){
     }else{
 
         $reportError = true;
