@@ -18,6 +18,7 @@ global $disability;
 global $updatedFields;
 global $allfields;
 global $student;
+global $submit;
 ?>
 
 <div id="register">
@@ -25,9 +26,46 @@ global $student;
     <div>
         <h2 style="display: inline-block;">Profile</h2>
         <?php if(!isset($errorMsg) || $errorMsg == ""){ ?>
-            <span class="<?= $allfields ? "green" : "orange" ?>">
-            <?= $allfields ? "100% Complete" : "Incomplete!" ?>
-            </span>
+            <?php if($submit){ ?>
+                <?php if($allfields){ ?>
+                        <script>
+                            window.location.href = "<?=Page::getRealURL("Courses")?>";
+                        </script>
+                <?php }else{ ?>
+                    <p id='fill-out-message'><b>Your profile is incomplete!</b><br>Would you take a minute to complete it?</p>
+                    <script>
+                    $("#fill-out-message").dialog({
+                        autoOpen: false,
+                        hide: { effect: "slide", duration: 200, direction: "down" },
+                        show: { effect: "slide", duration: 200, direction: "down" },
+                        modal: true,
+                        buttons: [
+                            {
+                                text: "Yes",
+                                click: function () { $(this).dialog("close"); }
+                            },
+                            {
+                                text: "Maybe later",
+                                click: function () {
+                                        $(this).dialog("close");
+                                        window.location.href = "<?=Page::getRealURL("Courses")?>";
+                                }                        
+                            }   
+                        ],
+                        resizable: false,
+                        draggable: true,
+                        position: { my: "top", at: "top", of: "#register" },
+                        width: 300,
+                        title: "Incomplete"
+                    });
+                    $(document).ready(function(){
+                        $("#fill-out-message").dialog("open");
+                    });
+                </script>
+                <?php } ?>
+            <?php }else{ ?>
+                <span class="<?= $allfields ? "green" : "orange" ?>"><?= $allfields ? "100% Complete" : "Incomplete!" ?></span>
+            <?php } ?>
         <?php } ?>
     </div>
     <form class='bordered' name='updateprofile' method='POST' action='<?php echo Page::getRealURL(); ?>'>

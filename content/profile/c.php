@@ -1,5 +1,6 @@
 <?php
 global $student;
+global $submit;
 
 $ERRMSG_EXISTS_EMAIL    = "This email is already registered!";
 $ERRMSG_EMPTY_FIRSTNAME = "First Name is a required field and was left empty!";
@@ -9,6 +10,7 @@ $ERRMSG_EMPTY_EMAIL     = "Email is a required field and was left empty!";
 $ERRMSG_EMPTY_INSTITUDE = "Institution is a required field and was left empty!";
 $ERRMSG_NOT_MATCH_STUDENTID = "Student ID MUST be 9 digits!";
 
+$submit = isset($_GET['submit'])?true:false;
 
 if (isset($_POST['act'])){
     
@@ -45,8 +47,8 @@ if (isset($_POST['act'])){
             $errMsg .= $ERRMSG_EMPTY_LASTNAME;
             $lastnameBad = true;
         }
-        
-        if($student){
+
+        if($student=$user['role_code']=="st" ){
             if ($studentid !== "" && !preg_match("/^[0-9]{9}$/", $studentid)){
                 if ($errMsg != "") $errMsg .= "<br />";
                 $errMsg .= $ERRMSG_NOT_MATCH_STUDENTID;
@@ -122,13 +124,12 @@ if (isset($_POST['act'])){
         $_SESSION['formError']['msg'] = $errMsg;
         Dbase::Disconnect();
         
+        
         if(isset($_SESSION['newUserId']) && $required ){//new user who fill out the required field.
-            unset($_SESSION['newUserId']);
-            header("Location: ".Page::getRealURL("Courses"));
-            exit;    
+            unset($_SESSION['newUserId']);   
         }
         
-        header("Location: ".Page::getRealURL("Profile"));
+        header("Location: ".Page::getRealURL("Profile")."&submit");
         exit;
     
     }
