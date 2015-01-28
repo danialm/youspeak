@@ -65,14 +65,14 @@ if(!$reportError){
                 'registered_students' => count($ids)>0 ? implode(", ", $ids) : "No Registered Ids"
             );
             $report['reports']['comments'] = array(
-                'tottal_number_of_comments'       =>$courseCommentNumber ,
-                'tottal_number_of_comments_by_students'=>$studentCourseCommentNumber ,
+                'total_number_of_comments'       =>$courseCommentNumber ,
+                'total_number_of_comments_by_students'=>$studentCourseCommentNumber ,
                 'average_students_comments_per_session'      =>$studentCourseCommentNumber/count($courseSessions)
             );
             $report['reports']['questionnaires'] = array(
-                'tottal_number_of_questionnaires'       =>$courseQuizzNumber ,
-                'tottal_number_of_answered_questionnaires'=>$answerdCourseQuizzNumber ,
-                'tottal_number_of_participants'      =>$totalQuizAnswer,
+                'total_number_of_questionnaires'       =>$courseQuizzNumber ,
+                'total_number_of_answered_questionnaires'=>$answerdCourseQuizzNumber ,
+                'total_number_of_participants'      =>$totalQuizAnswer,
                 'average_participation_per_questionnaire'      =>$totalQuizAnswer/$courseQuizzNumber,
                 'average_answered_questionnaires_per_session'      =>$answerdCourseQuizzNumber/count($courseSessions)
             );
