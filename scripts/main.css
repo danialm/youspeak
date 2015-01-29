@@ -566,13 +566,13 @@ table#showAnswers tr td:first-child{
 }
 
 #showOrHideButaddressed, li.addressedComment{
-    background: #BBFFBB url("../images/check.png") right center no-repeat !important;    
+    background: #BBFFBB url("../images/check.png") right top no-repeat !important;    
 }
 #showOrHideButhidden, li.hiddenComment{
     background-color: #FFD8D8 !important;
 }
 .instComment{
-    background-color: #FFF2AF !important;
+    background: #FFF2AF url("../images/important.png") right top no-repeat !important;
 }
 .icons
 {
