@@ -55,7 +55,7 @@ form.hide { display: none }
     color: #AF0000;
 }
 .orange{
-    color: #DF6E00;
+    color: #F5B40A;
 }
 .loginEmail{
     text-align: right;
@@ -565,16 +565,15 @@ table#showAnswers tr td:first-child{
     width: 98%;
 }
 
-li.hiddenComment, li.addressedComment{
-    //display: none;
-}
 #showOrHideButaddressed, li.addressedComment{
     background: #BBFFBB url("../images/check.png") right center no-repeat !important;    
 }
 #showOrHideButhidden, li.hiddenComment{
     background-color: #FFD8D8 !important;
 }
-
+.instComment{
+    background-color: #FFF2AF !important;
+}
 .icons
 {
     background: url(../images/icons.gif) no-repeat;

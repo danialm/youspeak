@@ -257,8 +257,12 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             //$newComment = isNewComment($c['time'])? "newComment" : "";
             $newComment = "";
             
-            $liClass = $c["flag_id"]==4 ? "hiddenComment" : ($c["flag_id"]==3 ? "addressedComment" : "");
-            //var_dump($liClass);
+            $course = Dbase::GetCourseFromSession($sessionId);
+            $roleInCourse = Dbase::GetUserRoleInCourse($c["user_id"], $course["id"]);
+            $instructorComment = ($roleInCourse === "in");
+            
+            $liClass = $c["flag_id"]==4 ? "hiddenComment" : ($c["flag_id"]==3 ? "addressedComment" : ($instructorComment ? "instComment" : ""));
+
             echo "<li class='$liClass'><div class='control $newComment' >";
             
             // if comment owner
