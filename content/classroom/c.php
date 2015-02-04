@@ -54,7 +54,7 @@ if ( isset($_POST['act']) )
         
     case "add_quiz":
         if ($instructor){
-            $adding = Dbase::AddQuiz($sessionId, $name, $numOptions, $options, $open);
+            $adding = Dbase::AddQuiz($sessionId, $name, $numOptions, $options, $open, $save);
         }
 
         // must stay right above "get_quizzes"
@@ -67,7 +67,7 @@ if ( isset($_POST['act']) )
             if ( !$instructor )
                 unset($ret[$i]['choices']);
             
-            if ( !$quiz['form']['open'] && !$instructor) 
+            if ( (!$quiz['form']['open'] || $quiz['form']['save'] == "1" )&& !$instructor) 
                 unset($ret[$i]);
         }
         

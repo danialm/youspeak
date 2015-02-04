@@ -200,7 +200,40 @@ span#quizLink a
     width: auto;
     height: auto;
 }
-
+#saved_quizzes{
+    position: fixed;
+    top:120px;
+    right: -130px;
+    background-color: rgba(0,0,0, .5);
+    z-index: 100;
+    padding: 20px 20px 20px 30px;
+    display: none;
+    width: 110px;
+}
+#saved_quizzes:hover{
+    right: 0;
+}
+#saved_quizzes>span{
+    display: inline-block;
+    background: #5c9ccc url(images/ui-bg_gloss-wave_55_5c9ccc_500x100.png) 50% 50% repeat-x;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 10px;
+    width: 80px;
+    max-height: 80px;
+    overflow: hidden;
+    cursor: pointer;
+}
+#saved_quizzes>span:hover{
+    background: #5c9ccc;
+}
+#saved_quizzes>span:active{
+    opacity: .5;
+}
+#saved_quizzes>p{
+    font-size: .8em;
+    color: #BBBBBB;
+}
 #AddQuizDialog span, #AddQuizDialog select{
     display: inline-block;
     margin: 0 5px 5px 0;
