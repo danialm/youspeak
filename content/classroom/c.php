@@ -21,7 +21,7 @@ if ( isset($_POST['act']) )
         $comments = Dbase::GetCommentsFromSession($sessionId,$userId);
         $userrates = Dbase::GetCommentRatingsForUser($userId);
 
-        GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView, $width, false, false);
+        GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, ($showHidden === 'true'), ($showAddressed === 'true'), $studentView, $width, false, false);
         break;
         
     case "add_rating":
@@ -114,8 +114,7 @@ if ( isset($_POST['act']) )
 }
 
 // UPDATE
-function isNewComment ($time, $cutoff = 30)
-{
+function isNewComment ($time, $cutoff = 15){
     $now = new DateTime();
     $then = new DateTime($time);
     $diff = $now->diff($then);
@@ -141,7 +140,7 @@ function MakeRemoveCommentLink ($commentId,$mobile=false)
     {
         $html .= "<p class='prating'><a  id='iminus' href='#' ";//class='icons'
         $html .= "title='Remove Comment' ";
-        $html .= "onclick='AreYouSure(\"Remove this comment?\", RemoveComment,$commentId); return false;'>";
+        $html .= "onclick='AreYouSure(\"Remove this comment?\", FlagComment,$commentId,4); return false;'>";
         $html .= "<i class='fa fa-trash-o red'></i>";
         $html .= "</a></p>";
     }
@@ -243,19 +242,16 @@ function MakeReplyLink($id){
     return $html;
 }
 
-function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$studentView,$width=false,$indent=false,$mobile=false){
+function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showHidden,$showAddressed,$studentView,$width=false,$indent=false,$mobile=false){
     $ulClass = $indent ? "indent": "";
     $pStyle = $width ? ( $indent ? "width:".($width*0.95-80)."px" : "width:".($width-80)."px") : "display: none";
     echo "<ul class='$ulClass'>";
     if ( $comments ) {
         foreach ($comments as $c){
-            //if ( $c["flag_id"] > 0 )
-                //continue;
             if (!$instructor && $c["flag_id"]==4)//Hidden comments not shown for non-instructor
                 continue;
             
-            //$newComment = isNewComment($c['time'])? "newComment" : "";
-            $newComment = "";
+            $newComment = isNewComment($c['time'])? "newComment" : "";
             
             $course = Dbase::GetCourseFromSession($sessionId);
             $roleInCourse = Dbase::GetUserRoleInCourse($c["user_id"], $course["id"]);
@@ -263,44 +259,47 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
             
             $liClass = $c["flag_id"]==4 ? "hiddenComment" : ($c["flag_id"]==3 ? "addressedComment" : ($instructorComment ? "instComment" : ""));
 
-            echo "<li class='$liClass'><div class='control $newComment' >";
+            echo "<li class='$liClass $newComment'>";
             
-            // if comment owner
-            if ($_SESSION['currentUserId'] == $c['user_id'] || $instructor)
-            {
-                $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
-                echo "$removeLink";
-                echo "<center><p class='prating'>$c[rating]</p></center>";
-            }
-            
-            else if (!$instructor)
-            {
-                $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$mobile);
-                echo "$rateLinks ";
-            }
-            
-            if ($instructor)
-            {
-                $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
-                echo "$flagLinks ";
-            }
-            if ($c['parent_id'] === "0"){
-                echo MakeReplyLink($c['id']);
-            }
-            
-            echo "</div><div id='cid$c[id]'";
-            if ($mobile) echo " style='padding-left: 20px'";
-            echo " class='$newComment'><p style='$pStyle'>$c[comment]</p>";
-            echo "</div>";
-            if ($_SESSION['currentUserId'] == $c['user_id'])
-            {
-                $mobString = $mobile?"true":"false";
-                $jsFunc = "function () {}";
-                $edits[] = "$(\"#cid$c[id] p\").click($jsFunc);";
+            if ( (!$c["flag_id"]==4 && !$c["flag_id"]==3) || ($c["flag_id"]==4 && $showHidden) || ($c["flag_id"]==3 && $showAddressed)){
+                
+                echo "<div class='control' >";
+                
+                if ($instructor)
+                {
+                    $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
+                    echo "$flagLinks ";
+                }
+                
+                // if comment owner
+                if ($_SESSION['currentUserId'] == $c['user_id'] && !$instructor)
+                {
+                    echo "<center><p class='prating'>$c[rating]</p></center>";
+                    $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
+                    echo "$removeLink";   
+                }
+
+                else if (!$instructor)
+                {
+                    $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$mobile);
+                    echo "$rateLinks ";
+                }
+
+
+                if ($c['parent_id'] === "0"){
+                    echo MakeReplyLink($c['id']);
+                }
+
+                echo "</div><div id='cid$c[id]'";
+                if ($mobile) echo " style='padding-left: 20px'";
+                echo " ><p style='$pStyle'>$c[comment]</p>";
+                echo "</div>";
+                
             }
             echo "</li>";
+            
             if($c['children'] && count($c['children'])>0)
-                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$studentView,$width,true,false);
+                GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$showHidden,$showAddressed,$studentView,$width,true,false);
         }
         
         if ( isset($addressedComments) )
@@ -328,15 +327,6 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$stude
     
     echo "</ul>";
     
-    if ( isset($edits) )
-    {
-        echo "<script>function EditsWhenReady() {";
-        foreach ($edits as $e)
-            echo "$e ";
-        echo "};$(document).ready(EditsWhenReady());</script>";
-    }
-
-
 }
 
 ?>

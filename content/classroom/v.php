@@ -33,8 +33,8 @@ var width = $(window).width();
 $( window ).resize(function(){
     width = $(window).width();
 });
-window.hideaddressedComments = true;
-window.hidehiddenComments = true;
+window.showHiddenComments = false;
+window.showAddressedComments = false;
 window.UpdateCommentsEvent = function (){
     UpdateSessionComments( <?php echo $sessionId; ?>, width );
     getQuizzes(<?php echo $sessionId; ?>);
@@ -64,13 +64,18 @@ $(".right-side").css("top","5px");
     
     <div id="userComments" class='ui-widget ui-widget-content'>
         <div id='commentTable'>
-            <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView, false, false, false); ?>
+            <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, false ,false, $studentView, false, false, false); ?>
         </div>
-        <div id='addComment'>
-            <a href='#' id='iplus' onclick='ClassroomReply(); return false;'>
-                <i class="fa fa-plus fa-lg green"></i>Comment</a>
+        <div>
+            <a href='#' onclick='window.showAddressedComments = !window.showAddressedComments; faClassToggle(this) ; return false;'>
+                <i class="fa fa-toggle-off fa-lg green"></i>Addressed comments</a>
         </div>
-        
+        <?php if ($instructor){?>
+        <div>
+            <a href='#' onclick='window.showHiddenComments = !window.showHiddenComments; faClassToggle(this) ; return false;'>
+                <i class="fa fa-toggle-off fa-lg green"></i>Hidden comments</a>
+        </div>
+        <?php } ?>
         <div id='ShowQuizDialog' qopenid="0"></div>
         <script>
             session = <?php echo $sessionId; ?>;
@@ -107,13 +112,13 @@ $(".right-side").css("top","5px");
             .dialog({
                 autoOpen: false,
                 buttons: {
-                    Save: function(){
-                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>, true); 
+                    Post:    function () { 
+                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>, false); 
                         if(re)
                             $(this).dialog("close"); 
                     },
-                    Add:    function () { 
-                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>, false); 
+                    Save: function(){
+                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>, true); 
                         if(re)
                             $(this).dialog("close"); 
                     },

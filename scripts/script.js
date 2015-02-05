@@ -218,7 +218,6 @@ function ValidateAddQuiz(sessionId, save){
 
     var form = $("#AddQuizDialog");
     var fields = form.find("input");
-    fields.push(form.find("textarea")[0]);
     var emptyFields;
     var options = new Array();
 
@@ -339,14 +338,14 @@ function DisaShow(caller)
         ele.disabled = true;
 }
 
-function AreYouSure (dialog, func, param)
+function AreYouSure (dialog, func, param1, param2)
 {
     var yes = function ()
     {
         if (!func)
             $("#confirmation").dialog("close");
         
-        else if (!param)
+        else if (!param1)
         {
             if (func.name)
             {
@@ -357,9 +356,12 @@ function AreYouSure (dialog, func, param)
             $("#confirmation").dialog("close");
         }
         
-        else
+        else if (!param2)
         {
-            func(param);
+            func(param1);
+            $("#confirmation").dialog("close");
+        }else{
+            func(param1, param2);
             $("#confirmation").dialog("close");
         }
     }
@@ -462,14 +464,8 @@ function showSavedQuizzes(saveds){
         $("#saved_quizzes").show();
     }
     $.each(saveds, function(i, id){
-        if(i<3)
-            $("#saved_quizzes").append("<span onclick='showEditQuiz("+id+")'>"+quizzes[id].form.name+"</span>");
-    });
-    var i = saveds.length-3;
-    var q = i === 1 ? "quiz is" : "quizzes are";
-    if( i > 0)
-            $("#saved_quizzes").append("<p>"+i+" "+q+" hidden!</p>");
-        
+            $("#saved_quizzes").append("<span onclick='showEditQuiz("+id+")'><i>"+quizzes[id].form.name+"</i></span>");
+    }); 
 }
 
 function showEditQuiz(id){
@@ -734,34 +730,6 @@ function ClassroomCancelAdd (){
     $("#quizLink").html(window.originalAddQuiz);
 }
 
-function ClassroomShowOrHideComments (flagtype)
-{
-    var elems = document.getElementsByTagName('*'), i;
-    var matchClass = flagtype+"Comment";
-    for (i in elems) {
-        if ((' ' + elems[i].className + ' ').indexOf(' ' + matchClass + ' ') > -1)
-        {
-            if (elems[i].style.display == "none" || elems[i].style.display == "")
-            {
-                elems[i].style.display = "list-item";
-                var h = $("#showOrHideBut"+flagtype+" a").html();
-                $("#showOrHideBut"+flagtype+" a").html(h.replace("Show","Hide"));
-            }
-            else
-            {
-                elems[i].style.display = "none";
-                var h = $("#showOrHideBut"+flagtype+" a").html();
-                $("#showOrHideBut"+flagtype+" a").html(h.replace("Hide","Show"));
-            }
-        }
-    }
-    
-    if (window["hide"+flagtype+"Comments"] == true)
-        window["hide"+flagtype+"Comments"] = false;
-    else
-        window["hide"+flagtype+"Comments"] = true;
-}
-
 function getQuizzes (sessionId)
 {
     if ( !sessionId ) sessionId = lastSId;
@@ -950,7 +918,9 @@ function UpdateSessionComments (sessionId,width,mobile)
         act: "update_comments",
         sessionId: sessionId,
         mobile: mobile?1:null,
-        width: width
+        width: width,
+        showHidden: showHiddenComments,
+        showAddressed: showAddressedComments
     };
     var url = (NO_REWRITE?"?p=Classroom":"Classroom");
     $.post(url,vars,function (res)
@@ -958,18 +928,6 @@ function UpdateSessionComments (sessionId,width,mobile)
         var eleSect = document.getElementById("commentTable");
             
         eleSect.innerHTML = res;
-        
-        if (!window.hideaddressedComments)
-        {
-            ClassroomShowOrHideComments("addressed");
-            window.hideaddressedComments = false;
-        }
-        
-        if (!window.hidehiddenComments)
-        {
-            ClassroomShowOrHideComments("hidden");
-            window.hidehiddenComments = false;
-        }
         
         $("#mobclass").trigger('create');
         if (EditsWhenReady) EditsWhenReady();
@@ -1113,6 +1071,15 @@ function joinDialog (c,title){
     $("#join").dialog("option", "title", "Confirm");
     $("#join").dialog("option", "buttons", buttons);
     $("#join").html(html).dialog("open");
+}
+
+function faClassToggle(t){
+    var cls = $(t).find("i").attr("class");
+    if(cls.search("off")>0){
+        $(t).find("i").attr("class", "fa fa-toggle-on fa-lg green");
+    }else{
+        $(t).find("i").attr("class", "fa fa-toggle-off fa-lg green");
+    }
 }
 
 /*

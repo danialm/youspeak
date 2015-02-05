@@ -834,12 +834,15 @@ class Dbase
     }
     
     public static function AddQuiz ($sessionId, $question, $numOptions, $options, $open, $save){
+        date_default_timezone_set('America/Los_Angeles');
+        preg_match('/<[0-2][0-9]:[0-5][0-9]:[0-5][0-9]>/', $question, $matches);
         if ($numOptions < 1) 
             $numOptions = 1;
         if ($numOptions > 10) 
             $numOptions = 10;
-        if (!$question || $question=="") 
-            $question = "Question";
+        if (!$question || trim($question)=="" || count($matches) === 1) 
+            $question = "Question <" . date('H:i:s') . ">";
+        
         $q = "INSERT INTO quizzes (id, name, time, num_options, open, save, session)
                 VALUES (DEFAULT, '$question', NOW(), $numOptions, $open, $save, $sessionId)";
         
