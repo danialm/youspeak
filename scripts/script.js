@@ -211,12 +211,13 @@ function ValidateAddComment(sessionId)
     return false;
 }
 
-function ValidateAddQuiz(sessionId){
+function ValidateAddQuiz(sessionId, save){
+    
+    var open = !save;
     var ERRMSG_EMPTY_FIELDS = "Something was left blank.";
 
     var form = $("#AddQuizDialog");
     var fields = form.find("input");
-    fields.push(form.find("textarea")[0]);
     var emptyFields;
     var options = new Array();
 
@@ -244,7 +245,7 @@ function ValidateAddQuiz(sessionId){
                 options.push(temp.trim());
             }
         }
-        addQuiz(sessionId, form.find("textarea").val(), options.length, options, 1);
+        addQuiz(sessionId, form.find("textarea").val(), options.length, options, open, save);
         return true;
     }
 }
@@ -337,14 +338,14 @@ function DisaShow(caller)
         ele.disabled = true;
 }
 
-function AreYouSure (dialog, func, param)
+function AreYouSure (dialog, func, param1, param2)
 {
     var yes = function ()
     {
         if (!func)
             $("#confirmation").dialog("close");
         
-        else if (!param)
+        else if (!param1)
         {
             if (func.name)
             {
@@ -355,9 +356,12 @@ function AreYouSure (dialog, func, param)
             $("#confirmation").dialog("close");
         }
         
-        else
+        else if (!param2)
         {
-            func(param);
+            func(param1);
+            $("#confirmation").dialog("close");
+        }else{
+            func(param1, param2);
             $("#confirmation").dialog("close");
         }
     }
@@ -414,10 +418,14 @@ function ClassroomAddQuiz (sessionId)
 function UpdateQuizState (){
 
     var dialog = $("#ShowQuizDialog");
+    var saveds = [];
+    
     if(!ins && quizzes.length===0){ //No active quiz for student 
         dialog.html("Quiz is closed!");
         dialog.dialog("option","buttons",{ Close: function () {dialog.dialog("close");} });
     }
+    
+    
     $.each(quizzes, function (i,q){
         var id = q.form.id;
         var open = q.form.open;
@@ -441,7 +449,67 @@ function UpdateQuizState (){
         // if instructor and there is an active quiz, pop it up
         if ( ins && (dialog.attr("qopenid")==0) && open==1 )
             ShowQuiz(id);
+        
+        if(q.form.save == 1){
+            saveds.push(id);
+        }
     });
+    
+    showSavedQuizzes(saveds);
+}
+
+function showSavedQuizzes(saveds){
+    $("#saved_quizzes").empty().hide();
+    if(saveds.length > 0){
+        $("#saved_quizzes").show();
+    }
+    $.each(saveds, function(i, id){
+            $("#saved_quizzes").append("<span onclick='showEditQuiz("+id+")'><i>"+quizzes[id].form.name+"</i></span>");
+    }); 
+}
+
+function showEditQuiz(id){
+    var saved = (typeof id == "undefined") ? false : true;
+    
+    
+    var html ="<input type='hidden' name='act' value='add_quiz'>";
+        html+="<textarea style='width: 100%; box-sizing: border-box;' rows=2 name='question' placeholder='Type your question here.' >";
+    if(saved)    
+        html+= quizzes[id].form.name;
+        html+="</textarea><br />";
+        html+="Number Of Choices:";  
+        html+="<select onchange='addOptions();' name='NumberOfChoises'>";
+    for(var i=2; i<11; i++){
+        var sel = (saved && i===quizzes[id].options.length)?"select":""; 
+        html+="    <option value='";
+        html+=i;
+        html+="' ";
+        html+=sel;
+        html+=">";
+        html+=i;
+        html+="</option>";
+    }
+        html+="</select>";
+        html+="<div class='choises' >";
+    var char = 97;
+    if(saved){
+        for(var index in quizzes[id].options){
+            var val = quizzes[id].options[index];
+            html+="    <span>";
+            html+=index;
+            html+=". <input type='text' name='";
+            html+=String.fromCharCode(char++);
+            html+="' value='";
+            html+=val;
+            html+="'/></span>";
+        }
+    }else{
+        html+="<span><input tupe='text' name='a' value='a' /></span>";
+        html+="<span><input tupe='text' name='b' value='b' /></span>";
+    }
+        html+="</div>";
+    $("#AddQuizDialog").html(html).dialog("open");
+    removeQuiz(id);
 }
 
 function decideOnQuiz (answered)
@@ -470,7 +538,10 @@ function ShowQuiz (quiz)
     var choices = ["A","B","C","D","E","F","G","H","I","J"];
     var q = quizzes[quiz];
     var options = q["options"];
+    var saved = q.form.save === "1" ? true : false;
     var buttons;
+    
+    if (saved) return false;
     
     $("#ShowQuizDialog").dialog("option","title","Questionnaire");
     
@@ -488,14 +559,13 @@ function ShowQuiz (quiz)
         for (var i=0; i<q.form.num_options; i++)
             total += parseInt(q.choices[ choices[i] ]);
         
-        if (cChecked)
-        {
+        if (cChecked){
             html += "<br><span>Click on the right Answer:</span>";
             html += "<center><table id='showAnswers' cellspacing=0>";
             html += "<tr><th>Choice</th><th>Count</th><th>%</th></tr>";
-            
+
             total = total>0?total:1;
-            
+
             for (var i=0; i<q.form.num_options; i++)
             {
                 var count = q.choices[ choices[i] ];
@@ -517,15 +587,12 @@ function ShowQuiz (quiz)
                     $("#ShowQuizDialog").dialog("close");
                 }
             };
-        }
-        else
-        {
+        }else{
             html += "<br><p>"+ q.form.name +"<br><b>is active</b></p>";
             html += "<p>"+total+ (total==1?" has ":" have ")+"answered</p>";
-            buttons = {
-                
-            };
+            buttons = {};
         }
+        
         
         $("#ShowQuizDialog").html(html).dialog("option", "buttons", buttons);
         $("#ShowQuizDialog div").buttonset();
@@ -640,10 +707,21 @@ function ClassroomSwitchToAddQuiz (sessionId){
 function addOptions(){
     var form = $("#AddQuizDialog");
     var num = parseInt(form.find("select option:selected").first().text());
+    var currentOptions = form.find(".choises").find("input");
+    var currentValues = [];
+    currentOptions.each(function(i, option){
+       var val = $(option).val();
+       currentValues.push(val);
+    });
+    
     form.find(".choises").empty();
-    for(var i=1;i<num+1;i++){
-        var char = String.fromCharCode(96 + i);
-        form.find(".choises").append("<span>"+i+". <input type='text' name='"+char+"' value='"+char+"'></span>");
+    if(num == currentValues.length){
+        return false;
+    }else {
+        for(var i=1;i<num+1;i++){
+            var char = String.fromCharCode(96 + i);
+            form.find(".choises").append("<span>"+i+". <input type='text' name='"+char+"' value='"+(currentValues[i-1] || char)+"'></span>");
+        }
     }
 }
 
@@ -652,73 +730,12 @@ function ClassroomCancelAdd (){
     $("#quizLink").html(window.originalAddQuiz);
 }
 
-//Depricated because no one can edit any comment
-//function ClassroomSwitchToEditComment (commentId, sessionId, mobile)
-//{
-//    var cell = $("#cid"+commentId);
-//    var comment = $("#cid"+commentId+" p").html();
-//    
-//    var editHtml = "";
-//    editHtml += "<textarea id='editcom"+commentId+"'>";
-//    editHtml += comment;
-//    editHtml += "</textarea>";
-//    editHtml += "<input id='submitEditCom"+commentId+"' type='button' value='Submit Change' />";
-//    editHtml += "<input id='cancelEditCom"+commentId+"' type='button' value='Cancel' />";
-//    
-//    cell.html(editHtml);
-//    
-//    $("#submitEditCom"+commentId).click( function () {
-//        var newComment = $("#editcom"+commentId)[0].value;
-//        
-//        EditComment(newComment, commentId, sessionId, mobile);
-//        window.updateCommentsEvent = setInterval(window.UpdateCommentsEvent,10000);
-//    });
-//    
-//    $("#cancelEditCom"+commentId).click( function () {
-//        cell.html("<p>"+comment+"</p>");
-//        $("#cid"+commentId+" p").click(function () {
-//            ClassroomSwitchToEditComment(commentId, sessionId, mobile);
-//        });
-//        window.updateCommentsEvent = setInterval(window.UpdateCommentsEvent,10000);
-//    });
-//    
-//    clearInterval(window.updateCommentsEvent);
-//}
-
-function ClassroomShowOrHideComments (flagtype)
-{
-    var elems = document.getElementsByTagName('*'), i;
-    var matchClass = flagtype+"Comment";
-    for (i in elems) {
-        if ((' ' + elems[i].className + ' ').indexOf(' ' + matchClass + ' ') > -1)
-        {
-            if (elems[i].style.display == "none" || elems[i].style.display == "")
-            {
-                elems[i].style.display = "list-item";
-                var h = $("#showOrHideBut"+flagtype+" a").html();
-                $("#showOrHideBut"+flagtype+" a").html(h.replace("Show","Hide"));
-            }
-            else
-            {
-                elems[i].style.display = "none";
-                var h = $("#showOrHideBut"+flagtype+" a").html();
-                $("#showOrHideBut"+flagtype+" a").html(h.replace("Hide","Show"));
-            }
-        }
-    }
-    
-    if (window["hide"+flagtype+"Comments"] == true)
-        window["hide"+flagtype+"Comments"] = false;
-    else
-        window["hide"+flagtype+"Comments"] = true;
-}
-
 function getQuizzes (sessionId)
 {
     if ( !sessionId ) sessionId = lastSId;
     else              lastSId = sessionId;
     
-    var url = NO_REWRITE?"?p=Classroom":"Classroom";
+    var url = (NO_REWRITE?"?p=Classroom":"Classroom");
     $.ajax({
         type: "POST",
         url: url,
@@ -735,7 +752,7 @@ function getQuizzes (sessionId)
     });
 }
 
-function addQuiz (sessionId, name, numOptions, options, open)
+function addQuiz (sessionId, name, numOptions, options, open, save)
 {
     var url = NO_REWRITE?"?p=Classroom":"Classroom";
     $.ajax({
@@ -747,7 +764,8 @@ function addQuiz (sessionId, name, numOptions, options, open)
             name: name,
             numOptions: numOptions,
             options: options,
-            open: open
+            open: open,
+            save: save
         },
         success: function (data) {
             quizzes = data['quizzes'];
@@ -758,10 +776,7 @@ function addQuiz (sessionId, name, numOptions, options, open)
     });
 }
 
-function removeQuiz (quizId)
-{
-    var removeFunc = function (quizId)
-    {
+function removeQuiz (quizId){
         var url = NO_REWRITE?"?p=Classroom":"Classroom";
         $.ajax({
             type: "POST",
@@ -771,32 +786,9 @@ function removeQuiz (quizId)
                 quizId: quizId
             },
             success: function () {
-                getQuizzes();
-                $("#ShowQuizDialog").dialog("close");
             },
             error: function (j,t,e) { console.log("Remove Quiz Cancelled"); }
         });
-    };
-    $("<div></div>").dialog(
-    {
-        buttons: 
-        { 
-            Yes: function () 
-            {
-                removeFunc(quizId);
-                $(this).html("Deleted");
-                $(this).dialog("option","buttons",{Close:function(){$(this).dialog("close").dialog("destroy");}});
-            },
-            No:  function () { $(this).dialog("close").dialog("destroy"); } 
-        },
-        dialogClass: "no-close-button",
-        show: { effect: "shake" },
-        modal: true,
-        resizable: false,
-        draggable: false,
-        width: 400,
-        title: "Delete Questionnaire"
-    }).html("Delete Questionnaire: "+quizzes[quizId].form.name+"?");
 }
 
 function SubmitQuizAnswer (answer, quiz)
@@ -926,26 +918,16 @@ function UpdateSessionComments (sessionId,width,mobile)
         act: "update_comments",
         sessionId: sessionId,
         mobile: mobile?1:null,
-        width: width
+        width: width,
+        showHidden: showHiddenComments,
+        showAddressed: showAddressedComments
     };
-    var url = NO_REWRITE?"?p=Classroom":"Classroom";
+    var url = (NO_REWRITE?"?p=Classroom":"Classroom");
     $.post(url,vars,function (res)
     {   
         var eleSect = document.getElementById("commentTable");
             
         eleSect.innerHTML = res;
-        
-        if (!window.hideaddressedComments)
-        {
-            ClassroomShowOrHideComments("addressed");
-            window.hideaddressedComments = false;
-        }
-        
-        if (!window.hidehiddenComments)
-        {
-            ClassroomShowOrHideComments("hidden");
-            window.hidehiddenComments = false;
-        }
         
         $("#mobclass").trigger('create');
         if (EditsWhenReady) EditsWhenReady();
@@ -1089,6 +1071,15 @@ function joinDialog (c,title){
     $("#join").dialog("option", "title", "Confirm");
     $("#join").dialog("option", "buttons", buttons);
     $("#join").html(html).dialog("open");
+}
+
+function faClassToggle(t){
+    var cls = $(t).find("i").attr("class");
+    if(cls.search("off")>0){
+        $(t).find("i").attr("class", "fa fa-toggle-on fa-lg green");
+    }else{
+        $(t).find("i").attr("class", "fa fa-toggle-off fa-lg green");
+    }
 }
 
 /*

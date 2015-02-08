@@ -755,7 +755,8 @@ class Dbase
                 q.name,
                 q.time,
                 q.num_options,
-                q.open
+                q.open,
+                q.save
             FROM quizzes q
             WHERE session = $sessionId
         ";
@@ -832,16 +833,18 @@ class Dbase
         return $res;
     }
     
-    public static function AddQuiz ($sessionId, $question, $numOptions, $options, $open){
+    public static function AddQuiz ($sessionId, $question, $numOptions, $options, $open, $save){
+        date_default_timezone_set('America/Los_Angeles');
+        preg_match('/<[0-2][0-9]:[0-5][0-9]:[0-5][0-9]>/', $question, $matches);
         if ($numOptions < 1) 
             $numOptions = 1;
         if ($numOptions > 10) 
             $numOptions = 10;
-        if (!$question || $question=="") 
-            $question = "Question";
+        if (!$question || trim($question)=="" || count($matches) === 1) 
+            $question = "Question <" . date('H:i:s') . ">";
         
-        $q = "INSERT INTO quizzes (id, name, time, num_options, open, session)
-                VALUES (DEFAULT, '$question', NOW(), $numOptions, $open, $sessionId)";
+        $q = "INSERT INTO quizzes (id, name, time, num_options, open, save, session)
+                VALUES (DEFAULT, '$question', NOW(), $numOptions, $open, $save, $sessionId)";
         
         self::Query($q);
         
@@ -861,6 +864,9 @@ class Dbase
     {
         $q = "DELETE FROM quizzes WHERE id = $quizId";
         self::Query($q);
+        
+        $q = "DELETE FROM options WHERE quiz = $quizId";
+        self::Query($q);
     }
     
     public static function SubmitQuizAnswer ($userId, $quizId, $answer)
@@ -873,7 +879,7 @@ class Dbase
     
     public static function OpenQuiz ($quiz, $open)
     {
-        $q = "UPDATE quizzes SET open = $open WHERE id = $quiz";
+        $q = "UPDATE quizzes SET open = $open, save= 0 WHERE id = $quiz";
         self::Query($q);
     }
     

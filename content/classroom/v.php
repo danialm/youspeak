@@ -33,16 +33,14 @@ var width = $(window).width();
 $( window ).resize(function(){
     width = $(window).width();
 });
-window.hideaddressedComments = true;
-window.hidehiddenComments = true;
+window.showHiddenComments = false;
+window.showAddressedComments = false;
 window.UpdateCommentsEvent = function (){
     UpdateSessionComments( <?php echo $sessionId; ?>, width );
     getQuizzes(<?php echo $sessionId; ?>);
 };
 UpdateCommentsEvent;
-var updateCommentsEvent = setInterval(UpdateCommentsEvent,1000);
-
-setInterval(console.log('test'),300);
+var updateCommentsEvent = setInterval(UpdateCommentsEvent,5000);
 
 $(".right-side").css("top","5px");
 
@@ -53,8 +51,8 @@ $(".right-side").css("top","5px");
 //setSize = setInterval(setSize,1);
 </script>
 <style> body { background-color: black; background-image: none; } </style>
-
-<div id="classroom">        
+<div id="saved_quizzes"></div>
+<div id="classroom">    
     <div id='confirmation' title='Are You Sure?'></div>
     <script>
         $("#confirmation").dialog({autoOpen:false});
@@ -66,13 +64,18 @@ $(".right-side").css("top","5px");
     
     <div id="userComments" class='ui-widget ui-widget-content'>
         <div id='commentTable'>
-            <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, $studentView, false, false, false); ?>
+            <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, false ,false, $studentView, false, false, false); ?>
         </div>
-        <div id='addComment'>
-            <a href='#' id='iplus' onclick='ClassroomReply(); return false;'>
-                <i class="fa fa-plus fa-lg green"></i>Comment</a>
+        <div>
+            <a href='#' onclick='window.showAddressedComments = !window.showAddressedComments; faClassToggle(this) ; return false;'>
+                <i class="fa fa-toggle-off fa-lg green"></i>Addressed comments</a>
         </div>
-        
+        <?php if ($instructor){?>
+        <div>
+            <a href='#' onclick='window.showHiddenComments = !window.showHiddenComments; faClassToggle(this) ; return false;'>
+                <i class="fa fa-toggle-off fa-lg green"></i>Hidden comments</a>
+        </div>
+        <?php } ?>
         <div id='ShowQuizDialog' qopenid="0"></div>
         <script>
             session = <?php echo $sessionId; ?>;
@@ -82,7 +85,6 @@ $(".right-side").css("top","5px");
             $("#ShowQuizDialog").hide().dialog({
                     autoOpen: false,
                     buttons: { 
-//                        Close: function () { $(this).dialog("close"); } 
                     },
                     dialogClass: "no-close-button",
                     hide: { effect: "slide", duration: 200, direction: "down" },
@@ -90,7 +92,7 @@ $(".right-side").css("top","5px");
                     modal: false,
                     resizable: false,
                     draggable: true,
-                    position: { my: "top", at: "top", of: "#classroom" },
+                    position: { my: "top", at: "top", of: "#container" },
                     width: 300,
                     title: "View a Questionnaire",
                     open: function () {
@@ -104,33 +106,19 @@ $(".right-side").css("top","5px");
             getQuizzes(<?php echo $sessionId; ?>);
         </script>
     </div><!-- userComments -->
-    <div id="AddQuizDialog">
-            <input type='hidden' name='act' value='add_quiz'>
-            <textarea style='width: 100%; box-sizing: border-box;' rows=2 name='question' placeholder='Type your question here.' ></textarea><br />
-            Number Of Choices: 
-            <select onchange='addOptions();' name='NumberOfChoises'>
-                <option value='2'>2</option>
-                <option value='3'>3</option>
-                <option value='4'>4</option>
-                <option value='5'>5</option>
-                <option value='6'>6</option>
-                <option value='7'>7</option>
-                <option value='8'>8</option>
-                <option value='9'>9</option>
-                <option value='10'>10</option>
-            </select>
-            <div class='choises' >
-                <span>1. <input type='text' name='a' value='a'/></span>
-                <span>2. <input type='text' name='b' value='b'/></span>
-            </div>
-    </div>
+    <div id="AddQuizDialog"></div>
     <script>
         $("#AddQuizDialog").hide()
             .dialog({
                 autoOpen: false,
                 buttons: {
-                    Add:    function () { 
-                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>); 
+                    Post:    function () { 
+                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>, false); 
+                        if(re)
+                            $(this).dialog("close"); 
+                    },
+                    Save: function(){
+                        var re = ValidateAddQuiz(<?php echo $sessionId; ?>, true); 
                         if(re)
                             $(this).dialog("close"); 
                     },

@@ -200,7 +200,44 @@ span#quizLink a
     width: auto;
     height: auto;
 }
-
+#saved_quizzes{
+    position: absolute;
+    box-sizing: border-box;
+    top:0;
+    right: -7px;
+    background-color: rgba(0,0,0, .5);
+    z-index: 100;
+    padding: 10px 0px 5px 20px;
+    display: none;
+    width: 20px;
+    overflow: hidden;
+}
+#saved_quizzes:hover{
+    right: -7px;
+    width: 160px;
+}
+#saved_quizzes>span{
+    display: inline-block;
+    background: #5c9ccc url(images/ui-bg_gloss-wave_55_5c9ccc_500x100.png) 50% 50% repeat-x;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#saved_quizzes>span>i{
+    display: inline-block;
+    overflow: hidden;
+    width: 90px;
+    max-height: 120px;
+    margin: 10px;
+    text-align: center;
+    font-size: .8em;
+}
+#saved_quizzes>span:hover{
+    background: #5c9ccc;
+}
+#saved_quizzes>span:active{
+    opacity: .5;
+}
 #AddQuizDialog span, #AddQuizDialog select{
     display: inline-block;
     margin: 0 5px 5px 0;
@@ -451,15 +488,11 @@ span.addingPresents
     padding-left: 0;
     padding-right: 0px;
     clear: right;
-    overflow-y: auto;
+    overflow: hidden;
     border: none;
     background: none;
 }
 
-.newComment
-{
-    background-color: rgb(255,200,0);
-}
 #commentTable{
     padding: 1px;
     -webkit-animation: slide 2s; /* Chrome, Safari, Opera */
@@ -487,11 +520,12 @@ span.addingPresents
     border: solid #BBBBBB 1px;
     border-radius: 3px;
     margin-bottom: 2px;
-    padding: 5px;
+    padding: 1px 5px;
     background: #FFFFFF;
 }
-#commentTable ul li div:nth-child(2) p{
-    //display: none;
+#commentTable ul li>*{
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 #commentTable ul.indent{
     margin-left: 5%;
@@ -566,13 +600,16 @@ table#showAnswers tr td:first-child{
 }
 
 #showOrHideButaddressed, li.addressedComment{
-    background: #BBFFBB url("../images/check.png") right top no-repeat !important;    
+    background: #BBFFBB !important;    
 }
 #showOrHideButhidden, li.hiddenComment{
     background-color: #FFD8D8 !important;
 }
 .instComment{
-    background: #FFF2AF url("../images/important.png") right top no-repeat !important;
+    background-color: #FFF2AF !important;
+}
+.newComment{
+    background-color: rgb(255,200,0) !important;
 }
 .icons
 {

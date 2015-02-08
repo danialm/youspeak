@@ -55,7 +55,7 @@ if ( strstr($thisPage, "Classroom")){
         echo "
             <span id='quizLink'>
                 <a href='#' 
-                        onclick='$(\"#AddQuizDialog\").dialog(\"open\"); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
+                        onclick='showEditQuiz(); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
             </span>
         ";
         echo "
