@@ -520,11 +520,12 @@ span.addingPresents
     border: solid #BBBBBB 1px;
     border-radius: 3px;
     margin-bottom: 2px;
-    padding: 5px;
+    padding: 1px 5px;
     background: #FFFFFF;
 }
-#commentTable ul li div:nth-child(2) p{
-    //display: none;
+#commentTable ul li>*{
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 #commentTable ul.indent{
     margin-left: 5%;
