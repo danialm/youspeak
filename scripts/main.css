@@ -212,9 +212,15 @@ span#quizLink a
     width: 20px;
     overflow: hidden;
 }
-#saved_quizzes:hover{
+#saved_quizzes.open{
     right: -7px;
     width: 160px;
+}
+#saved_quizzes>i{
+    position: absolute;
+    top: 5px;
+    left: 3px;
+    color: #BBBBBB;
 }
 #saved_quizzes>span{
     display: inline-block;

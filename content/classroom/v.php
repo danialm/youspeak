@@ -51,7 +51,7 @@ $(".right-side").css("top","5px");
 //setSize = setInterval(setSize,1);
 </script>
 <style> body { background-color: black; background-image: none; } </style>
-<div id="saved_quizzes"></div>
+<div id="saved_quizzes" onclick="$(this).toggleClass('open').children('i').toggleClass('fa-caret-left').toggleClass('fa-caret-right'); return false;"></div>
 <div id="classroom">    
     <div id='confirmation' title='Are You Sure?'></div>
     <script>

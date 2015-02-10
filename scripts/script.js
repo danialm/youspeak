@@ -460,6 +460,12 @@ function UpdateQuizState (){
 
 function showSavedQuizzes(saveds){
     $("#saved_quizzes").empty().hide();
+    if($("#saved_quizzes").attr("class") === "open"){
+        $("#saved_quizzes").append("<i class='fa fa-caret-right fa-lg'></i>");
+    }else{
+        $("#saved_quizzes").append("<i class='fa fa-caret-left fa-lg'></i>");
+    }
+    $("#saved_quizzes").hide();
     if(saveds.length > 0){
         $("#saved_quizzes").show();
     }
