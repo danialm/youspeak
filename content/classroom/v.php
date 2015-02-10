@@ -40,7 +40,7 @@ window.UpdateCommentsEvent = function (){
     getQuizzes(<?php echo $sessionId; ?>);
 };
 UpdateCommentsEvent;
-var updateCommentsEvent = setInterval(UpdateCommentsEvent,1000);
+var updateCommentsEvent = setInterval(UpdateCommentsEvent,<?= getenv("RELOAD_CALSSROOM") ?>);
 
 $(".right-side").css("top","5px");
 
