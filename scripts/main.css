@@ -9,10 +9,12 @@ html, body
 body {
     background-color: #EEEEFF;
     background-image: url('../images/bgtile.jpg');
-    //background-repeat: repeat-x;
     background-size: 100% 100%;
     background-attachment: fixed;
     font-family: Verdana, sans-serif;
+    margin: 0;
+    padding: 8px;
+    box-sizing: border-box;
 }
 
 img {
@@ -669,28 +671,37 @@ div#footer span {
 }
 
 /*******************
-       COLORS
-********************
+*ABOUT US PAGE
+********************/
+.aboutus-container{
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.aboutus-container>div{
+    clear: both;
+    margin-top: 10px;
+}
+.aboutus-container p{
+    text-align: justify;
+    color: #333;
+}
+.aboutus-container img{
+    display: block;
+    float: right;
+    max-width: 50%;
+    margin: 0 0 20px 20px;
+    box-shadow: 5px 5px 15px #333;
+    //border: solid 1px #888;
+}
+.aboutus-container img.left{
+    float: left;
+    margin: 0 20px 20px 0;
+}
+p.version{
+    text-align: right;
+    font-weight: bold;
+}
 
-9FAFCC
-3A5D99 (old)
-     light, bgcolor, navHover/current, txt
-
-061E45
-     dark, divBorder, txt
-     
-899CBB
-     navbar
-
-394C6B
-     header
-
-293956
-     dark (close to header)
-     
-EEEEFF
-     content bgcolor
-*/
 
 @media screen and (max-width: 340px){
     div#heading img{
@@ -739,4 +750,10 @@ EEEEFF
     #navNav{
         margin-bottom: 5px;
     }
+    .aboutus-container img, .aboutus-container img.left{
+        max-width: 90%;
+        float: none;
+        margin: 10px auto;
+    }
+    
 }
