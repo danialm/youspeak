@@ -152,25 +152,13 @@ function MakeRateLinks ($commentId,$rating,$rates,$studentView,$mobile=false)
     $up = $down = "";
     $html = "";
     
-    if ($mobile) 
-    {
-        $activeUp  = "<a data-role='button' data-icon='arrow-u' data-iconpos='notext' href='#'";
-        $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'></a>";
-        $inactiveUp  = "<span  class='ui-disabled' data-role='button' data-icon='arrow-u' data-iconpos='notext'></span>";
-        
-        $activeDown  = "<a data-role='button' data-icon='arrow-d' data-iconpos='notext' href='#'";
-        $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'></a>";
-        $inactiveDown = "<span class='ui-disabled' data-role='button' data-icon='arrow-d' data-iconpos='notext'></span>";
-    }
-    else{
-        $activeUp  = "<a  id='iup' href='#'";//class='icons'
-        $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'></i></a>";
-        $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'></i></span>";//class='icons'
-        
-        $activeDown  = "<a  id='idown' href='#'";//class='icons'
-        $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'></i></a>";
-        $inactiveDown = "<span  id='idown'><i class='fa fa-arrow-down inactive'></i></span>";//class='icons'
-    }
+    $activeUp  = "<a  id='iup' href='#'";//class='icons'
+    $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'></i></a>";
+    $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'></i></span>";//class='icons'
+
+    $activeDown  = "<a  id='idown' href='#'";//class='icons'
+    $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'></i></a>";
+    $inactiveDown = "<span  id='idown'><i class='fa fa-arrow-down inactive'></i></span>";//class='icons'
     
     if($studentView){
         $up = $inactiveUp;
@@ -265,27 +253,25 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
                 
                 echo "<div class='control' >";
                 
-                if ($instructor)
-                {
+                if ($instructor){
+                    
                     $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
                     echo "$flagLinks ";
-                }
-                
-                // if comment owner
-                if ($_SESSION['currentUserId'] == $c['user_id'] && !$instructor)
-                {
                     echo "<center><p class='prating'>$c[rating]</p></center>";
-                    $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
-                    echo "$removeLink";   
-                }
-
-                else if (!$instructor)
-                {
+                    
+                }else{
+                    
                     $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$mobile);
                     echo "$rateLinks ";
+                    
+                    if ($_SESSION['currentUserId'] == $c['user_id']){// if comment owner and non instructor
+                
+                        $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
+                        echo "$removeLink";
+                        
+                    }    
                 }
-
-
+                
                 if ($c['parent_id'] === "0"){
                     echo MakeReplyLink($c['id']);
                 }
