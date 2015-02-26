@@ -2,4 +2,6 @@ dehbeh
 .htaccess
 script/js-xlsx
 script/js-xlsx/
+script/Charts.js
+script/Charts.js/
 tides_bug_reporting.php
