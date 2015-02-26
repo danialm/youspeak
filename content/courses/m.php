@@ -5,6 +5,7 @@ global $userInfo;
 global $courses;
 global $joinCourseList;
 global $expand;
+global $institutions;
 
 //exit ( $_SESSION['currentUserId'] );
 
@@ -18,13 +19,13 @@ else
 }
 
 Dbase::Connect();
-
 $userInfo = Dbase::GetUserInfo($userId);
 $sessions = Dbase::GetSessions();
 $enrollment = Dbase::GetEnrollmentFromUser($userId);
 $allCourses = Dbase::GetCourses();
 $roleRef = Dbase::GetRoleRef();
 $joinCourseList = Dbase::GetJoinCourseList($userId);
+$institutions = Dbase::GetInstitutions();
 $terms = Dbase::GetTermRef();
 if ( count($enrollment) > 0 ){
     $courses = array();

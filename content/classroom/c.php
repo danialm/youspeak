@@ -126,39 +126,39 @@ function isNewComment ($time, $cutoff = 15){
     return ($totalSec < $cutoff);
 }
 
-function MakeRemoveCommentLink ($commentId,$mobile=false)
+function MakeRemoveCommentLink ($commentId, $isFirst)
 {
-    $html = "";
-    if ($mobile)
-    {
-        $html .= "<p class='prating'><a data-role='button' data-icon='delete' data-iconpos='notext' ";
-        $html .= "onclick='$(\"#yesbox\").click(function(){RemoveComment($commentId);})' href='#diatest' ";
-        $html .= "data-rel='dialog' title='Remove Comment' data-transition='flip'></a>";
-        $html .= "</p><script>$('#rmc$commentId').trigger('create')</script>";
-    }
-    else
-    {
-        $html .= "<p class='prating'><a  id='iminus' href='#' ";//class='icons'
-        $html .= "title='Remove Comment' ";
-        $html .= "onclick='AreYouSure(\"Remove this comment?\", FlagComment,$commentId,4); return false;'>";
-        $html .= "<i class='fa fa-trash-o red'></i>";
-        $html .= "</a></p>";
-    }
+    $html  = "<p class='prating'><a href='#' ";//class='icons'
+    $html .= "title='Remove Comment' ";
+    $html .= "onclick='AreYouSure(\"Remove this comment?\", FlagComment,$commentId,4); return false;'";
+    $html .= $isFirst ? " data-intro='Remove yours' data-position='right'" : "";
+    $html .= " >";
+    $html .= "<i class='fa fa-trash-o red'></i>";
+    $html .= "</a></p>";
+
     return $html;
 }
 
-function MakeRateLinks ($commentId,$rating,$rates,$studentView,$mobile=false)
-{
+function MakeRateLinks ($commentId,$rating,$rates,$studentView,$isFirst){
+    
     $up = $down = "";
     $html = "";
     
-    $activeUp  = "<a  id='iup' href='#'";//class='icons'
-    $activeUp .= " title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'></i></a>";
-    $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'></i></span>";//class='icons'
+    $activeUp  = "<a  id='iup' href='#' title='Rate Comment Up' onclick='RateUp($commentId); return false;'><i class='fa fa-arrow-up'";    
+    $activeUp .= $isFirst ? " data-intro='Rate up' data-position='right'" : "";
+    $activeUp .= " ></i></a>";
+    
+    $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'";
+    $inactiveUp .= $isFirst ? " data-intro='You rated up' data-position='right'" : "";
+    $inactiveUp .= " ></i></span>";
 
-    $activeDown  = "<a  id='idown' href='#'";//class='icons'
-    $activeDown .= " title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'></i></a>";
-    $inactiveDown = "<span  id='idown'><i class='fa fa-arrow-down inactive'></i></span>";//class='icons'
+    $activeDown  = "<a  id='idown' href='#' title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'";
+    $activeDown .= $isFirst ? " data-intro='Rate down' data-position='right'" : "";
+    $activeDown .= " ></i></a>";
+    
+    $inactiveDown  = "<span  id='idown'><i class='fa fa-arrow-down inactive'";
+    $inactiveDown .= $isFirst ? " data-intro='You rated down' data-position='right'" : "";
+    $inactiveDown .= " ></i></span>";
     
     if($studentView){
         $up = $inactiveUp;
@@ -166,53 +166,56 @@ function MakeRateLinks ($commentId,$rating,$rates,$studentView,$mobile=false)
     }elseif ( !isset($rates[$commentId]) || $rates[$commentId] == 0 ){
         $up = $activeUp;
         $down = $activeDown;
-    }
-    elseif ( isset($rates[$commentId]) && $rates[$commentId] > 0 )
-    {
+    }elseif ( isset($rates[$commentId]) && $rates[$commentId] > 0 ){
         $up = $inactiveUp;
         $down = $activeDown;
-    }
-    elseif ( isset($rates[$commentId]) && $rates[$commentId] < 0 )
-    {
+    }elseif ( isset($rates[$commentId]) && $rates[$commentId] < 0 ){
         $up = $activeUp;
         $down = $inactiveDown;
     }
 
     $html .= "<p class='prating'>$up</p>";
-    $html .= "<center><p class='prating'>$rating</p></center>";
+    $html .= "<center><p class='prating'";
+    $html .= $isFirst ? "data-intro='Rating' data-position='right'" : "";
+    $html .= " >$rating</p></center>";
     $html .= "<p class='prating'>$down</p>";
     
     return $html;
 }
 
-function MakeFlagLinks ($commentId, $flagId)
+function MakeFlagLinks ($commentId, $flagId, $isFirst)
 {
     $NOFLAG_ID = 0;
     $ADDRESS_ID = 3;
     $HIDE_ID = 4;
     
-    //$flagId = $comments[$commentId]['flag_id'];
     $html = "";
     if ($flagId == $NOFLAG_ID){
         $html .= "<a title='Address'";
         $html .= " href='#' id='iaddress'";//class='icons'
-        $html .= " onclick='FlagComment($commentId,$ADDRESS_ID); return false;'>";
+        $html .= " onclick='FlagComment($commentId,$ADDRESS_ID); return false;'";
+        $html .= $isFirst ? " data-intro='Address comment' data-position='right'" : "";
+        $html .= " >";
         $html .= '<i class="fa fa-comment-o"></i>';
         $html .= "</a>";
         
         $html .= "<a title='Hide'";
         $html .= " href='#' id='ihide'";//class='icons'
-        $html .= " onclick='FlagComment($commentId,$HIDE_ID); return false;'>";
+        $html .= " onclick='FlagComment($commentId,$HIDE_ID); return false;'";
+        $html .= $isFirst ? " data-intro='Hide comment' data-position='right'" : "";
+        $html .= " >";
         $html .= '<i class="fa fa-toggle-off"></i>';
         $html .= "</a>";
     }else{ // Can be $ADDRESS_ID && $HIDE_ID
         $html .= "<a title='";
-        $html .= $flagId == $ADDRESS_ID ? "Unaddress" : ($flagId == $HIDE_ID  ? "Unhide" : "");;
+        $html .= $flagId == $ADDRESS_ID ? "Unaddress" : ($flagId == $HIDE_ID  ? "Unhide" : "");
         $html .= "'";
         $html .= " href='#' id='"; 
         $html .= $flagId == $ADDRESS_ID ? "iresaddr" : ($flagId == $HIDE_ID  ? "ireshide" : "");
         $html .= "'";//class='icons'
-        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'>";
+        $html .= " onclick='FlagComment($commentId,$NOFLAG_ID); return false;'";
+        $html .= $isFirst ? ($flagId == $ADDRESS_ID ? " data-intro='Unaddress' data-position='right'" : ($flagId == $HIDE_ID  ? " data-intro='Unhide' data-position='right'" : "")) : "";
+        $html .= " >";
         $html .= "<i class='fa fa-";
         $html .= $flagId == $ADDRESS_ID ? "comment" : ($flagId == $HIDE_ID  ? "toggle-on" : "");
         $html .= "'></i>";
@@ -222,10 +225,12 @@ function MakeFlagLinks ($commentId, $flagId)
     return $html;
 }
 
-function MakeReplyLink($id){
-    $html =   "<span title='Reply' id='reply$id'>";
-    $html.=   "<a href='#' id='iplus' onclick='ClassroomReply($id); return false;'>";
-    $html.=   "<i class='fa fa-reply green'></i></a></span>";
+function MakeReplyLink($id, $isFirst){
+    $html =   "<p title='Reply' id='reply$id' class='prating'>";
+    $html.=   "<a href='#' onclick='ClassroomReply($id); return false;'";
+    $html.=   $isFirst ? " data-intro='Reply' data-position='right'" : "";
+    $html.=   " >";
+    $html.=   "<i class='fa fa-reply green'></i></a></p>";
     
     return $html;
 }
@@ -235,7 +240,9 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
     $pStyle = $width ? ( $indent ? "width:".($width*0.95-80)."px" : "width:".($width-80)."px") : "display: none";
     echo "<ul class='$ulClass'>";
     if ( $comments ) {
+        $commentCounter = 0;
         foreach ($comments as $c){
+            $isFirst = $commentCounter === 0 && !$indent;//first comment not 
             if (!$instructor && $c["flag_id"]==4)//Hidden comments not shown for non-instructor
                 continue;
             
@@ -255,25 +262,27 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
                 
                 if ($instructor){
                     
-                    $flagLinks = MakeFlagLinks($c["id"], $c['flag_id']);
+                    $flagLinks = MakeFlagLinks($c["id"], $c['flag_id'], $isFirst);
                     echo "$flagLinks ";
-                    echo "<center><p class='prating'>$c[rating]</p></center>";
+                    echo "<center><p class='prating'";
+                    echo $isFirst ? " data-intro='Rating' data-position='right'": "";
+                    echo " >$c[rating]</p></center>";
                     
                 }else{
                     
-                    $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$mobile);
+                    $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$isFirst);
                     echo "$rateLinks ";
                     
                     if ($_SESSION['currentUserId'] == $c['user_id']){// if comment owner and non instructor
                 
-                        $removeLink = MakeRemoveCommentLink($c['id'],$mobile);
+                        $removeLink = MakeRemoveCommentLink($c['id'], $isFirst);
                         echo "$removeLink";
                         
                     }    
                 }
                 
                 if ($c['parent_id'] === "0"){
-                    echo MakeReplyLink($c['id']);
+                    echo MakeReplyLink($c['id'], $isFirst);
                 }
 
                 echo "</div><div id='cid$c[id]'";
@@ -286,24 +295,8 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
             
             if($c['children'] && count($c['children'])>0)
                 GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$showHidden,$showAddressed,$studentView,$width,true,false);
-        }
         
-        if ( isset($addressedComments) )
-        {
-            $count = count($addressedComments);
-            $initLinkText = "&lt;Show $count addressed comment".(($count>1)?"s":"")."&gt;";
-            $jsCall = "ClassroomShowOrHideComments(\"addressed\")";
-            echo "<li id='showOrHideButaddressed'><div colspan=2><a href='#' onclick='$jsCall; return false;'>$initLinkText</a></div></li>";
-            foreach ($addressedComments as $c) echo $c;
-        }
-        
-        if ( isset($hiddenComments) )
-        {
-            $count = count($hiddenComments);
-            $initLinkText = "&lt;Show $count hidden comment".(($count>1)?"s":"")."&gt;";
-            $jsCall = "ClassroomShowOrHideComments(\"hidden\")";
-            echo "<li id='showOrHideButhidden'><div colspan=2><a href='#' onclick='$jsCall; return false;'>$initLinkText</a></div></li>";
-            foreach ($hiddenComments as $c) echo $c;
+        $commentCounter++;    
         }
         
     }

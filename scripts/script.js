@@ -461,9 +461,9 @@ function UpdateQuizState (){
 function showSavedQuizzes(saveds){
     $("#saved_quizzes").empty().hide();
     if($("#saved_quizzes").attr("class") === "open"){
-        $("#saved_quizzes").append("<i class='fa fa-caret-right fa-lg'></i>");
+        $("#saved_quizzes").append("<i class='fa fa-caret-right fa-lg' data-intro='Saved questions' data-position='left'></i>");
     }else{
-        $("#saved_quizzes").append("<i class='fa fa-caret-left fa-lg'></i>");
+        $("#saved_quizzes").append("<i class='fa fa-caret-left fa-lg' data-intro='Saved questions' data-position='left'></i>");
     }
     $("#saved_quizzes").hide();
     if(saveds.length > 0){
@@ -997,7 +997,7 @@ function ClassroomReply(id){
         };
     }else{
         var buttons = {
-            Send: function(){
+            Post: function(){
                 var comment = $(this).find('textarea').val();
                 if(comment && comment.trim() !== ""){
                     comment = comment.trim();
@@ -1018,6 +1018,78 @@ function ClassroomReply(id){
     $("#reply").dialog("option", "buttons", buttons);
     $("#reply").html(html).dialog("open");
 }
+function openAddUser(institutions){
+    var html = "";
+        html +="<input type='text' name='firstname' id='firstName' placeholder='First Name' value='' /><br />";
+        html +="<input type='text' name='lastname' id='lastName' placeholder='Last Name' value='' /><br />";
+        html +="<input type='email' name='email' id='email' placeholder='E-mail' value='' /><br />";
+        html +="<select name='institute' id='selInst'>";
+        html +="<option disabled selected value='0'>Select Institution</option>";
+        for(var i in institutions){
+            var ins = institutions[i];
+            html +="<option value='";
+            html +=ins['id'];
+            html +="'>";
+            html +=ins['name'];
+            html +="</option>";
+        }
+        html +="</select>";
+        html +="<input type='checkbox' name='role' value='in' checked> Insteuctor";
+        html +="<input type='checkbox' name='role' value='as'> Assessor";
+    var buttons = {
+        Add: function(){
+            var usr = {};
+            usr.fn = $(this).find("input[name=firstname]").prop("value");
+            usr.ln = $(this).find("input[name=lastname]").prop("value");
+            usr.em = $(this).find("input[name=email]").prop("value");
+            usr.nt = $(this).find("select").prop("value");
+            usr.rl = [];
+            $(this).find("input[name=role]:checked").each(function(c,v){
+                    usr.rl.push($(v).val());
+            });
+            for(var i in usr){
+                if(typeof usr[i] !== "object" && usr[i].trim() === ""){
+                    alert("Something left empty!");
+                    return false;
+                }
+            }
+            if(usr.nt.trim() == 0 ){
+                alert("Something left empty!");
+                return false;
+            }
+            addUser(usr);
+        },
+        Cancel: function () { 
+            $(this).dialog("close");
+        }
+    };
+    $("#addIns").dialog("option", "title", "Add User");
+    $("#addIns").dialog("option", "buttons", buttons);
+    $("#addIns").html(html).dialog("open");
+}
+
+function addUser(usr){
+    var vars = {
+        act: "add_user",
+        firstname: usr.fn,
+        lastname: usr.ln,
+        email: usr.em,
+        institude: usr.nt,
+        role: usr.rl
+    };
+    var url = (NO_REWRITE?"?p=Courses":"Courses");
+    $.post(url,vars,function (res){
+        if(res == 0){
+            alert("The role is updated for thie user");   
+        }
+        $("#addIns").dialog("close");
+        
+    }).fail(function(e){
+        console.log(e);
+        alert("Error: Instructor is not added");
+    });    
+}
+
 function openJoinACourse(){
     var html = "<ul>";
     for (var i=0; i<joinCourseList.length; i++){
@@ -1182,5 +1254,30 @@ function SaveFile(report, date, courseId){
 
 /*
  *Excel Download functions end
+ *******************************
+*/
+
+/*
+ *Overlay Instruction (HELP)
+ *******************************
+*/      
+        var savedElements = [];
+        $('body').on('chardinJs:start', function() {
+            $(".ui-front").css("z-index", "auto");
+//            $("*").each(function(i,e){
+//                if($(e).attr('onclick')){
+//                    savedElements.push({"e": e, "c": $(e).attr('onclick')});
+//                    $(e).attr('onclick', function(){ return false;});
+//                }
+//            });
+        });
+        $('body').on('chardinJs:stop', function() {
+            $(".ui-front").css("z-index", "100");
+//            $.each(savedElements, function(i, n){
+//                $(n.e).attr("onclick", n.c);
+//            });
+        });
+/*
+ *Overlay Instruction (HELP) end
  *******************************
 */

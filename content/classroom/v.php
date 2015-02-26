@@ -39,19 +39,19 @@ window.UpdateCommentsEvent = function (){
     UpdateSessionComments( <?php echo $sessionId; ?>, width );
     getQuizzes(<?php echo $sessionId; ?>);
 };
-UpdateCommentsEvent;
-var updateCommentsEvent = setInterval(UpdateCommentsEvent,<?= getenv("RELOAD_CALSSROOM") ?>);
+var interval = setInterval(UpdateCommentsEvent,<?= getenv("RELOAD_CALSSROOM") ?>);
+$('body').on('chardinJs:start', function() {
+    window.clearInterval(interval);
+});
+$('body').on('chardinJs:stop', function() {
+    interval = setInterval(UpdateCommentsEvent,<?= getenv("RELOAD_CALSSROOM") ?>);
+});
 
 $(".right-side").css("top","5px");
 
-//var setSize = function(){
-//    var width = $(window).width()-80;
-//    $('#commentTable ul li div:nth-child(2) p').width(width).show();
-//};
-//setSize = setInterval(setSize,1);
 </script>
-<style> body { background-color: black; background-image: none; } </style>
-<div id="saved_quizzes" onclick="$(this).toggleClass('open').children('i').toggleClass('fa-caret-left').toggleClass('fa-caret-right'); return false;"></div>
+<style> body { background-color: black; background-image: none; } div#content{padding: 3px 5px}</style>
+
 <div id="classroom">    
     <div id='confirmation' title='Are You Sure?'></div>
     <script>
@@ -59,7 +59,6 @@ $(".right-side").css("top","5px");
         $("#confirmation").dialog("option","resizable",false);
         $("#confirmation").dialog("option","modal",true);
         $("#heading").hide();
-        //$("#navigation")[0].style.border = "3px ridge #394C6B";
     </script>
     
     <div id="userComments" class='ui-widget ui-widget-content'>
@@ -67,15 +66,22 @@ $(".right-side").css("top","5px");
             <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, false ,false, $studentView, false, false, false); ?>
         </div>
         <div>
-            <a href='#' onclick='window.showAddressedComments = !window.showAddressedComments; faClassToggle(this) ; return false;'>
+            <a href='#' onclick='window.showAddressedComments = !window.showAddressedComments; faClassToggle(this) ; return false;' data-intro="Toggle addressed comments" data-position="right">
                 <i class="fa fa-toggle-off fa-lg green"></i>Addressed comments</a>
         </div>
         <?php if ($instructor){?>
         <div>
-            <a href='#' onclick='window.showHiddenComments = !window.showHiddenComments; faClassToggle(this) ; return false;'>
+            <a href='#' onclick='window.showHiddenComments = !window.showHiddenComments; faClassToggle(this) ; return false;' data-intro="Toggle hidden comments" data-position="bottom">
                 <i class="fa fa-toggle-off fa-lg green"></i>Hidden comments</a>
+        </div>   
+        <div id='classroom-quiz-link'>
+            <a href='#' onclick='showEditQuiz(); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
         </div>
         <?php } ?>
+        <div id='classroom-comment-link'>
+            <a href='#' onclick='ClassroomReply(); return false;'><i class='fa fa-plus fa-lg green'></i>Comment</a>
+        </div>
+        
         <div id='ShowQuizDialog' qopenid="0"></div>
         <script>
             session = <?php echo $sessionId; ?>;
@@ -103,10 +109,12 @@ $(".right-side").css("top","5px");
                     }
                 }
             );
+        $(document).ready(function(){
             getQuizzes(<?php echo $sessionId; ?>);
+        });
         </script>
-    </div><!-- userComments -->
-    <div id="AddQuizDialog"></div>
+    </div>
+    <div id="AddQuizDialog" data-intro="Design and post or save your question" data-position="right"></div>
     <script>
         $("#AddQuizDialog").hide()
             .dialog({
@@ -136,7 +144,7 @@ $(".right-side").css("top","5px");
         });
         $("#AddQuizDialog div").buttonset();
     </script>
-    <div id="reply"></div>
+    <div id="reply" data-intro="Post a comment" data-position="bottom"></div>
     <script>
         $("#reply").hide()
             .dialog({
@@ -152,4 +160,6 @@ $(".right-side").css("top","5px");
                 title: "Reply"
         });
     </script>
-</div><!-- classroom -->
+</div>
+<div id="saved_quizzes" onclick="$(this).toggleClass('open').children('i').toggleClass('fa-caret-left').toggleClass('fa-caret-right'); return false;"></div>
+<!-- classroom -->

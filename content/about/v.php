@@ -50,6 +50,6 @@
         </p>
     </div>
     <div>
-        <p class="version">rev. 3.2.2</p>
+        <p class="version">rev. 4.0.1</p>
     </div>
 </div>

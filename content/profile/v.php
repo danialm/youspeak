@@ -85,7 +85,7 @@ global $submit;
 //            }
             ?>
         </div>-->
-        <fieldset>
+        <fieldset data-intro="Required fileds" data-position="right">
             <legend>User Info (required)</legend>
 
 
@@ -124,7 +124,7 @@ global $submit;
 
 
 
-            <fieldset>
+            <fieldset data-intro="Optional fileds" data-position="right">
                 <legend>Academic Info (optional)</legend>
 
 
@@ -156,7 +156,7 @@ global $submit;
 
 
 
-            <fieldset>
+            <fieldset data-intro="Optional fileds" data-position="right">
                 <legend>Personal Info (optional)</legend>
 
 

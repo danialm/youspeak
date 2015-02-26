@@ -73,9 +73,6 @@ form.hide { display: none }
 .no-margin{
     margin: 0;
 }
-/*.fa-trash-o{
-    margin-right: 0;
-}*/
 .clickable, .clickable *{
     cursor: pointer;
 }
@@ -121,7 +118,7 @@ div#content {
     height: auto;
     position: relative;
     background: #E5E5FF;
-    padding: 3px 5px;
+    padding: 3px 15px;
     font-size: 1em;
 }
 
@@ -208,7 +205,7 @@ span#quizLink a
     top:0;
     right: -7px;
     background-color: rgba(0,0,0, .5);
-    z-index: 100;
+    //z-index: 100;
     padding: 10px 0px 5px 20px;
     display: none;
     width: 20px;
@@ -251,28 +248,35 @@ span#quizLink a
     margin: 0 5px 5px 0;
 }
 div#navigation #profileLink.notComplete a{
-        /* Chrome, Safari, Opera */
+    /* Chrome, Safari, Opera */
     -webkit-animation-name: myfirst;
-    -webkit-animation-duration: 3s;
+    -webkit-animation-duration: 1s;
     -webkit-animation-timing-function: linear;
-    -webkit-animation-delay: 2s;
+    -webkit-animation-delay: 0s;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-direction: alternate;
     -webkit-animation-play-state: running;
     /* Standard syntax */
     animation-name: myfirst;
-    animation-duration: 3s;
+    animation-duration: 1s;
     animation-timing-function: linear;
-    animation-delay: 2s;
+    animation-delay: 0s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
     animation-play-state: running;
+    position: relative;
 }
 /* Chrome, Safari, Opera */
 @-webkit-keyframes myfirst {
-    0%    {color:#FDFF75; text-shadow: 0 0 5px #FDFF75;}
-    20%   {color:black; text-shadow: none;}
-    100%  {color:black; text-shadow: none;}
+    0%   {color:black; text-shadow: none;}
+    70%  {color:black; text-shadow: none;}
+    100%    {color:#F5B40A; text-shadow: 0 0 5px #F5B40A;}
+}
+/*standard */
+@keyframes myfirst {
+    0%   {color:black; text-shadow: none;}
+    70%  {color:black; text-shadow: none;}
+    100%    {color:#F5B40A; text-shadow: 0 0 5px #F5B40A;}
 }
 
 /*******************
@@ -365,7 +369,6 @@ form #formError
     margin: 10px;
     text-align: left;
 }
-
 #chooser dt
 {
     margin-top: 15px;
@@ -378,6 +381,11 @@ form #formError
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
+#addIns input:not([type='checkbox']), #addIns select{
+    width: 100%;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+} 
 #joinCourse
 {
     position: relative;
@@ -390,7 +398,10 @@ form #formError
     border: 2px solid #5555AA;
     border-radius: 4px;
     padding: 5px;
-    background-color: white;
+    background-color: inherit;
+}
+#join{
+    background-color: inherit;
 }
 #join ul{
     list-style-type: none;
@@ -755,5 +766,17 @@ p.version{
         float: none;
         margin: 10px auto;
     }
-    
+    #commentLink, #quizLink {
+        display: none;
+    }
+}
+@media screen and (max-width: 800px){
+    #help-link{
+        display: none;
+    }
+}
+@media screen and (min-width: 601px){
+    #classroom-comment-link, #classroom-quiz-link{
+        display: none;
+    }
 }

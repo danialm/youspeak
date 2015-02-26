@@ -5,7 +5,10 @@ global $userInfo;
 global $courses;
 global $joinCourseList;
 global $expand;
+global $institutions;
 
+$instructor = isset($_SESSION["isInstructor"]) && $_SESSION['isInstructor'];
+$admin = isset($_SESSION["isAdmin"]) && $_SESSION['isAdmin'];
 ?>
 
 <div id="chooser">
@@ -22,14 +25,32 @@ global $expand;
         var joinCourseList = <?php echo json_encode($joinCourseList); ?>;
         var userId = <?php echo $userId; ?>;
         var URL = '<?php echo Page::getRealURL(); ?>';
-
     </script>
     
     <h2> <?= ucfirst(strtolower($userInfo['firstname']))?> <?= ucfirst(strtolower($userInfo['lastname'])) ?>'s Courses </h2>
+    <?php if($admin){?>
+    <dl><a href='#' id='iplus' onclick='openAddUser(<?= json_encode($institutions) ?> ); return false;'><i class="fa fa-plus fa-lg green"></i><b>Add User</b></a></dl>
 
-    <a href='#' id='iplus' onclick='openJoinACourse(); return false;'><i class="fa fa-plus fa-lg green"></i><b>Join a Course</b></a>
+        <div id="addIns" data-intro="Add instructor" data-position="right"></div>
+        <script>
+            $("#addIns").hide()
+                .dialog({
+                    autoOpen: false,
+                    dialogClass: "no-close-button",
+                    hide: { effect: "slide", duration: 200, direction: "down" },
+                    show: { effect: "slide", duration: 200, direction: "down" },
+                    modal: false,
+                    resizable: false,
+                    draggable: true,
+                    position: { my: "top", at: "top", of: "#chooser" },
+                    width: 300,
+                    height: 300
+            });
+        </script>    
+    <?php } ?>
+    <dl><a href='#' id='iplus' onclick='openJoinACourse(); return false;'><i class="fa fa-plus fa-lg green"></i><b>Join a Course</b></a></dl>
     
-    <div id="join"></div>
+    <div id="join" data-intro="Select prof./course" data-position="right"></div>
     <script>
         $("#join").hide()
             .dialog({
@@ -67,29 +88,6 @@ global $expand;
             t.closest("dd").siblings().slideDown();
             t.closest("dd").html("<a href='#' onclick='shrink($(this).closest(\"dl\"), 500); return false;' ><i class='fa fa-caret-up'></i> Show Less</a>");
         }
-
-
-//        $("#joinCourse .header").button().click(function () { 
-//            $("#joinCourse #courses").slideToggle();
-//        });
-//        var html = "<dl>";
-//        for (i=0; i<joinCourseList.length; i++){
-//            var name = joinCourseList[i][0];
-//            var c = name.replace(/ /g,"");
-//            c = c.replace(/,/g,"");
-//            var link = "<a href='#' onclick='$(\"#joinCourse #courses ."+c+"\").slideToggle(); return false;'>"+name+"</a>";
-//            html += "<dt>"+link+"</dt>";
-//            for (j=1; j<joinCourseList[i].length; j++)
-//            {
-//                var title = joinCourseList[i][j]['title'];
-//                var id    = joinCourseList[i][j]['id'];
-//                link = "<a href='#' onclick='joinDialog("+id+",\""+title+"\"); return false;'>"+title+"</a>";
-//                html += "<dd class='"+c+"' style='display:none'>"+link+"</dd>";
-//            }
-//        }
-//        html += "</dl>";
-//
-//        $("#joinCourse #courses").html(html).hide();
     </script>
     
     <?php
@@ -97,13 +95,12 @@ global $expand;
             echo "<br><p class='red'>".$_SESSION['error']."</p>";
             unset($_SESSION['error']);
         }
-//        echo "<dl>\n";
         
-        if ($userInfo["role_code"] == "in"){
+        if ($instructor){
             echo "<dl>";
             echo "<dt id='addCourse'>";
-            echo "<a ";//style='padding-left: 16px; width: auto;'
-            echo " id='iplus' href='#'";//class='icons'
+            echo "<a ";
+            echo " id='iplus' href='#'";
             echo " onclick='ChooserSwitchToAddCourse(); return false;'>";
             echo '<i class="fa fa-plus fa-lg green"></i>';
             echo "<b>Add a Course</b></a></dt>";
@@ -111,20 +108,31 @@ global $expand;
         }
         
         if ( count($courses) > 0 ){
+            $courseCounter = $ownCourseCounter = $sessionCounter = 0;
             foreach ($courses as $course){
+                
+                $course['role_in_course'] == 'in' ? $ownCourseCounter++ : "";
+                $courseCounter++;
                 
                 $courseTitle = trim($course["title"]) . " (" . $course['term_name'] . " " . trim($course['year']) . ")";
                 $removeLink = $reportLink = "";
                 $editCourse = "";
                 if ($course['role_in_course'] == 'in'){
-                    $removeLink = MakeRemoveCourseLink($course['id']);
-                    $reportLink = "<a href='#' onclick='FormIt({act:\"report\", reportCourseId:" . $course['id'] . "}, \"" . Page::getRealURL("Report") . "\"); return false;'><i class='fa fa-bar-chart fa-lg' title='See report'></i></a>";
-                    $editCourse = "<a href='#' onclick='toggleEditCourseForm(" . $course['id'] . "); return false;'><i class='fa fa-edit fa-lg orange' title='Edit Course'></i></a>";
-                }else{
-                    $leaveCourse = MakeLeaveCourseLink($userId, $course['id']);
+                    
+                    $reportLink = "<a href='#' onclick='FormIt({act:\"report\", reportCourseId:" . $course['id'] . "}, \"" . Page::getRealURL("Report") . "\"); return false;'";
+                    $reportLink.= $ownCourseCounter === 1 ? "data-intro='See report' data-position='right'" : "";
+                    $reportLink.= " ><i class='fa fa-bar-chart fa-lg' title='See report'></i></a>";
+                    
+                    $editCourse = "<a href='#' onclick='toggleEditCourseForm(" . $course['id'] . "); return false;'";
+                    $editCourse.= $ownCourseCounter === 1 ? " data-intro='Edit course' data-position='bottom'" : "";
+                    $editCourse.= " ><i class='fa fa-edit fa-lg orange' title='Edit Course'></i></a>";
                 }
                 
-                echo "<dl><dt><span class='course$course[id]'>$leaveCourse$removeLink$editCourse<b>$courseTitle </b>$reportLink</span>";
+                $leaveCourse = MakeLeaveCourseLink($userId, $course['id']);
+                
+                echo "<dl><dt><span class='course$course[id]'><span";
+                echo $courseCounter === 1 ? " data-intro=' Drop course' data-position='top'" : "";
+                echo " >$leaveCourse</span><span>$editCourse</span><b>$courseTitle </b>$reportLink</span>";
                 if($course['role_in_course'] == 'in'){
                     echo "<form class='hide course$course[id]' action method='post' >";
                     echo "<input type='hidden' name='act' value='edit_course' />";
@@ -150,19 +158,14 @@ global $expand;
                 
                 if (isset($course['sessions'])){
                     foreach ($course['sessions'] as $i=>$s){
-//                        if (($expand != $course['id']) && ($i >= 3)){
-//                            MakeExpandLink($course['id']);
-//                            break;
-//                        }
+                        $sessionCounter++;
                         $sessionID = $s["id"];
                         $sessionDate = date("M jS, Y", $s["date"]);
                         $htmlLink = MakeSessionLink($sessionID, $sessionDate, ($course['role_in_course'] == 'in'));
                         if (($course['role_in_course'] == 'in'))
-                            $removeLink = MakeRemoveSessionLink($sessionID);
+                            $removeLink = MakeRemoveSessionLink($sessionID, $sessionCounter === 1);
                         echo "<dd>$removeLink$htmlLink</dd>";
                     }
-//                    if ($expand == $course['id'])
-//                        MakeExpandLink($course['id']);
                 }
                 else if($course['role_in_course'] != 'in') echo "<dd>No sessions available</dd>";
                 echo "</dl>";
@@ -170,9 +173,7 @@ global $expand;
         }
         else
             echo "<dl><dt>No courses available</dt></dl>";
-        
-        
-//        echo "</dl>\n";
+       
     ?>
     
 </div><!-- chooser -->

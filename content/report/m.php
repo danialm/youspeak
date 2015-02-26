@@ -13,6 +13,7 @@ global $inReport;
 if(!$reportError){
     $inReport = $asReport = $report = null;
     $assessor = isset($_SESSION['isAssessor']) && $_SESSION['isAssessor'];
+    $admin = isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'];
     Dbase::Connect();
 
     if($reportCourseId && $reportCourseId != ''){
@@ -88,8 +89,11 @@ if(!$reportError){
             $allCourses = Dbase::GetCourses();
             $courses = array();
             foreach($allCourses as $crs){
+                $temp_course = Array();
                 $temp_course['title'] = $crs['title'] . " (" . Dbase::GetTermRef($crs['term_code']) . " " . $crs['year'] . ")";
                 $temp_course['id'] = $crs['id'];
+                if($admin && Dbase::GetEnrollmentFromCourse($crs['id']) === null)
+                    $temp_course['noInstructor'] = true;
                 array_push($courses, $temp_course);
                 
                 $asReport['courses'][$crs['id']]['name'] = $temp_course['title'];

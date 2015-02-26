@@ -25,8 +25,8 @@ $id = isset($_SESSION['currentUserId']) && $_SESSION['currentUserId'] ? $_SESSIO
 
 Dbase::Connect();
 $user = Dbase::GetUserInfo($id);
-$instructor = $user['role_code'] == "in";
-$assessor = $user['role_code'] == "as";
+$instructor = isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']===true;
+$assessor = isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']===true;
 $institutions = Dbase::GetInstitutions();
 $allfields = Dbase::allFields($user);
 Dbase::Disconnect();

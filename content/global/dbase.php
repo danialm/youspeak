@@ -133,7 +133,7 @@ class Dbase
         }
         
         $q .= " WHERE $where";
-        
+        //var_dump($q);
         return self::Query($q);
     }
     
@@ -481,6 +481,15 @@ class Dbase
         return self::SelectFromWhere($select,$from);
     }
     
+    public static function GetEnrollmentFromCourse ($courseId)
+    {
+        $select = "user_id, role_code";
+        $from = "enrollment";
+        $where = "course_id=$courseId";
+        
+        return self::SelectFromWhere($select, $from, $where);
+    }
+    
     public static function GetEnrollmentFromUser ($userId)
     {
         $select = "course_id, role_code";
@@ -515,14 +524,29 @@ class Dbase
         return $res;
     }
     
-    public static function AddUser ($email){
-        // default role
-        $role = 'st';
+    public static function AddUser ($email,$fname="",$lname="",$institude="",$role=null){
+        
+        if($role === null){
+            $role = "st";
+        }else{
+            if(count($role) === 1){
+                $role = $role[0];
+            }else if(count($role) === 2){
+                $role = "ai";
+            }
+        }
+        foreach(self::GetUsers() as $usr){
+            if($usr['email'] == $email){
+                self::Updates("users", [["key" => "role_code", "val" => $role ? $role : "st"]], "id='$usr[id]'");
+                return 0;
+            }
+        }
+        
         $studentid = 0;
         // Encrypt Last Name & email etc.. (decryptable)
-        $lastName   = self::Encrypt("");
+        $lastName   = self::Encrypt($lname);
         $email      = self::Encrypt($email);
-        $inst       = self::Encrypt("");
+        $inst       = self::Encrypt($institude);
         $major      = self::Encrypt("");
         $gpa        = self::Encrypt("");
         $schoolYear = self::Encrypt("");
@@ -536,16 +560,15 @@ class Dbase
         $password = crypt($password);
         
         $table   = "users";
-        $fields  = "id, email, firstname, lastname, studentid,password, role_code, ";
+        $fields  = "id, email, firstname, lastname, studentid, password, role_code, ";
         $fields .= "institute, major, gpa, school_year, gender, age, race, have_disa, disability, joined";
-        $values  = "DEFAULT, '$email', '', '$lastName', '$studentid','$password', '$role', ";
+        $values  = "DEFAULT, '$email', '$fname', '$lastName', '$studentid','$password', '$role', ";
         $values .= "'$inst', '$major', '$gpa', '$schoolYear', '$sex', '$age', '$race', '$haveDisa', '$disability', NOW()";
         
+        //var_dump($table,$fields,$values);
         self::InsertInto($table,$fields,$values);
         
         return $newId = mysql_insert_id();
-        
-        // self::AddUserToCourse($newId, 28, 'st');
     }
     
     public static function AddCourse ($title, $termCode, $year)
@@ -600,9 +623,9 @@ class Dbase
      
     public static function RemoveUserFromCourse($userId, $courseId){
         if(self::GetUserRoleInCourse($userId, $courseId) === "in")
-                return false;
-        
-	return self::Query("DELETE FROM enrollment WHERE course_id = $courseId AND user_id= $userId");
+            return self::Query("DELETE FROM enrollment WHERE course_id= $courseId");
+
+	return self::Query("DELETE FROM enrollment WHERE course_id= $courseId AND user_id= $userId");
     }
      
     public static function AddSession ($courseId,$unixtime)
@@ -893,7 +916,7 @@ class Dbase
             RIGHT JOIN courses c ON c.id = e.course_id
             RIGHT JOIN ref_term t ON c.term_code = t.code
             RIGHT JOIN users u ON u.id = e.user_id
-            WHERE e.role_code = 'in' AND c.active=1 AND e.user_id <> $id
+            WHERE (e.role_code = 'in' OR e.role_code = 'ai' OR e.role_code = 'ad') AND c.active=1 AND e.user_id <> $id
         ";
         
         $q = self::Query($q);
@@ -1066,7 +1089,7 @@ class Dbase
     
     public static function allFields($user){
         
-    $student = !($user['role_code'] == "in" || $user['role_code'] == "as");
+    $student = ($user['role_code'] == "st");
         
         if(!self::requiredFields($user))
             return false;

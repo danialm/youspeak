@@ -17,26 +17,11 @@ function array_sort_bycolumn(&$array,$column,$dir = 'asc') {
     else $array = $newarr;
 }
 
-
-function MakeRemoveCourseLink ($courseId)
-{
-    $html  = "<a href='#' ";//class='icons' id='iminus'
-    $html .= "title='Remove Course' ";
-    $html .= "onclick='AreYouSure(\"Remove this course?\", document.remcourse$courseId); return false;'>";
-    $html .= '<i class="fa fa-trash-o fa-lg red"></i>';
-    $html .= "</a>";
-    $html .= "<form class='hide' name='remcourse$courseId' ";
-    $html .= "action='' method='POST'>";
-    $html .= "<input type='hidden' name='act' value='remove_course' />";
-    $html .= "<input type='hidden' name='courseId' value='$courseId' /></form>";
-    return $html;
-}
-
 function MakeLeaveCourseLink ($userId, $courseId)
 {
     $html  = "<a href='#' ";//class='icons' id='iminus' 
-    $html .= "title='Leave Course' ";
-    $html .= "onclick='AreYouSure(\"Leave this course?\", document.leavecourse$courseId); return false;'>";
+    $html .= "title='Drop Course' ";
+    $html .= "onclick='AreYouSure(\"Drop this course?\", document.leavecourse$courseId); return false;'>";
     $html .= '<i class="fa fa-remove fa-lg red"></i>';
     $html .= "</a>";
     $html .= "<form class='hide' name='leavecourse$courseId' ";
@@ -55,11 +40,13 @@ function MakeSessionLink ($sessionId, $linkText, $instruct)
     return $html;
 }
 
-function MakeRemoveSessionLink ($sessionId)
+function MakeRemoveSessionLink ($sessionId, $first)
 {
-    $html  = "<a href='#' ";//class='icons'  id='iminus'
+    $html  = "<a href='#' ";
     $html .= "title='Remove Session' ";
-    $html .= "onclick='AreYouSure(\"Remove this session?\", document.remses$sessionId); return false;'>";
+    $html .= "onclick='AreYouSure(\"Remove this session?\", document.remses$sessionId); return false;'";
+    $html .= $first ? " data-intro='Remove Session' data-position='right'" : "";
+    $html .= " >";
     $html .= '<i class="fa fa-trash-o red"></i>';
     $html .= "</a>";
     $html .= "<form class='hide' name='remses$sessionId' ";
@@ -74,8 +61,7 @@ function MakeAddSessionLink ($courseId)
     $linkText = "Add a Session";
     
     $html  = "<dd class='addSession'>";
-    $html .= "<a id='iplus' class='addses$courseId'";//class='icons' //style='padding-left: 16px; width: auto;'
-//    $html .= " href='#' onclick='pickDate($courseId); return false;'>";
+    $html .= "<a id='iplus' class='addses$courseId'";
     $html .= " href='#' onclick='toggleAddSessionForm($courseId); return false;'>";
     $html .= '<i class="fa fa-plus green"></i>';
     $html .= "$linkText</a>";
@@ -150,18 +136,6 @@ if ( isset( $_POST['act'] ) )
 
         header("Location: ".Page::getRealURL("Courses"));
         break;
-
-    case "remove_course":
-
-        $cId = $_POST["courseId"];
-
-        Dbase::Connect();
-        Dbase::RemoveCourse($cId);
-        Dbase::Disconnect();
-
-
-        header("Location: ".Page::getRealURL("Courses"));
-        break;
     
     case "leave_course":
 
@@ -217,6 +191,20 @@ if ( isset( $_POST['act'] ) )
         Dbase::Disconnect();
 
         header("Location: ".Page::getRealURL("Courses"));
+        break;
+
+    case "add_user":
+        Dbase::Connect();
+
+        $fname = $_POST["firstname"];
+        $lname = $_POST["lastname"];
+        $email = $_POST["email"];
+        $institude = $_POST["institude"];
+        $role = $_POST["role"];
+
+        echo  Dbase::AddUser($email,$fname,$lname,$institude,$role);
+
+        Dbase::Disconnect();
         break;
         
     }

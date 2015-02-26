@@ -50,12 +50,27 @@ if (isset($_POST['act'])) {
                     $_SESSION['isInstructor'] = true;
                     header("location: " . Page::getRealURL("Courses"));
                     exit;
+                    
                 case 'st' :
                     header("location: " . Page::getRealURL("Courses"));
                     exit;
+                    
                 case 'as' :
                     $_SESSION['isAssessor'] = true;
                     header("location: " . Page::getRealURL("Report"));
+                    exit;
+                    
+                case 'ai' ://assessor and instructor
+                    $_SESSION['isAssessor'] = true;
+                    $_SESSION['isInstructor'] = true;
+                    header("location: " . Page::getRealURL("Courses"));
+                    exit;
+                    
+                case 'ad' ://admin and assessor and instructor
+                    $_SESSION['isAssessor'] = true;
+                    $_SESSION['isInstructor'] = true;
+                    $_SESSION['isAdmin'] = true;
+                    header("location: " . Page::getRealURL("Courses"));
                     exit;
                 }
             }
@@ -66,27 +81,8 @@ if (isset($_POST['act'])) {
             
             $logout = true;
 
-            if (isset($_SESSION['currentUserId']))
-                unset($_SESSION['currentUserId']);
-
-            if (isset($_SESSION['sessionId']))
-                unset($_SESSION['sessionId']);
-
-            if (isset($_SESSION['newUserId']))
-                unset($_SESSION['newUserId']);
-            
-            if (isset($_SESSION['reportCourseId']))
-                unset($_SESSION['reportCourseId']);
-            
-            if (isset($_SESSION['login_email']))
-                unset($_SESSION['login_email']);
-            
-            if (isset($_SESSION['isInstructor']))
-                unset($_SESSION['isInstructor']);
-            
-            if (isset($_SESSION['isAssessor']))
-                unset($_SESSION['isAssessor']);
-
+            session_unset();
+                
             break;
     }
 }

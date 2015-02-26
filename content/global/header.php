@@ -17,13 +17,14 @@ global $navi;
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <link href="scripts/main.css" rel="stylesheet" type="text/css" />
 <link href="scripts/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css" />
+<link href="scripts/chardinjs.css" rel="stylesheet">
 <script src="scripts/jquery-1.9.1.js"></script>
 <script src="scripts/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="https://apis.google.com/js/client:platform.js" async defer></script>
 <script src="scripts/Blob.js" lang="javascript" ></script>
 <script src="scripts/FileSaver.js" lang="javascript" ></script>
 <script src="scripts/js-xlsx/dist/xlsx.core.min.js" lang="javascript" ></script>
-<script src="scripts/script.js"></script>
+<script src="scripts/chardinjs.min.js"></script>
 <script>var NO_REWRITE = <?php echo NO_REWRITE?"true":"false"; ?>;</script>
 </head>
 

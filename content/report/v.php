@@ -8,6 +8,17 @@ global $inReport;
 ?>
 
 <div id="report">
+    <div id='confirmation' title='Are You Sure?'></div>    
+    <script>
+        $("#confirmation").dialog({
+                autoOpen: false,
+                modal: false,
+                resizable: false,
+                draggable: true,
+                position: { my: "top", at: "top", of: "#report" }
+        });
+        $("#confirmation").dialog("option","modal",true);
+    </script>
     <h2>YouSpeak Report</h2>
 <?php if($reportError){ ?>
     <h3><?= $reportMessage; ?></h3>
@@ -37,8 +48,9 @@ global $inReport;
     <?php foreach($courses as $crs){ ?>
         <li>
             <span><?= $crs['title'] ?></span>
-            <a  title="See report" href='#' onclick='FormIt({act:"report", reportCourseId:<?= "\"".$crs['id']."\"" ?> }, <?= "\"".Page::getRealURL("Report")."\"" ?> ); return false;'><i class="fa fa-bar-chart"></i></a>
-            <a title='Download' href="#" onclick='SaveFile(report, date, <?= $crs['id']?>); return false;'><i class="fa fa-download orange"></i></a>
+            <?= (isset($crs['noInstructor']) && $crs['noInstructor'] === true) ?  MakeRemoveCourseLink( $crs['id']) : ""  ?>
+                <a  title="See report" href='#' onclick='FormIt({act:"report", reportCourseId:<?= "\"".$crs['id']."\"" ?> }, <?= "\"".Page::getRealURL("Report")."\"" ?> ); return false;'><i class="fa fa-bar-chart"></i></a>
+                <a title='Download' href="#" onclick='SaveFile(report, date, <?= $crs['id']?>); return false;'><i class="fa fa-download orange"></i></a>
         </li>
     <?php } ?>
     </ul>
