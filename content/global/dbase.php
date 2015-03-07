@@ -779,7 +779,8 @@ class Dbase
                 q.time,
                 q.num_options,
                 q.open,
-                q.save
+                q.save,
+                q.answer
             FROM quizzes q
             WHERE session = $sessionId
         ";
@@ -989,14 +990,19 @@ class Dbase
     }
     
     public static function GetAssessorReport ($courseId = NULL){
-        if($courseId)
-            $users = self::GetUsersFromCourse ($courseId, "st");//All students in course
-        else
-            $users = self::GetUsers("st");//All studets
-        
         $report = array();
         
+        if($courseId){
+            $users = self::GetUsersFromCourse ($courseId, "st");//All students in course
+            $course = self::GetCourseInfo($courseId);
+            $report['title'] = $course['title'].' '.$course['term_code'].' '.$course['year'];
+        }else{
+            $users = self::GetUsers("st");//All studets
+            $report['title'] = "All Courses";
+        }
+
         $students = array();
+        
         foreach($users as $user){
             //var_dump("===================================");
             $student = self::GetUserInfo($user['id']);
@@ -1057,7 +1063,7 @@ class Dbase
             );
             array_push($students, $temp);
         }
-        $report = $students;
+        $report['report'] = $students;
         return $report;
     }
     

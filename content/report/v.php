@@ -2,59 +2,95 @@
 global $reportError;
 global $reportMessage;
 global $report;
-global $courses;
-global $asReport;
-global $inReport;
+global $COMMENTS_REPORT_TITLE;
+global $QUIZ_REPORT_TITLE;
 ?>
 
 <div id="report">
-    <div id='confirmation' title='Are You Sure?'></div>    
-    <script>
-        $("#confirmation").dialog({
-                autoOpen: false,
-                modal: false,
-                resizable: false,
-                draggable: true,
-                position: { my: "top", at: "top", of: "#report" }
-        });
-        $("#confirmation").dialog("option","modal",true);
-    </script>
-    <h2>YouSpeak Report</h2>
+    <h2><?= $report['title']?> Report</h2>
 <?php if($reportError){ ?>
     <h3><?= $reportMessage; ?></h3>
 <?php }else{ ?> 
-    <script>
-        var report = <?= json_encode( $asReport ? $asReport : $inReport )?>, date = '<?= date("m-d-y") ?>' ;
-        console.log(report);
-    </script>
-    <?php if($asReport){ ?>
-        <h3>All Courses: <a title='Download' href="#" onclick='SaveFile(report, date); return false;'><i class="fa fa-download fa-lg orange"></i></a></h3>
-    <?php } ?>
-    <?php if($report){ ?>
-    <h3><?= $report['title']?></h3>
-    <?php foreach($report['reports'] as $name => $rep){?>
+    <?php foreach($report['reports'] as $name => $rep){ 
+        if($name === 'sessions')            continue;?>
         <div class="reportContainer">
-            <h4><?= ucfirst(strtolower($name)) ?></h4>
-            <?php foreach( $rep as $n => $d){ ?>
-            <li><?= ucwords(str_replace("_", " ", $n)).": ".$d?></li>
-            <?php } ?>
+            <h3><?= ucfirst(strtolower($name)) ?></h3>
+            <?php if($name == $COMMENTS_REPORT_TITLE){?>
+            <div class="charts">
+                <div id="comments_line" class="chart line">
+                    <canvas width="600" height="400"></canvas>
+                    <div class="caption">Number of comments per session </div>
+                </div>
+                <div id="comments_doughnut" class="chart pie">
+                    <canvas width="200" height="200"></canvas>
+                    <div class="caption">Number of comments</div>
+                </div>
+                <div class="chart">
+                    <table>
+                        <?php foreach( $rep as $n => $d){ ?>
+                        <tr>
+                            <td><?= ucwords(str_replace("_", " ", $n))?></td><td><?= $d?></td>
+                        </tr>
+                        <?php } ?>
+                    </table>
+                    <div class="caption">&nbsp;</div>
+                </div>
+            </div>
+            <?php }?>
+            <?php if($name == $QUIZ_REPORT_TITLE){?>
+            <div class="charts">
+                <div id="quizzes_line" class="chart line">
+                    <canvas width="600" height="400"></canvas>
+                    <div class="caption">Average questionnaire data per session </div>
+                </div>
+                <div id="quizzes_doughnut" class="chart pie">
+                    <canvas width="200" height="200"></canvas>
+                    <div class="caption">Number of questionnaire</div>
+                </div>
+                <div class="chart">
+                    <table>
+                        <?php foreach( $rep as $n => $d){ ?>
+                        <tr>
+                            <td><?= ucwords(str_replace("_", " ", $n))?></td><td><?= $d?></td>
+                        </tr>
+                        <?php } ?>
+                    </table>
+                    <div class="caption">&nbsp;</div>
+                </div>
+            </div>
+            <?php }?>
+            <?php if($name == "students"){?>
+            <div>
+                <span>IDs: </span><span><?= implode(", ", $rep)?></span>
+            </div>
+            <?php }?>
         </div>
     <?php } ?>
     <br><br>
-    <a href='#' onclick='FormIt({act:"clear"}, <?= "\"".Page::getRealURL("Report")."\"" ?> ); return false;'><i class="fa fa-list" title="Report"></i>Reports</a>
-<?php }else if($courses){?>
-    <h3>List of Courses:</h3>
-    <ul>
-    <?php foreach($courses as $crs){ ?>
-        <li>
-            <span><?= $crs['title'] ?></span>
-            <?= (isset($crs['noInstructor']) && $crs['noInstructor'] === true) ?  MakeRemoveCourseLink( $crs['id']) : ""  ?>
-                <a  title="See report" href='#' onclick='FormIt({act:"report", reportCourseId:<?= "\"".$crs['id']."\"" ?> }, <?= "\"".Page::getRealURL("Report")."\"" ?> ); return false;'><i class="fa fa-bar-chart"></i></a>
-                <a title='Download' href="#" onclick='SaveFile(report, date, <?= $crs['id']?>); return false;'><i class="fa fa-download orange"></i></a>
-        </li>
-    <?php } ?>
-    </ul>
-<?php }else{ ?>
-    <h3>No course to display!</h3>
-<?php } } ?>
+    <a href='<?= Page::getRealURL("Reports") ?>'><i class="fa fa-list" title="Report"></i>Reports</a>
+    <script src="scripts/Chart.js/Chart.min.js"></script>
+    <script>
+    var comRep = <?= json_encode($report['reports'][$COMMENTS_REPORT_TITLE])?>;
+    var quzRep = <?= json_encode($report['reports'][$QUIZ_REPORT_TITLE])?>;
+    var sesRep = <?= json_encode($report['reports']['sessions'])?>;
+    Chart.defaults.global.animationSteps = "30";
+    Chart.defaults.global.animationEasing = "easeOutBounce";
+    Chart.defaults.global.responsive= true;
+    Chart.defaults.global.multiTooltipTemplate= "<%= value %>";
+    $(document).ready(function(){
+        showCommentChatrs();
+        showQuizChatrs();
+    });
+    </script>
+<?php } ?>
 </div>
+<script>
+    $("#confirmation").dialog({
+            autoOpen: false,
+            modal: false,
+            resizable: false,
+            draggable: true,
+            position: { my: "top", at: "top", of: "#report" }
+    });
+    $("#confirmation").dialog("option","modal",true);
+</script>

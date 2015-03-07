@@ -2,62 +2,29 @@
 
 global $reportError;
 global $reportMessage;
-global $reportCourseId;
 global $userId;
+global $courseId;
 
-$student = !(isset($_SESSION['isInstructor']) && $_SESSION['isInstructor']) && !(isset($_SESSION['isAssessor']) && $_SESSION['isAssessor']);
+$assessor = isset($_SESSION['isAssessor']) && $_SESSION['isAssessor'];
+$instructor = isset($_SESSION['isInstructor']) && $_SESSION['isInstructor'];
+
 if(isset($_SESSION['currentUserId']) && $userId = $_SESSION['currentUserId']){
-
-    if(!$student){
-        if ( isset($_POST['act']) ){
-            extract($_POST);
-            switch ($act)
-            {
-            case "clear":
-                if (isset($_SESSION['reportCourseId']))
-                    unset($_SESSION['reportCourseId']);
-                
-                break;
-
-            case "report":
-                $reportCourseId = isset($_POST['reportCourseId']) ? $_POST['reportCourseId'] : '';
-                $_SESSION['reportCourseId'] = $reportCourseId;
-                break;
-
-            case "remove_course":
-
-                $cId = $_POST["courseId"];
-
-                Dbase::Connect();
-                Dbase::RemoveCourse($cId);
-                Dbase::Disconnect();
-
-
-                header("Location: ".Page::getRealURL("Report"));
-                break;
-            }
+    if($assessor || $instructor){
+        if(isset($_POST) && isset($_POST['courseId'])){
+            $_SESSION["courseId"] = $_POST["courseId"];
+        }
+        if(isset($_SESSION["courseId"])){
+            $courseId = $_SESSION["courseId"];
+        }else{
+            header("location: ".Page::getRealURL("Report"));
+            exit;
         }
     }else{
-
         $reportError = true;
         $reportMessage = "Access denied!";
     }
 }else{
     header("location: ".Page::getRealURL("Login"));
     exit;
-}
-
-
-function MakeRemoveCourseLink ($courseId){
-    $html  = "<a href='#' ";
-    $html .= "title='Remove Course' ";
-    $html .= "onclick='AreYouSure(\"Remove this course?\", document.remcourse$courseId); return false;'>";
-    $html .= '<i class="fa fa-trash-o red"></i>';
-    $html .= "</a>";
-    $html .= "<form class='hide' name='remcourse$courseId' ";
-    $html .= "action='' method='POST'>";
-    $html .= "<input type='hidden' name='act' value='remove_course' />";
-    $html .= "<input type='hidden' name='courseId' value='$courseId' /></form>";
-    return $html;
 }
 ?>

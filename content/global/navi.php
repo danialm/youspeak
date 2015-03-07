@@ -20,8 +20,8 @@ $navi = array (
     "Courses"      => array(),
     "Login"        => array(),
     "Profile"      => array("Courses"),
-    "Report"       => array("Courses")
-    //"Registration" => array("Login")
+    "Reports"      => array("Courses"),
+    "Report"      => array("Courses","Reports")
 );
 
 echo "<div id='navNav'>";
@@ -68,7 +68,7 @@ if ( $thisPage == "Courses" && !$student){
     
     echo "<span id='analLink'>";
     echo "<a ";
-    echo "href='".Page::getRealURL("Report")."'";
+    echo "href='".Page::getRealURL("Reports")."'";
     echo " data-intro='Report' data-position='left'";
     echo " >";
     echo '<i class="fa fa-bar-chart fa-lg" title="Report"></i>';

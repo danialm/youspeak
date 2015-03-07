@@ -53,6 +53,7 @@ new Page("Classroom",    $template);
 new Page("Courses",      $template);
 new Page("Login",        $template);
 new Page("Profile",      $template);
+new Page("Reports",      $template);
 new Page("Report",       $template);
 //new Page("Registration", $template); Gmail Authentication, we do not need registration anymore
 

@@ -57,7 +57,7 @@ if (isset($_POST['act'])) {
                     
                 case 'as' :
                     $_SESSION['isAssessor'] = true;
-                    header("location: " . Page::getRealURL("Report"));
+                    header("location: " . Page::getRealURL("Reports"));
                     exit;
                     
                 case 'ai' ://assessor and instructor

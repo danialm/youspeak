@@ -119,7 +119,7 @@ $admin = isset($_SESSION["isAdmin"]) && $_SESSION['isAdmin'];
                 $editCourse = "";
                 if ($course['role_in_course'] == 'in'){
                     
-                    $reportLink = "<a href='#' onclick='FormIt({act:\"report\", reportCourseId:" . $course['id'] . "}, \"" . Page::getRealURL("Report") . "\"); return false;'";
+                    $reportLink = "<a href='#' onclick='FormIt({act:\"report\", courseId:" . $course['id'] . "}, \"" . Page::getRealURL("Report") . "\"); return false;'";
                     $reportLink.= $ownCourseCounter === 1 ? "data-intro='See report' data-position='right'" : "";
                     $reportLink.= " ><i class='fa fa-bar-chart fa-lg' title='See report'></i></a>";
                     
@@ -171,8 +171,6 @@ $admin = isset($_SESSION["isAdmin"]) && $_SESSION['isAdmin'];
                 echo "</dl>";
             }
         }
-        else
-            echo "<dl><dt>No courses available</dt></dl>";
        
     ?>
     

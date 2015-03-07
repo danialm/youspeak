@@ -165,3 +165,5 @@
 [21-Feb-2015 23:14:32 UTC] PHP Fatal error:  Call to undefined function MakeLeaveCourseLink() in /home/admindanial/public_html/youspeak/content/report/v.php on line 41
 [21-Feb-2015 23:14:36 UTC] PHP Fatal error:  Call to undefined function MakeLeaveCourseLink() in /home/admindanial/public_html/youspeak/content/report/v.php on line 41
 [22-Feb-2015 03:05:21 UTC] PHP Fatal error:  Undefined class constant 'GetUsers' in /home/admindanial/public_html/youspeak/content/courses/m.php on line 22
+[27-Feb-2015 02:30:16 UTC] PHP Fatal error:  Call to undefined function arry_push() in /home/admindanial/public_html/youspeak/content/report/m.php on line 69
+[07-Mar-2015 00:06:32 UTC] PHP Fatal error:  Array callback has to contain indices 0 and 1 in /home/admindanial/public_html/youspeak/content/report/c.php on line 16

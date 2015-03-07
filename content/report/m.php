@@ -1,120 +1,106 @@
 <?php
 
-global $reportCourseId;
 global $reportError;
 global $reportMessage;
 global $userId;
+global $courseId;
 global $report;
-global $courses;
-global $asReport;
-global $inReport;
+global $COMMENTS_REPORT_TITLE;
+global $QUIZ_REPORT_TITLE;
 
+$COMMENTS_REPORT_TITLE = 'comments';
+$QUIZ_REPORT_TITLE = 'questionnaires';
 
 if(!$reportError){
-    $inReport = $asReport = $report = null;
+    
+    $report = null;
     $assessor = isset($_SESSION['isAssessor']) && $_SESSION['isAssessor'];
-    $admin = isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'];
+    
     Dbase::Connect();
 
-    if($reportCourseId && $reportCourseId != ''){
-        $roleInCourse = Dbase::GetUserRoleInCourse($userId, $reportCourseId);
-        if( $roleInCourse == "in" || $assessor){
-            $allStudents = Dbase::GetUsersFromCourse($reportCourseId, "st");
-            $ids = array();
-            foreach ($allStudents as $st) {
-                if($st['studentid'] != 0){
-                    array_push($ids, $st['studentid']);
-                }
+    $roleInCourse = Dbase::GetUserRoleInCourse($userId, $courseId);
+    
+    if( $roleInCourse == "in" || $assessor){
+        $allStudents = Dbase::GetUsersFromCourse($courseId, "st");
+        $ids = array();
+        foreach ($allStudents as $st) {
+            if($st['studentid'] != 0){
+                array_push($ids, $st['studentid']);
             }
-            $course = Dbase::GetCourseInfo($reportCourseId);
-            $report = array(
-                'title' => $course['title'] . " (" . Dbase::GetTermRef($course['term_code']) . " " . $course['year'] . ")",
-            );
+        }
+        $course = Dbase::GetCourseInfo($courseId);
+        $report = array(
+            'title' => $course['title'] . " (" . Dbase::GetTermRef($course['term_code']) . " " . $course['year'] . ")",
+        );
 
-            $courseCommentNumber = 0;
-            $studentCourseCommentNumber = 0;
-            $courseQuizzNumber = 0;
-            $answerdCourseQuizzNumber = 0;
-            $totalQuizAnswer = 0;
-            $courseSessions = Dbase::GetSessions($reportCourseId);
-            foreach($courseSessions as $sess){
-                $sessionComments = Dbase::GetCommentsFromSession($sess['id']);
-                foreach($sessionComments as $com){
-                    $courseCommentNumber++;
-                    if(Dbase::GetUserRoleInCourse($com['user_id'], $reportCourseId) != "in"){ //Only comments by student
-                        $studentCourseCommentNumber++;
-                    }
+        $courseCommentNumber  = $studentCourseCommentNumber = $courseQuizzNumber =
+                                $answerdCourseQuizzNumber = $totalQuizAnswer = $sessionAddressedCommentsCounter = 0;
+                                
+        $courseSessions = Dbase::GetSessions($courseId);
+        $sessions = array();
+        foreach($courseSessions as $sess){
+            $sessionComments = Dbase::GetCommentsFromSession($sess['id']);
+            $sessionAddressedCommentsCounter = $sessionHiddenCommentsCouner = 0;
+            foreach($sessionComments as $com){
+                $courseCommentNumber++;
+                if(Dbase::GetUserRoleInCourse($com['user_id'], $courseId) != "in"){ //Only comments by student
+                    $studentCourseCommentNumber++;
                 }
-                $sessionQuizzes = Dbase::GetQuizzes($sess['id']);
-                $courseQuizzNumber += count($sessionQuizzes);
- 
-                foreach ($sessionQuizzes as $quz){
-                    $answer = 0;
-                    foreach($quz['choices'] as $key => $val){
-                        if($key != "quiz"){
-                            $answer+=$val;
-                            $totalQuizAnswer+=$val;
+                $com['flag_id'] == '3' ? $sessionAddressedCommentsCounter++ : $com['flag_id'] == '4' ? $sessionHiddenCommentsCouner++ : "" ;
+            }
+            $sessionQuizzes = Dbase::GetQuizzes($sess['id']);
+            $courseQuizzNumber += count($sessionQuizzes);
+             $session_answers_counter = $session_correct_answers_counter = $session_wrong_answers_counter = 0;
+            foreach ($sessionQuizzes as $quz){
+                $answer = 0;
+                $i = 0;
+                foreach($quz['choices'] as $key => $val){
+                    if($key != "quiz"){
+                        $answer+=$val;
+                        $totalQuizAnswer+=$val;
+                        $session_answers_counter+=$val;
+                        if($quz['form']['answer'] !== "0"){//quiz has a correct answer
+                            ($i."" == $quz['form']['answer']) ? $session_correct_answers_counter+=$val : $session_wrong_answers_counter+=$val;
                         }
                     }
-                    if($answer>0){
-                        $answerdCourseQuizzNumber++;
-                    }
+                $i++;
                 }
-
-            }
-            $report['reports']['students'] = array(
-                'registered_students' => count($ids)>0 ? implode(", ", $ids) : "No Registered Ids"
-            );
-            $report['reports']['comments'] = array(
-                'total_number_of_comments'       =>$courseCommentNumber ,
-                'total_number_of_comments_by_students'=>$studentCourseCommentNumber ,
-                'average_students_comments_per_session'      =>$studentCourseCommentNumber/count($courseSessions)
-            );
-            $report['reports']['questionnaires'] = array(
-                'total_number_of_questionnaires'       =>$courseQuizzNumber ,
-                'total_number_of_answered_questionnaires'=>$answerdCourseQuizzNumber ,
-                'total_number_of_participants'      =>$totalQuizAnswer,
-                'average_participation_per_questionnaire'      =>$totalQuizAnswer/$courseQuizzNumber,
-                'average_answered_questionnaires_per_session'      =>$answerdCourseQuizzNumber/count($courseSessions)
-            );
-        }else {
-            $reportError = true;
-            $reportMessage = "You do not have access to this course!";
-        }
-
-    }else{
-        
-        if($assessor){
-            $asReport['all-courses'] = Dbase::GetAssessorReport();
-            $allCourses = Dbase::GetCourses();
-            $courses = array();
-            foreach($allCourses as $crs){
-                $temp_course = Array();
-                $temp_course['title'] = $crs['title'] . " (" . Dbase::GetTermRef($crs['term_code']) . " " . $crs['year'] . ")";
-                $temp_course['id'] = $crs['id'];
-                if($admin && Dbase::GetEnrollmentFromCourse($crs['id']) === null)
-                    $temp_course['noInstructor'] = true;
-                array_push($courses, $temp_course);
-                
-                $asReport['courses'][$crs['id']]['name'] = $temp_course['title'];
-                $asReport['courses'][$crs['id']]['report'] = Dbase::GetAssessorReport($crs['id']);
-            }
-        }else{
-            $userCourses = Dbase::GetEnrollmentFromUser($userId);
-            $courses = array();
-            foreach($userCourses as $crs){
-                if($crs['role_code'] == 'in'){
-                    $temp_course = Dbase::GetCourseInfo($crs['course_id']);
-                    $temp_course['title'] = $temp_course['title'] . " (" . Dbase::GetTermRef($temp_course['term_code']) . " " . $temp_course['year'] . ")";
-                    array_push($courses, $temp_course);
+                if($answer>0){
+                    $answerdCourseQuizzNumber++;
                 }
             }
-            foreach($courses as $crs){
-                    $inReport['courses'][$crs['id']]['name'] = $crs['title'];
-                    $inReport['courses'][$crs['id']]['report'] = Dbase::GetAssessorReport($crs['id']);
-            }
+
+            array_push($sessions, array(  
+                                        'date' => date("d M", $sess['date']), 
+                                        'comments' => count($sessionComments), 
+                                        'hidden_comments' => $sessionHiddenCommentsCouner, 
+                                        'addressed_comments' => $sessionAddressedCommentsCounter, 
+                                        'participant' => round($session_answers_counter/count($sessionQuizzes),2), 
+                                        'correct_answres' => round($session_correct_answers_counter/count($sessionQuizzes),2), 
+                                        'wrong_answres' => round($session_wrong_answers_counter/count($sessionQuizzes),2)
+                                        )
+                    );
+
         }
-        
+        $report['reports']['students'] = array(
+            'registered_students' => count($ids)>0 ? implode(", ", $ids) : "No Registered Ids"
+        );
+        $report['reports'][$COMMENTS_REPORT_TITLE] = array(
+            'number_of_comments'       =>$courseCommentNumber ,
+            'number_of_comments_by_students'=>$studentCourseCommentNumber ,
+            'average_students_comments_per_session'      =>round($studentCourseCommentNumber/count($courseSessions),2)
+        );
+        $report['reports'][$QUIZ_REPORT_TITLE] = array(
+            'number_of_questionnaires'       =>$courseQuizzNumber ,
+            'number_of_answered_questionnaires'=>$answerdCourseQuizzNumber ,
+            'number_of_participants'      =>$totalQuizAnswer,
+            'average_participation_per_questionnaire'      =>round($totalQuizAnswer/$courseQuizzNumber,2),
+            'average_answered_questionnaires_per_session'      =>round($answerdCourseQuizzNumber/count($courseSessions),2)
+        );
+        $report['reports']['sessions'] = array_reverse($sessions);
+    }else {
+        $reportError = true;
+        $reportMessage = "You do not have access to this course!";
     }
 
     Dbase::Disconnect();

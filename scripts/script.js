@@ -1160,6 +1160,174 @@ function faClassToggle(t){
     }
 }
 
+function showCommentChatrs(){
+    if(sesRep.length > 1){
+        var comLineData = { 
+            labels: [],
+            datasets: [
+                        {
+                            label: "total",
+                            fillColor: "rgba(77, 83, 96,0)",
+                            strokeColor: "rgba(77, 83, 96,1)",
+                            highlightFill: "rgba(77, 83, 96,0.8)",
+                            highlightStroke: "rgba(77, 83, 96,1)",
+                            pointColor : "rgba(77, 83, 96,1)",
+                            pointStrokeColor : "#fff",
+                            data: []
+                        },
+                        {
+                            label: "addressed",
+                            fillColor: "rgba(70, 191, 189,0)",
+                            strokeColor: "rgba(70, 191, 189,1)",
+                            highlightFill: "rgba(70, 191, 189,0.8)",
+                            highlightStroke: "rgba(70, 191, 189,1)",
+                            pointColor : "rgba(70, 191, 189,1)",
+                            pointStrokeColor : "#fff",
+                            data: []
+                        },
+                        {
+                            label: "hidden",
+                            fillColor: "rgba(247, 70, 74,0)",
+                            strokeColor: "rgba(247, 70, 74,1)",
+                            highlightFill: "rgba(247, 70, 74,0.8)",
+                            highlightStroke: "rgba(247, 70, 74,1)",
+                            pointColor : "rgba(247, 70, 74,1)",
+                            pointStrokeColor : "#fff",
+                            data: []
+                        }
+                    ]
+        };
+
+        for(var i in sesRep){
+            var ses = sesRep[i];
+            comLineData.labels.push(ses.date);
+            comLineData.datasets[0].data.push(ses.comments);
+            comLineData.datasets[1].data.push(ses.addressed_comments);
+            comLineData.datasets[2].data.push(ses.hidden_comments);
+        }
+        var line = $("#comments_line canvas").get(0).getContext("2d");
+        var lineChart = new Chart(line).Line(comLineData,   {
+                                                                legendTemplate : "<span class=\"<%=name.toLowerCase()%>-legend\">(<% for (var i=0; i<datasets.length; i++){%><span style=\"color:<%=datasets[i].strokeColor%>\"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span><%if(i<datasets.length-1){%>, <%}%><%}%>)<span>"
+                                                            }); 
+        $("#comments_line .caption").append(lineChart.generateLegend());
+            
+    }else{
+        $("#comments_line").hide();
+    }
+    
+    if(comRep.number_of_comments>0){
+        var comDoughData = [
+            {
+                value: comRep.number_of_comments_by_students,
+                color:"#46BFBD",
+                highlight: "#5AD3D1",
+                label: "Students Comments"
+            },
+            {
+                value: comRep.number_of_comments - comRep.number_of_comments_by_students,
+                color: "#949FB1",
+                highlight: "#A8B3C5",
+                label: "Instructor Comments"
+            }
+        ];
+        var dn = $("#comments_doughnut canvas").get(0).getContext("2d");
+        var dnChart = new Chart(dn).Doughnut(comDoughData, {
+                                                    animationSteps : 30,
+                                                    animateRotate : true,
+                                                    animateScale : true,
+                                                    tooltipFontSize: 11
+                                                });                                
+    }else{
+        $("#comments_doughnut").hide();
+    }
+    
+}
+
+function showQuizChatrs(){
+    console.log(quzRep);
+    console.log(sesRep);
+    if(sesRep.length > 1){
+        var quzLineData = { 
+            labels: [],
+            datasets: [
+                        {
+                            label: "participants",
+                            fillColor: "rgba(77, 83, 96,0)",
+                            strokeColor: "rgba(77, 83, 96,1)",
+                            highlightFill: "rgba(77, 83, 96,0.8)",
+                            highlightStroke: "rgba(77, 83, 96,1)",
+                            pointColor : "rgba(77, 83, 96,1)",
+                            pointStrokeColor : "#fff",
+                            data: []
+                        },
+                        {
+                            label: "correct answers",
+                            fillColor: "rgba(70, 191, 189,0)",
+                            strokeColor: "rgba(70, 191, 189,1)",
+                            highlightFill: "rgba(70, 191, 189,0.8)",
+                            highlightStroke: "rgba(70, 191, 189,1)",
+                            pointColor : "rgba(70, 191, 189,1)",
+                            pointStrokeColor : "#fff",
+                            data: []
+                        },
+                        {
+                            label: "wrong answers",
+                            fillColor: "rgba(247, 70, 74,0)",
+                            strokeColor: "rgba(247, 70, 74,1)",
+                            highlightFill: "rgba(247, 70, 74,0.8)",
+                            highlightStroke: "rgba(247, 70, 74,1)",
+                            pointColor : "rgba(247, 70, 74,1)",
+                            pointStrokeColor : "#fff",
+                            data: []
+                        }
+                    ]
+        };
+
+        for(var i in sesRep){
+            var ses = sesRep[i];
+            quzLineData.labels.push(ses.date);
+            quzLineData.datasets[0].data.push(ses.participant);
+            quzLineData.datasets[1].data.push(ses.correct_answres);
+            quzLineData.datasets[2].data.push(ses.wrong_answres);
+        }
+        var line = $("#quizzes_line canvas").get(0).getContext("2d");
+        var lineChart = new Chart(line).Line(quzLineData, {
+            legendTemplate : "<span class=\"<%=name.toLowerCase()%>-legend\">(<% for (var i=0; i<datasets.length; i++){%><span style=\"color:<%=datasets[i].strokeColor%>\"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span><%if(i<datasets.length-1){%>, <%}%><%}%>)<span>"
+        });
+        $("#quizzes_line .caption").append(lineChart.generateLegend());
+            
+    }else{
+        $("#quizzes_line").hide();
+    }
+    
+    if(quzRep.number_of_questionnaires>0){
+        var quzDoughData = [
+            {
+                value: quzRep.number_of_answered_questionnaires,
+                color:"#46BFBD",
+                highlight: "#5AD3D1",
+                label: "Answered"
+            },
+            {
+                value: quzRep.number_of_questionnaires - quzRep.number_of_answered_questionnaires,
+                color: "#949FB1",
+                highlight: "#A8B3C5",
+                label: "Not answered"
+            }
+        ];
+        var dn = $("#quizzes_doughnut canvas").get(0).getContext("2d");
+        var dnChart = new Chart(dn).Doughnut(quzDoughData, {
+                                                    animationSteps : 30,
+                                                    animateRotate : true,
+                                                    animateScale : true,
+                                                    tooltipFontSize: 11
+                                                });                                
+    }else{
+        $("#quizzes_doughnut").hide();
+    }
+    
+}
+
 /*
  *Excel Download functions start
  *******************************
@@ -1211,45 +1379,66 @@ function Workbook() {
         this.Sheets = {};
 }
 
-function SaveFile(report, date, courseId){
-
-    var rep, fileName;
+function GetReport(courseId, callBack){
+    var data;
     if(typeof courseId === "undefined" ){
-        rep = report['all-courses'];
-        fileName = "YouSpeak All Courses Report ("+date+").xlsx";
+        data = {
+            act: "get_all_report"
+        };
     }else{
-        rep = report.courses[courseId].report;
-        fileName = "YouSpeak "+ report.courses[courseId].name +" Report ("+date+").xlsx";
+        data = {
+            act: "get_course_report",
+            courseId: courseId
+        };
     }
+    $.ajax({
+        method: "post",
+        url: NO_REWRITE?"?p=Reports":"Reports",
+        data: data,
+        dataType: "json"})
+        .done(function (data) {
+            callBack(data);
+        })
+        .fail(function (a,b,c) { console.log("Get report error: ",a,b,c); }
+        );
+}
+function SaveFile(courseId){
 
-    /* original data */
-    var data = [];
-    for(var i= 0; i<rep.length; i++){
-        var student = rep[i];
-        var title = [];
-        var temp = [];
-        for (var key in student){
-            var value = student[key];
-            if(i == 0){//title
-                title.push(key);
+    var fileName;
+    var date = new Date();
+
+    GetReport(courseId, function(d){
+        var rep = d.report;
+        fileName = "YouSpeak "+d.title +" Report ("+date.getMonth()+"-"+date.getDay()+"-"+date.getFullYear()+").xlsx";
+        /* original data */
+        var data = [];
+        for(var i= 0; i<rep.length; i++){
+            var student = rep[i];
+            var title = [];
+            var temp = [];
+            for (var key in student){
+                var value = student[key];
+                if(i == 0){//title
+                    title.push(key);
+                }
+                temp.push(Array.isArray(value) ? null : value);
             }
-            temp.push(Array.isArray(value) ? null : value);
+            if(i == 0){//title
+                data.push(title);
+            }
+            data.push(temp);
         }
-        if(i == 0){//title
-            data.push(title);
-        }
-        data.push(temp);
-    }
-    var ws_name = "SheetJS";
-    var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
+        var ws_name = "SheetJS";
+        var wb = new Workbook(), ws = sheet_from_array_of_arrays(data);
 
-    /* add worksheet to workbook */
-    wb.SheetNames.push(ws_name);
-    wb.Sheets[ws_name] = ws;
-    var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        /* add worksheet to workbook */
+        wb.SheetNames.push(ws_name);
+        wb.Sheets[ws_name] = ws;
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
 
 
-    saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), fileName);
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), fileName);
+    });
 }
 
 /*
