@@ -21,7 +21,7 @@ if(!$reportError){
             $temp_course = Array();
             $temp_course['title'] = $crs['title'] . " (" . Dbase::GetTermRef($crs['term_code']) . " " . $crs['year'] . ")";
             $temp_course['id'] = $crs['id'];
-            if($admin && Dbase::GetEnrollmentFromCourse($crs['id']) === null)
+            if($admin && Dbase::GetEnrollmentFromCourse($crs['id'], "in") === null)
                 $temp_course['noInstructor'] = true;
             array_push($courses, $temp_course);
         }

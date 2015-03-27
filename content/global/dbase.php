@@ -91,16 +91,15 @@ class Dbase
         return self::Query($query);
     }
     
-    private static function SelectFromWhere ($select, $from="", $where="")
-    {
+    private static function SelectFromWhere ($select, $from="", $where=""){
         $query = "SELECT $select";
         
         if (  ($from != null) && ($from != "") )
-            $query = $query . " FROM $from";
+            $query .=" FROM $from";
         
         if ( ($from != null) && ($from != "") && ($where != null) && ($where != "") )
-            $query = $query . " WHERE $where";
-        
+            $query .=" WHERE $where";
+       
         $result = self::Query($query);
         
         if ( !$result )
@@ -133,7 +132,7 @@ class Dbase
         }
         
         $q .= " WHERE $where";
-        //var_dump($q);
+        
         return self::Query($q);
     }
     
@@ -279,11 +278,26 @@ class Dbase
         return $users;
     }
     
-    public static function GetInstitutions ()
-    {
-        $inst = self::SelectFromWhere("id,name","institutions");
-        if (!$inst) return null;
-        return $inst;
+    public static function GetInstitutions (){
+        $institutions = self::SelectFromWhere("id,name","institutions");
+        if (!$institutions) return null;
+        $out = array();
+        foreach($institutions as $inst){
+            $users = self::GetUsersFromInstitution($inst['id']);
+            array_push($out, array(
+                "id"    => $inst['id'],
+                "name"  => $inst['name'],
+                "users" => $users
+                ));
+        }
+        return $out;
+    }
+    
+    public static function GetUsersFromInstitution ($institutionId){
+        $instId = self::Encrypt($institutionId);
+        $users = self::SelectFromWhere("id","users", "institute='$instId'");
+        if (!$users) return array();
+        return $users;
     }
     
     public static function GetUserInfo ($userId)
@@ -481,11 +495,13 @@ class Dbase
         return self::SelectFromWhere($select,$from);
     }
     
-    public static function GetEnrollmentFromCourse ($courseId)
-    {
+    public static function GetEnrollmentFromCourse ($courseId, $role=null){
         $select = "user_id, role_code";
         $from = "enrollment";
         $where = "course_id=$courseId";
+        if($role !== null){
+            $where .= " AND role_code='$role'";
+        }
         
         return self::SelectFromWhere($select, $from, $where);
     }
@@ -533,11 +549,16 @@ class Dbase
                 $role = $role[0];
             }else if(count($role) === 2){
                 $role = "ai";
+            }else{
+                $role = "st";
             }
         }
-        foreach(self::GetUsers() as $usr){
+        foreach(self::GetUsers() as $usr){//Check if the user already exisys then update the role.
             if($usr['email'] == $email){
-                self::Updates("users", [["key" => "role_code", "val" => $role ? $role : "st"]], "id='$usr[id]'");
+                self::Updates("users", [["key" => "role_code", "val" => $role]], "id='$usr[id]'");
+                if($role === "st" || $role === "as"){
+                    self::Updates("enrollment", [["key" => "role_code", "val" => $role]], "user_id='$usr[id]'");
+                }
                 return 0;
             }
         }
@@ -585,11 +606,8 @@ class Dbase
         return $res["newId"];
     }
     
-    public static function EditCourse ($id, $title, $termCode, $year)
-    {
+    public static function EditCourse ($id, $title, $termCode, $year){
         $table = "courses";
-//        $fields = "title, term_code, year";
-//        $values = "'$title', '$termCode', $year";
         $chenges = array(
             'title' => "'".$title."'",
             'term_code' => "'".$termCode."'",
@@ -600,8 +618,7 @@ class Dbase
         return self::Updates2($table,$chenges,$where);
     }
     
-    public static function RemoveCourse ($courseId)
-    {
+    public static function RemoveCourse ($courseId){
         self::Query("DELETE FROM courses WHERE id = $courseId");
 	self::Query("DELETE FROM enrollment WHERE course_id = $courseId");	
 
@@ -622,8 +639,6 @@ class Dbase
     }
      
     public static function RemoveUserFromCourse($userId, $courseId){
-        if(self::GetUserRoleInCourse($userId, $courseId) === "in")
-            return self::Query("DELETE FROM enrollment WHERE course_id= $courseId");
 
 	return self::Query("DELETE FROM enrollment WHERE course_id= $courseId AND user_id= $userId");
     }
@@ -655,7 +670,34 @@ class Dbase
 	$comments = self::SelectFromWhere($select,$from,$where);
 	if ($comments) foreach($comments as $c) self::RemoveComment($c['id']);
     }
-     
+    
+    public static function AddInstitution ($name){
+        $table = "institutions";
+        $fields = "id, name";
+        $values = "DEFAULT, '$name'";
+        
+        self::InsertInto($table,$fields,$values);
+        
+        return mysql_insert_id();
+    }
+    
+    public static function EditInstitution ($id, $name){
+        $res = self::Updates("institutions", [["key" => "name", "val" => $name]], "id='$id'");
+        if(!$res){
+            return false;
+        }
+        return true;
+    }
+    
+    public static function RemoveInstitution ($id){
+        $q = "DELETE FROM institutions WHERE id=$id";
+        $res = self::Query($q);
+        if(!$res){
+            return false;
+        }
+        return true;
+    }
+    
     public static function AddPresent ($sessionId, $name, $url)
     {
         // Encrypt URL (decryptable)

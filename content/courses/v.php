@@ -22,18 +22,37 @@ $admin = isset($_SESSION["isAdmin"]) && $_SESSION['isAdmin'];
                 position: { my: "top", at: "top", of: "#chooser" }
         });
         $("#confirmation").dialog("option","modal",true);
-        var joinCourseList = <?php echo json_encode($joinCourseList); ?>;
-        var userId = <?php echo $userId; ?>;
-        var URL = '<?php echo Page::getRealURL(); ?>';
+        var joinCourseList = <?= json_encode($joinCourseList); ?>;
+        var userId = <?= $userId; ?>;
+        var URL = '<?= Page::getRealURL(); ?>';
+        var institutes = <?= json_encode($institutions)?>;
     </script>
     
     <h2> <?= ucfirst(strtolower($userInfo['firstname']))?> <?= ucfirst(strtolower($userInfo['lastname'])) ?>'s Courses </h2>
     <?php if($admin){?>
-    <dl><a href='#' id='iplus' onclick='openAddUser(<?= json_encode($institutions) ?> ); return false;'><i class="fa fa-plus fa-lg green"></i><b>Add User</b></a></dl>
-
-        <div id="addIns" data-intro="Add instructor" data-position="right"></div>
+        <dl><a href='#' id='iplus' onclick='openAddUser();         return false;'><i class="fa fa-plus fa-lg green"></i><b>Add User</b></a></dl>
+        <dl><a href='#' id='iplus' onclick='openManageInstitude(); return false;'><i class="fa fa-plus fa-lg green"></i><b>Manage Institutions</b></a></dl>
+        
+        <div id="addIns" data-intro="Add user" data-position="right"></div>
         <script>
             $("#addIns").hide()
+                .dialog({
+                    autoOpen: false,
+                    dialogClass: "no-close-button",
+                    hide: { effect: "slide", duration: 200, direction: "down" },
+                    show: { effect: "slide", duration: 200, direction: "down" },
+                    modal: false,
+                    resizable: false,
+                    draggable: true,
+                    position: { my: "top", at: "top", of: "#chooser" },
+                    width: 300,
+                    height: 300
+            });
+        </script>    
+        
+        <div id="mngInst" data-intro="Manage Institutions" data-position="right"></div>
+        <script>
+            $("#mngInst").hide()
                 .dialog({
                     autoOpen: false,
                     dialogClass: "no-close-button",

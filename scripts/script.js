@@ -1,6 +1,5 @@
 EditsWhenReady = null;
-function ValidateLogin()
-{
+function ValidateLogin(){
     var ERRMSG_EMPTY_FIELDS = "One or more fields were left empty.";
 
     var form = document.forms["login"];
@@ -1018,15 +1017,193 @@ function ClassroomReply(id){
     $("#reply").dialog("option", "buttons", buttons);
     $("#reply").html(html).dialog("open");
 }
-function openAddUser(institutions){
+
+function openManageInstitude(){
+    var html = "<ul>";
+    for(var i in institutes){
+        var ins = institutes[i];
+        html +="<li><a href='#' onclick='goToInstitude(";
+        html +=i;
+        html +=")'>";
+        html +=ins.name;
+        html +="</a></li>";
+    }
+    html +="</ul>";
+    
+
+    var buttons = {
+        Add: function(){
+            goToInstitude();
+            return false;
+        },
+        Close: function () { 
+            $(this).dialog("close");
+            return false;
+        }
+    };
+    $("#mngInst").dialog("option", "title", "Manage Institude");
+    $("#mngInst").dialog("option", "buttons", buttons);
+    $("#mngInst").html(html).dialog("open");
+}
+
+function goToInstitude(index){
+    var institution = institutes[index];
     var html = "";
-        html +="<input type='text' name='firstname' id='firstName' placeholder='First Name' value='' /><br />";
-        html +="<input type='text' name='lastname' id='lastName' placeholder='Last Name' value='' /><br />";
-        html +="<input type='email' name='email' id='email' placeholder='E-mail' value='' /><br />";
+    var buttons = {};
+    if(typeof index === "undefined"){
+        //new institude
+        html += "<p>Enter the institution's name:</p>";
+        html += "<input type='text' name='instName' placeholder='Institution Name' />";
+        buttons = {
+            Cancel: function(){
+                    openManageInstitude();
+            },
+            Submit: function(){
+                    var newName = $("#mngInst").find("input").val();
+                    if(!newName || newName.trim() === ""){
+                        alert("Something has left empty!");
+                        return false;
+                    }
+                    addInstitution(newName,function(){
+                        updateInsitutes(function(){
+                            openManageInstitude();
+                        });
+                    });
+            }
+        };
+    }else{
+        html += "<p>This institution has <em>";
+        html += institution["users"].length || "no";
+        html += "</em> users.";
+        if(institution["users"].length>0){
+            buttons = {
+                "<": function(){
+                    openManageInstitude();
+                },
+                Edit: function(){
+                    openEditInst(index);
+                }
+            };
+        }else{
+            buttons = {
+                "<": function(){
+                    openManageInstitude();
+                },
+                Edit: function(){
+                    openEditInst(index);
+                },
+                Remove: function(){
+                    openRemoveInst(index); 
+                }
+            };            
+        }
+    }
+    
+    $("#mngInst").dialog("option", "title", institution ? institution['name'] : "New Institution");
+    $("#mngInst").dialog("option", "buttons", buttons);
+    $("#mngInst").html(html).dialog("open");
+}
+
+function openEditInst(index){
+    var institution = institutes[index];
+    
+    $("#mngInst").html("<p>Institution name:</p><input type='text' name='instName' value='"+institution['name']+"' placeholder='Institution Name'/>");
+    $("#mngInst").dialog("option", "title", "Edit "+institution['name']);
+    $("#mngInst").dialog("option", "buttons", {
+                                        Cancel: function(){
+                                            openManageInstitude();
+                                        },
+                                        Submit: function(){
+                                            var newName = $("#mngInst").find("input").val();
+                                            if(!newName || newName.trim() === ""){
+                                                alert("Something has left empty!");
+                                                return false;
+                                            }
+                                            editInstitution(institution['id'], newName,function(){
+                                                updateInsitutes(function(){
+                                                    openManageInstitude();
+                                                });
+                                            });
+                                        }
+    });
+    $("#mngInst").dialog();
+}
+
+function openRemoveInst(index){
+    var institution = institutes[index];
+    
+    $("#mngInst").html("<p>Are you sure you want to remove"+institution['name']+"?");
+    $("#mngInst").dialog("option", "title", "Remove "+institution['name']);
+    $("#mngInst").dialog("option", "buttons", {
+                                        No: function(){
+                                            openManageInstitude();
+                                        },
+                                        Yes: function(){
+                                            removeInstitution(institution['id'],function(){
+                                                updateInsitutes(function(){
+                                                    openManageInstitude();
+                                                });
+                                            });
+                                        }
+    });
+    $("#mngInst").dialog();
+}
+
+function addInstitution(newName, callback){
+    var vars = {
+        act: "add_institute",
+        name: newName
+    };
+    var url = (NO_REWRITE?"?p=Courses":"Courses");
+    $.post(url,vars, function(){
+        callback();
+    })
+    .fail(function(e){
+        console.log(e);
+        alert("Error: Institution is not added!");
+    }); 
+}
+
+function editInstitution(id, newName, callback){
+    var vars = {
+        act: "edit_institute",
+        id: id,
+        name: newName
+    };
+    var url = (NO_REWRITE?"?p=Courses":"Courses");
+    $.post(url,vars, function(){
+        callback();
+    })
+    .fail(function(e){
+        console.log(e);
+        alert("Error: Institution is not edited!");
+    }); 
+}
+
+function removeInstitution(id, callback){
+    var vars = {
+        act: "remove_institute",
+        id: id
+    };
+    var url = (NO_REWRITE?"?p=Courses":"Courses");
+    $.post(url,vars, function(){
+        callback();
+    })
+    .fail(function(e){
+        console.log(e);
+        alert("Error: Institution is not removed!");
+    }); 
+}
+
+function openAddUser(){
+    var html = "";
+        html +="<input type='text' name='firstname' id='firstName' placeholder='First Name' value=''/><br />";
+        html +="<input type='text' name='lastname' id='lastName' placeholder='Last Name' value=''/><br />";
+        html +="<input type='email' name='email' id='email' placeholder='E-mail' value=''/><br />";
         html +="<select name='institute' id='selInst'>";
         html +="<option disabled selected value='0'>Select Institution</option>";
-        for(var i in institutions){
-            var ins = institutions[i];
+        for(var i in institutes){
+            var ins = institutes[i];
             html +="<option value='";
             html +=ins['id'];
             html +="'>";
@@ -1034,8 +1211,8 @@ function openAddUser(institutions){
             html +="</option>";
         }
         html +="</select>";
-        html +="<input type='checkbox' name='role' value='in' checked> Insteuctor";
-        html +="<input type='checkbox' name='role' value='as'> Assessor";
+        html +="<input type='checkbox' name='role' value='in' checked> "+roles["in"];
+        html +=" <input type='checkbox' name='role' value='as'> "+roles["as"];
     var buttons = {
         Add: function(){
             var usr = {};
@@ -1047,16 +1224,21 @@ function openAddUser(institutions){
             $(this).find("input[name=role]:checked").each(function(c,v){
                     usr.rl.push($(v).val());
             });
-            for(var i in usr){
+            for(var i in usr){//Check for empty inputs.
                 if(typeof usr[i] !== "object" && usr[i].trim() === ""){
-                    alert("Something left empty!");
+                    alert("Something hs left empty!");
                     return false;
                 }
             }
-            if(usr.nt.trim() == 0 ){
-                alert("Something left empty!");
+            if(!validateEmail(usr.em)){
+                alert("Email address is not valid!");
                 return false;
             }
+            if(usr.nt.trim() == 0 ){//Check for institution.
+                alert("Please select the institution!");
+                return false;
+            }
+            
             addUser(usr);
         },
         Cancel: function () { 
@@ -1080,9 +1262,12 @@ function addUser(usr){
     var url = (NO_REWRITE?"?p=Courses":"Courses");
     $.post(url,vars,function (res){
         if(res == 0){
-            alert("The role is updated for thie user");   
+            $("#addIns").html("<h3>User is updated.</h3><p>Email: "+usr.em+"<br>Role: "+(roles[usr.rl] || "Student")+"</p>"); 
+        }else{
+            $("#addIns").html("<h3>User is added.</h3><p>Email: "+usr.em+"<br>Role: "+(roles[usr.rl] || "Student")+"</p>");
         }
-        $("#addIns").dialog("close");
+        $("#addIns").dialog("option", "buttons", {OK: function () { $(this).dialog("close");}});
+        $("#addIns").dialog();
         
     }).fail(function(e){
         console.log(e);
@@ -1111,6 +1296,7 @@ function openJoinACourse(){
     $("#join").dialog("option", "buttons", buttons);
     $("#join").html(html).dialog("open");
 }
+
 function goToCourses(i){
     var courses = joinCourseList[i];
     var html = "<ul>";
@@ -1328,6 +1514,36 @@ function showQuizChatrs(){
     
 }
 
+function updateRoles(){
+    var vars = {
+        act: "get_roles"
+    };
+    var url = (NO_REWRITE?"?p=Courses":"Courses");
+    $.post(url,vars,function (res){
+        roles = JSON.parse(res);
+    }).fail(function(e){
+        console.log(e,"Error: updateRoles() failed!");
+    });   
+}
+
+function updateInsitutes(callback){
+    var vars = {
+        act: "get_intitutes"
+    };
+    var url = (NO_REWRITE?"?p=Courses":"Courses");
+    $.post(url,vars,function (res){
+        institutes = JSON.parse(res);
+        if(typeof callback !== "undefined") callback();
+    }).fail(function(e){
+        console.log(e,"Error: updateRoles() failed!");
+    });   
+}
+
+function validateEmail(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
 /*
  *Excel Download functions start
  *******************************
@@ -1470,3 +1686,6 @@ function SaveFile(courseId){
  *Overlay Instruction (HELP) end
  *******************************
 */
+
+updateRoles();//Updates the global variable roles based on the ref_rol table.
+updateInsitutes();

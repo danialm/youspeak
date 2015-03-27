@@ -76,4 +76,3 @@ function MakeRemoveCourseLink ($courseId){
     $html .= "<input type='hidden' name='courseId' value='$courseId' /></form>";
     return $html;
 }
-?>

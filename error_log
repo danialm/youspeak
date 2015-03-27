@@ -167,3 +167,5 @@
 [22-Feb-2015 03:05:21 UTC] PHP Fatal error:  Undefined class constant 'GetUsers' in /home/admindanial/public_html/youspeak/content/courses/m.php on line 22
 [27-Feb-2015 02:30:16 UTC] PHP Fatal error:  Call to undefined function arry_push() in /home/admindanial/public_html/youspeak/content/report/m.php on line 69
 [07-Mar-2015 00:06:32 UTC] PHP Fatal error:  Array callback has to contain indices 0 and 1 in /home/admindanial/public_html/youspeak/content/report/c.php on line 16
+[26-Mar-2015 18:02:30 UTC] PHP Fatal error:  Call to undefined function jsone_encode() in /home/admindanial/public_html/youspeak/content/courses/c.php on line 212
+[26-Mar-2015 18:02:45 UTC] PHP Fatal error:  Call to undefined function jsone_encode() in /home/admindanial/public_html/youspeak/content/courses/c.php on line 212

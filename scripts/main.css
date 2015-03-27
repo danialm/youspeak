@@ -400,21 +400,25 @@ form #formError
     padding: 5px;
     background-color: inherit;
 }
-#join{
+#mngInst input{
+    width: 100%;
+}
+#join, #mngInst{
     background-color: inherit;
 }
-#join ul{
+#join ul, #mngInst ul{
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
-#join ul li{
+#join ul li, #mngInst li{
     margin-bottom: 5px;
 }
-#join a{
+#join a, #mngInst a{
     color: #697C9B;
+    display: inline-block;
 }
-#join a:hover {
+#join a:hover, #mngInst a:hover {
     color: #293956;
 }
 #classroom

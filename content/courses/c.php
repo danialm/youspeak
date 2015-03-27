@@ -206,6 +206,36 @@ if ( isset( $_POST['act'] ) )
 
         Dbase::Disconnect();
         break;
+    
+    case "get_roles":
+        Dbase::Connect();
+        echo  json_encode(Dbase::GetRoleRef());
+        Dbase::Disconnect();
+        break;
+    
+    case "get_intitutes":
+        Dbase::Connect();
+        echo  json_encode(Dbase::GetInstitutions());
+        Dbase::Disconnect();
+        break;
+        
+    case "add_institute":
+        Dbase::Connect();
+        echo  json_encode(Dbase::AddInstitution($_POST['name']));
+        Dbase::Disconnect();
+        break;
+        
+    case "edit_institute":
+        Dbase::Connect();
+        echo  json_encode(Dbase::EditInstitution($_POST['id'], $_POST['name']));
+        Dbase::Disconnect();
+        break;
+        
+    case "remove_institute":
+        Dbase::Connect();
+        echo  json_encode(Dbase::RemoveInstitution($_POST['id']));
+        Dbase::Disconnect();
+        break;
         
     }
     
