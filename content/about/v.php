@@ -50,6 +50,6 @@
         </p>
     </div>
     <div>
-        <p class="version">rev. 4.0.1</p>
+        <p class="version">rev. <?= getenv("VERSION")?></p>
     </div>
 </div>
