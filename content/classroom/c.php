@@ -139,8 +139,10 @@ function MakeRemoveCommentLink ($commentId, $isFirst)
     return $html;
 }
 
-function MakeRateLinks ($commentId,$rating,$rates,$studentView,$isFirst){
+function MakeRateLinks ($comment,$rating,$rates,$studentView,$isFirst){
     
+    $commentId = $comment['id'];
+    $selfComment = $comment['user_id'] === $_SESSION["currentUserId"];
     $up = $down = "";
     $html = "";
     
@@ -149,7 +151,7 @@ function MakeRateLinks ($commentId,$rating,$rates,$studentView,$isFirst){
     $activeUp .= " ></i></a>";
     
     $inactiveUp  = "<span  id='iup'><i class='fa fa-arrow-up inactive'";
-    $inactiveUp .= $isFirst ? " data-intro='You rated up' data-position='right'" : "";
+    $inactiveUp .= $isFirst ? " data-intro='Inactive rate up' data-position='right'" : "";
     $inactiveUp .= " ></i></span>";
 
     $activeDown  = "<a  id='idown' href='#' title='Rate Comment Down' onclick='RateDown($commentId); return false;'><i class='fa fa-arrow-down'";
@@ -157,10 +159,10 @@ function MakeRateLinks ($commentId,$rating,$rates,$studentView,$isFirst){
     $activeDown .= " ></i></a>";
     
     $inactiveDown  = "<span  id='idown'><i class='fa fa-arrow-down inactive'";
-    $inactiveDown .= $isFirst ? " data-intro='You rated down' data-position='right'" : "";
+    $inactiveDown .= $isFirst ? " data-intro='Inactive rate down' data-position='right'" : "";
     $inactiveDown .= " ></i></span>";
     
-    if($studentView){
+    if($studentView || $selfComment){
         $up = $inactiveUp;
         $down = $inactiveDown;
     }elseif ( !isset($rates[$commentId]) || $rates[$commentId] == 0 ){
@@ -254,10 +256,11 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
             
             $liClass = $c["flag_id"]==4 ? "hiddenComment" : ($c["flag_id"]==3 ? "addressedComment" : ($instructorComment ? "instComment" : ""));
 
-            echo "<li class='$liClass $newComment'>";
+
             
             if ( (!$c["flag_id"]==4 && !$c["flag_id"]==3) || ($c["flag_id"]==4 && $showHidden) || ($c["flag_id"]==3 && $showAddressed)){
                 
+                echo "<li class='$liClass $newComment'>";
                 echo "<div class='control' >";
                 
                 if ($instructor){
@@ -270,7 +273,7 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
                     
                 }else{
                     
-                    $rateLinks = MakeRateLinks($c["id"],$c['rating'],$userates,$studentView,$isFirst);
+                    $rateLinks = MakeRateLinks($c,$c['rating'],$userates,$studentView,$isFirst);
                     echo "$rateLinks ";
                     
                     if ($_SESSION['currentUserId'] == $c['user_id']){// if comment owner and non instructor
@@ -289,14 +292,16 @@ function GenerateCommentsTable($comments,$sessionId,$instructor,$userates,$showH
                 if ($mobile) echo " style='padding-left: 20px'";
                 echo " ><p style='$pStyle'>$c[comment]</p>";
                 echo "</div>";
+                echo "</li>";
+                
+                $commentCounter++;   
                 
             }
-            echo "</li>";
             
             if($c['children'] && count($c['children'])>0)
                 GenerateCommentsTable($c['children'],$sessionId,$instructor,$userates,$showHidden,$showAddressed,$studentView,$width,true,false);
         
-        $commentCounter++;    
+         
         }
         
     }

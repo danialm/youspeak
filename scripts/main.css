@@ -65,7 +65,7 @@ form.hide { display: none }
     padding-right: 15px;
 }
 .inactive{
-    opacity: 0.5;
+    opacity: 0.2;
 }
 .fa{
     margin-right: 0.3em;
@@ -75,6 +75,17 @@ form.hide { display: none }
 }
 .clickable, .clickable *{
     cursor: pointer;
+}
+.button{
+    display: inline-block;
+    padding: 5px;
+    margin: 2px;
+    border-radius: 5px;
+    background: #5c9ccc url(images/ui-bg_gloss-wave_55_5c9ccc_500x100.png) 50% 50% repeat-x;
+    border: #6C85B5 1px solid;
+}
+.button:active{
+    background: #6C85B5;
 }
 /*******************
     DIV LAYOUTS
@@ -619,7 +630,8 @@ table#showAnswers tr td:first-child{
 #ShowQuizDialog table#showAnswers tr:nth-child(odd)  { background-color: #6FB8EE; }
 
 #reply textarea{
-    width: 98%;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #showOrHideButaddressed, li.addressedComment{
@@ -628,6 +640,9 @@ table#showAnswers tr td:first-child{
 #showOrHideButhidden, li.hiddenComment{
     background-color: #FFD8D8 !important;
 }
+/*li.hiddenComment, li.addressedComment{
+    display: none;
+}*/
 .instComment{
     background-color: #FFF2AF !important;
 }

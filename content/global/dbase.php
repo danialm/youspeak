@@ -639,8 +639,12 @@ class Dbase
     }
      
     public static function RemoveUserFromCourse($userId, $courseId){
-
-	return self::Query("DELETE FROM enrollment WHERE course_id= $courseId AND user_id= $userId");
+        $roleInCourse = Dbase::GetUserRoleInCourse($userId, $courseId);
+        $q = "DELETE FROM enrollment WHERE course_id=$courseId";
+        if($roleInCourse !== "in"){
+            $q .= " AND user_id= $userId";
+        }
+	return self::Query($q);
     }
      
     public static function AddSession ($courseId,$unixtime)
@@ -802,7 +806,7 @@ class Dbase
     
     public static function FlagComment ($commentId, $flagId)
     {
-        $query = "UPDATE comments SET flag_id=$flagId WHERE id=$commentId";// OR parent_id=$commentId" ;
+        $query = "UPDATE comments SET flag_id=$flagId WHERE id=$commentId or parent_id=$commentId";
         
         return self::Query($query);
     }

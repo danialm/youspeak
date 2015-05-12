@@ -1,6 +1,5 @@
 <?php
 
-global $userInfo;
 global $sessionInfo;
 global $courseInfo;
 global $comments;
@@ -65,23 +64,24 @@ $(".right-side").css("top","5px");
         <div id='commentTable'>
             <?php  GenerateCommentsTable($comments, $sessionId, $instructor, $userrates, false ,false, $studentView, false, false, false); ?>
         </div>
-        <div>
-            <a href='#' onclick='window.showAddressedComments = !window.showAddressedComments; faClassToggle(this) ; return false;' data-intro="Toggle addressed comments" data-position="right">
+        <!--<div>-->
+            <a class="button" href='#' onclick='window.showAddressedComments = !window.showAddressedComments; faClassToggle(this) ; return false;' data-intro="Toggle addressed comments" data-position="bottom">
                 <i class="fa fa-toggle-off fa-lg green"></i>Addressed comments</a>
-        </div>
+        <!--</div>-->
         <?php if ($instructor){?>
-        <div>
-            <a href='#' onclick='window.showHiddenComments = !window.showHiddenComments; faClassToggle(this) ; return false;' data-intro="Toggle hidden comments" data-position="bottom">
+        <!--<div>-->
+            <a class="button" href='#' onclick='window.showHiddenComments = !window.showHiddenComments; faClassToggle(this) ; return false;' data-intro="Toggle hidden comments" data-position="bottom">
                 <i class="fa fa-toggle-off fa-lg green"></i>Hidden comments</a>
-        </div>   
-        <div id='classroom-quiz-link'>
-            <a href='#' onclick='showEditQuiz(); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
+        <!--</div>-->
+        <div>
+            <span id='classroom-quiz-link'>
+                <a class="button" href='#' onclick='showEditQuiz(); return false;'><i class='fa fa-plus fa-lg green'></i>Questionnaire</a>
+            </span>
+            <?php } ?>
+            <span id='classroom-comment-link'>
+                <a class="button" href='#' onclick='ClassroomReply(); return false;'><i class='fa fa-plus fa-lg green'></i>Comment</a>
+            </span>
         </div>
-        <?php } ?>
-        <div id='classroom-comment-link'>
-            <a href='#' onclick='ClassroomReply(); return false;'><i class='fa fa-plus fa-lg green'></i>Comment</a>
-        </div>
-        
         <div id='ShowQuizDialog' qopenid="0"></div>
         <script>
             session = <?php echo $sessionId; ?>;
@@ -98,7 +98,7 @@ $(".right-side").css("top","5px");
                     modal: false,
                     resizable: false,
                     draggable: true,
-                    position: { my: "top", at: "top", of: "#container" },
+                    position: { my: "top", at: "top", of: "#navigation" },
                     width: 300,
                     title: "View a Questionnaire",
                     open: function () {
@@ -138,7 +138,7 @@ $(".right-side").css("top","5px");
                 modal: false,
                 resizable: false,
                 draggable: true,
-                position: { my: "top", at: "top", of: "#classroom" },
+                position: { my: "top", at: "top", of: "#navigation" },
                 width: 300,
                 title: "Add a Questionnaire"
         });
@@ -155,7 +155,7 @@ $(".right-side").css("top","5px");
                 modal: false,
                 resizable: false,
                 draggable: true,
-                position: { my: "top", at: "top", of: "#classroom" },
+                position: { my: "top", at: "top", of: "#navigation" },
                 width: 300,
                 title: "Reply"
         });

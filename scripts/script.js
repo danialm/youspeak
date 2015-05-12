@@ -421,7 +421,8 @@ function UpdateQuizState (){
     
     if(!ins && quizzes.length===0){ //No active quiz for student 
         dialog.html("Quiz is closed!");
-        dialog.dialog("option","buttons",{ Close: function () {dialog.dialog("close");} });
+        dialog.dialog("option","buttons",{});
+        setTimeout(function(){dialog.dialog("close");}, 2000);
     }
     
     
